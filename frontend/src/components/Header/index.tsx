@@ -1,10 +1,26 @@
 'use client'
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import Link from "next/link";
 // import { useRouter } from 'next/navigation'
 import { usePathname } from 'next/navigation'
 import CustomImage from "@/assets/images/fitness.png";
 
 export function Header() {
+  const [isSticky, setIsSticky] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 100) {
+        setIsSticky(true); // Add sticky effect when scrolling down
+      } else {
+        setIsSticky(false); // Remove sticky effect when at the top
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 //   const router = useRouter();
   const pathname = usePathname();
 
@@ -24,32 +40,24 @@ export function Header() {
   ];
 
   return (
-    <div className="py-2 z-50 bg-[#222] w-full transition-all duration-300">
-  <div className="container mx-auto flex items-center h-20">
-    <Link href="/" className="flex items-center">
-      {/* You can uncomment and add your logo here */}
-      <img className="h-10" src={CustomImage.src} alt="Fitness Image" />
-      {/* <span className="text-orange-600 font-bold text-xl ml-2"></span> */}
-    </Link>
-    
-    <div className="flex-1 flex gap-10 items-center justify-center">
-      {items.map((item, index) => (
-       <Link
-       key={index}
-       href={item.pathName}
-       className={`${
-         pathname === item.pathName
-           ? "text-[#EE7838] font-semibold border-b-2 border-[#EE7838]"
-           : "text-gray-600 hover:text-[#EE7838]"
-       } transition-colors duration-200`}
-     >
-       {item.name}
-     </Link>
-     
-      ))}
+    <motion.header
+    className={`fixed top-0 left-0 w-full bg-black text-white p-4 shadow-lg z-50 ${isSticky ? 'shadow-lg' : ''}`}
+    initial={{ opacity: 1 }}
+    animate={{ opacity: isSticky ? 1 : 1 }} // Keep opacity constant
+    transition={{ duration: 0.3 }}
+  >
+    <div className="container mx-auto flex justify-between items-center">
+      <h1 className="text-2xl font-bold text-[#EE7838]">My Fitness</h1>
+      <nav>
+        <ul className="flex space-x-6">
+          <li><a href="/" className="hover:text-[#EE7838]">Home</a></li>
+          <li><a href="#about" className="hover:text-[#EE7838]">About</a></li>
+          <li><a href="#services" className="hover:text-[#EE7838]">Services</a></li>
+          <li><a href="#contact" className="hover:text-[#EE7838]">Contact</a></li>
+        </ul>
+      </nav>
     </div>
-  </div>
-</div>
+  </motion.header>
 
 
   );
