@@ -1,23 +1,35 @@
 const express = require('express');
 const router = express.Router();
 const sessionController = require('../controllers/sessionController');
+const registrationController = require('../controllers/sessionRegistrationController');
 
-// CREATE a new session
-router.post('/sessions', sessionController.createSession);
+router.post('/', sessionController.createSession);
 
 // READ all sessions
-router.get('/sessions', sessionController.getAllSessions);
+router.get('/', sessionController.getAllSessions);
 
 // READ a single session by UUID
-router.get('/sessions/:id', sessionController.getSessionById);
+router.get('/:id', sessionController.getSessionById);
 
 // UPDATE a session by UUID
-router.put('/sessions/:id', sessionController.updateSession);
+router.put('/:id', sessionController.updateSession);
 
 // DELETE a session by UUID
-router.delete('/sessions/:id', sessionController.deleteSession);
+router.delete('/:id', sessionController.deleteSession);
 
-// Redirect to registration page
-router.get('/sessions/:id/register', sessionController.registerSession);
+// Handle registration form submission
+router.post('/:sessionId/register', registrationController.createSessionRegistration);
+
+// Get all registrations for a session
+router.get('/:sessionId/registrations', registrationController.getRegistrationsBySession);
+
+// Get a single registration by UUID
+router.get('/registrations/:id', registrationController.getSessionRegistrationById);
+
+// Update a registration by UUID
+router.put('/registrations/:id', registrationController.updateSessionRegistration);
+
+// Delete a registration by UUID
+router.delete('/registrations/:id', registrationController.deleteSessionRegistration);
 
 module.exports = router;

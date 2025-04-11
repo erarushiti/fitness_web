@@ -3,6 +3,7 @@ const User = require('./models/User');
 const Client = require('./models/Client');
 const Admin = require('./models/Admin');
 const Session = require('./models/Sessions');
+const SessionRegistration = require('./models/SessionRegistration');
 
 async function syncDatabase() {
   try {
