@@ -47,7 +47,7 @@ export function Header() {
     transition={{ duration: 0.3 }}
   >
     <div className="container mx-auto flex justify-between items-center">
-      <h1 className="text-2xl font-bold text-[#EE7838]">My Fitness</h1>
+    <img className="max-h-screen object-contain" src={CustomImage.src} alt="Fitness Image" />
       <nav>
         <ul className="flex space-x-6">
           <li><a href="/" className="hover:text-[#EE7838]">Home</a></li>

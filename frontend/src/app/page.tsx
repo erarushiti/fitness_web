@@ -4,6 +4,16 @@ import Icon1 from "@/assets/icons/icon1.png"
 import Icon2 from "@/assets/icons/icon2.png"
 import Icon3 from "@/assets/icons/icon3.png"
 import { motion } from "framer-motion";
+import Photo2 from "@/assets/images/photo2.png"
+import Photo1 from "@/assets/images/photo1.png"
+import Photo3 from "@/assets/images/photo3.png"
+import F1 from "@/assets/icons/f1.png"
+import F2 from "@/assets/icons/f2.png"
+import F3 from "@/assets/icons/f3.png"
+import F4 from "@/assets/icons/f4.png"
+import F5 from "@/assets/icons/f5.png"
+import Sessions  from "@/components/Sessions";
+import CustomImage from "@/assets/images/fitness.png";
 
 const cards = [
   {
@@ -80,7 +90,7 @@ export default function Home() {
     {/* Second Section */}
     <section className="py-16 flex flex-col items-center justify-center bg-black text-white">
       {/* Title & Text */}
-      <div className="max-w-4xl text-center px-8">
+      <div className="max-w-4xl text-center px-8 mt-50">
         <motion.h2
           className="text-5xl font-bold text-[#EE7838] mb-4"
           initial={{ opacity: 0, x: 100 }}
@@ -149,9 +159,85 @@ export default function Home() {
       </div>
     </section>
 
-    <section>
+    <section className="flex items-center justify-center gap-40 min-h-screen px-4 bg-black">
+      <div className="flex items-start justify-center gap-40 min-h-screen px-4 bg-black mt-50">
+      <div>
+      <img className=" object-contain min-h-[400px] rounded-[10px]  " src={Photo2.src} alt="Fitness Image" />
+      <img className=" relative w-40 object-contain rounded-[10px] -top-[420px] left-[513px] rotate-30" src={Photo1.src} alt="Fitness Image" />
+      <img className=" relative w-40 object-contain rounded-[10px] -top-[170px] left-[513px] -rotate-30" src={Photo3.src} alt="Fitness Image" />
+
+      </div>
+    <div className="pt-6 w-[500px]">
+      <h3 className="text-4xl font-extrabold">DEDICATED TO
+        <br></br>
+         IGNITING YOUR 
+      <br />
+        <span className="font-extrabold text-[#EE7838]"> FITNESS HEALTH</span></h3>
+        <p className="mt-4 text-lg leading-relaxed whitespace-pre-line">
+  {`Lorem ipsum dolor sit amet consectetur adipisicing
+   elit. Fuga, sapiente eius provident veniam quis ut
+    et maxime omnis earum at distinctio.Odit quae itaque 
+    voluptatum magni aliquam rem dolor enim.`}
+</p>
+ </div>
+      </div>
+      </section>
+
+
+      <section>
+        <div className="flex justify-center gap-[160px] bg-black pb-[50px]">
+        <img src={F1.src} alt="Fitness Image" />
+        <img src={F2.src} alt="Fitness Image" />
+        <img src={F3.src} alt="Fitness Image" />
+        <img src={F4.src} alt="Fitness Image" />
+        <img src={F5.src} alt="Fitness Image" />
+        </div>
+      </section>
+
+      <section>
+        <div className="bg-gradient-to-t from-[#EE7838] to-black p-[200px] pt-[150px]">
+          <div></div>
+        <Sessions/>
+        </div>
       
-    </section>
+
+      </section>
+
+      
+
+<footer className=" rounded-lg shadow-sm bg-black ">
+    <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
+        <div className="sm:flex sm:items-center sm:justify-between">
+            <a href="#" className="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
+            <img className="max-h-screen object-contain" src={CustomImage.src} alt="Fitness Image" />
+                <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">My Fitness</span>
+            </a>
+            <ul className="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400">
+                <li>
+                    <a href="#" className="hover:underline me-4 md:me-6">About</a>
+                </li>
+                <li>
+                    <a href="#" className="hover:underline me-4 md:me-6">Privacy Policy</a>
+                </li>
+                <li>
+                    <a href="#" className="hover:underline me-4 md:me-6">Licensing</a>
+                </li>
+                <li>
+                    <a href="#" className="hover:underline">Contact</a>
+                </li>
+            </ul>
+        </div>
+        <hr className="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+        <span className="block text-sm text-gray-500 sm:text-center text-[#EE7838]">© 2023 <a href="#`" className="hover:underline ">My Fitnes</a>. All Rights Reserved.</span>
+    </div>
+</footer>
+
+
+
+
+     
+
+     
   </div>
   
   
