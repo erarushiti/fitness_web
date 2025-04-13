@@ -46,8 +46,8 @@ export default function Home() {
         {/* Text Section */}
         <motion.div
           className="text-center absolute inset-0 flex flex-col justify-center items-center z-10 w-full px-8"
-          initial={{ opacity: 0, x: -100 }} // Start off-screen left
-          animate={{ opacity: 1, x: 0 }} // Move to normal position
+          initial={{ opacity: 0, x: -100 }} 
+          animate={{ opacity: 1, x: 0 }} 
           transition={{ duration: 1, ease: "easeOut" }}
         >
           <h1
@@ -210,7 +210,7 @@ export default function Home() {
         <div className="sm:flex sm:items-center sm:justify-between">
             <a href="#" className="flex items-center mb-4 sm:mb-0 space-x-3 rtl:space-x-reverse">
             <img className="max-h-screen object-contain" src={CustomImage.src} alt="Fitness Image" />
-                <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">My Fitness</span>
+                <span className="self-center text-2xl font-semibold whitespace-nowrap text-white">My Fitness</span>
             </a>
             <ul className="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400">
                 <li>
@@ -228,23 +228,9 @@ export default function Home() {
             </ul>
         </div>
         <hr className="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
-        <span className="block text-sm text-gray-500 sm:text-center text-[#EE7838]">© 2023 <a href="#`" className="hover:underline ">My Fitnes</a>. All Rights Reserved.</span>
+        <span className="block text-sm sm:text-center text-[#EE7838]">© 2023 <a href="#`" className="hover:underline ">My Fitnes</a>. All Rights Reserved.</span>
     </div>
-</footer>
-
-
-
-
-     
-
-     
+</footer>  
   </div>
-  
-  
-
-
-
-  
-  
   );
 }
