@@ -2,7 +2,7 @@ const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 const Session = require('./Sessions');
 
-const SessionRegistration = sequelize.define('SessionRegistration', {
+const SessionRegistration = sequelize.define('session_registration', {
   id: {
     type: DataTypes.CHAR(36), // Match Session.id type
     defaultValue: DataTypes.UUIDV4,
