@@ -1,5 +1,6 @@
 const Session = require('../models/Sessions');
 
+
 const sessionController = {
   // CREATE a new session
   async createSession(req, res) {

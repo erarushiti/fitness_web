@@ -58,7 +58,7 @@ exports.getRegistrationsBySession = async (req, res) => {
 
     const registrations = await SessionRegistration.findAll({
       where: { sessionId },
-      include: [{ model: Session, as: 'session', attributes: ['name', 'startDate'] }],
+      include: [{ model: Session, as: 'sessions', attributes: ['name', 'startDate'] }],
     });
 
     res.status(200).json(registrations);
@@ -74,7 +74,7 @@ exports.getSessionRegistrationById = async (req, res) => {
     const { id } = req.params;
 
     const registration = await SessionRegistration.findByPk(id, {
-      include: [{ model: Session, as: 'session', attributes: ['name', 'startDate'] }],
+      include: [{ model: Session, as: 'sessions', attributes: ['name', 'startDate'] }],
     });
 
     if (!registration) {
