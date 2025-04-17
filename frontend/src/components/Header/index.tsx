@@ -37,6 +37,10 @@ export function Header() {
       name: "Contact Us",
       pathName: "/contact",
     },
+    {
+      name: "Login",
+      pathName: "/Login",
+    },
   ];
 
   return (
@@ -54,6 +58,7 @@ export function Header() {
           <li><a href="#about" className="hover:text-[#EE7838]">About</a></li>
           <li><a href="#services" className="hover:text-[#EE7838]">Services</a></li>
           <li><a href="#contact" className="hover:text-[#EE7838]">Contact</a></li>
+          <li><a href="/login" className="hover:text-[#EE7838]">Login</a></li>
         </ul>
       </nav>
     </div>
