@@ -24,24 +24,7 @@ export function Header() {
 //   const router = useRouter();
   const pathname = usePathname();
 
-  const items = [
-    {
-      name: "Home",
-      pathName: "/",
-    },
-    {
-      name: "About",
-      pathName: "/about",
-    },
-    {
-      name: "Contact Us",
-      pathName: "/contact",
-    },
-    {
-      name: "Login",
-      pathName: "/Login",
-    },
-  ];
+
 
   return (
     <motion.header
@@ -56,8 +39,6 @@ export function Header() {
         <ul className="flex space-x-6">
           <li><a href="/" className="hover:text-[#EE7838]">Home</a></li>
           <li><a href="#about" className="hover:text-[#EE7838]">About</a></li>
-          <li><a href="#services" className="hover:text-[#EE7838]">Services</a></li>
-          <li><a href="#contact" className="hover:text-[#EE7838]">Contact</a></li>
           <li><a href="/login" className="hover:text-[#EE7838]">Login</a></li>
         </ul>
       </nav>

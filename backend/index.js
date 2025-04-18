@@ -23,7 +23,7 @@ app.use(
 );
 
 app.use("/api/auth", authRouter);
-app.use("/api/sessions", authenticateToken, sessionRoutes);
+app.use("/api/sessions", sessionRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
