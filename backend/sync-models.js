@@ -4,6 +4,7 @@ const Client = require('./models/Client');
 const Admin = require('./models/Admin');
 const Session = require('./models/Sessions');
 const SessionRegistration = require('./models/SessionRegistration');
+const RefreshToken = require('./models/RefreshToken');
 
 async function syncDatabase() {
   try {

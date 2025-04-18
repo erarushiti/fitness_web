@@ -28,12 +28,7 @@ const Admin = sequelize.define('Admin', {
     defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
     field: 'created_at',
   },
-  updatedAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: Sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
-    field: 'updated_at',
-  },
+
 }, {
   tableName: 'admins',
   timestamps: false,
