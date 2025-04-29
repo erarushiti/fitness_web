@@ -1,6 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
 const User = require('./User');
+const Trainer = require('./Trainer');
 
 const Client = sequelize.define('Client', {
   id: {
@@ -18,6 +19,16 @@ const Client = sequelize.define('Client', {
       key: 'id',
     },
     onDelete: 'CASCADE',
+  },
+  trainerId: {
+    type: DataTypes.UUID,
+    allowNull: true,
+    field: 'trainer_id',
+    references: {
+      model: Trainer,
+      key: 'id',
+    },
+    onDelete: 'SET NULL',
   },
   dateOfBirth: {
     type: DataTypes.DATEONLY,
@@ -39,12 +50,13 @@ const Client = sequelize.define('Client', {
     defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
     field: 'created_at',
   },
-
 }, {
   tableName: 'clients',
   timestamps: false,
 });
 
 Client.belongsTo(User, { foreignKey: 'userId', as: 'user' });
+Client.belongsTo(Trainer, { foreignKey: 'trainerId', as: 'trainer' });
+Trainer.hasMany(Client, { foreignKey: 'trainerId', as: 'clients' });
 
 module.exports = Client;
