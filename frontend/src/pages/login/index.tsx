@@ -74,40 +74,6 @@ const LoginForm: React.FC = () => {
   return (
     <div>
       <Header />
-      {/* <form classNameName="flex flex-col items-center" onSubmit={handleSubmit}>
-      <div classNameName="flex flex-col w-1/3 mb-[20px]">
-        <label classNameName="text-white">Email:</label>
-        <input
-          classNameName=""
-          type="email"
-          name="email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-      </div>
-      <div classNameName="flex flex-col w-1/3 mb-[40px]">
-        <label classNameName="text-white">Password:</label>
-        <input
-          classNameName="p-[6px] mt-[5px] border-2 border-[#6f6d6d] rounded-[8px] bg-transparent text-white"
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-      </div>
-      <button
-        classNameName="bg-[#6f6d6d] py-[10px] px-[20px] rounded-[8px] font-bold mb-[50px] text-white"
-        type="submit"
-        disabled={loading}
-      >
-        {loading ? 'Logging in...' : 'Submit Login'}
-      </button>
-      {error && <p classNameName="text-red-600 text-center text-base">{error}</p>}
-      {success && <p classNameName="text-green-600 text-center text-base">{success}</p>}
-    </form> */}
-
       <section className="bg-[#111]">
         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
           <div className="w-full bg-black rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0">
@@ -118,7 +84,7 @@ const LoginForm: React.FC = () => {
               <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
                 <div>
                   <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                    Password
+                    Email
                   </label>
                   <input
                     className="bg-[#111] border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
@@ -149,7 +115,7 @@ const LoginForm: React.FC = () => {
                         id="remember"
                         aria-describedby="remember"
                         type="checkbox"
-                        className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
+                        className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 "
                       />
                     </div>
                     <div className="ml-3 text-sm">
@@ -180,11 +146,11 @@ const LoginForm: React.FC = () => {
                     {success}
                   </p>
                 )}
-                <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+                <p className="text-sm font-light text-gray-500 ">
                   Don’t have an account yet?{" "}
                   <a
                     href="#"
-                    className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                    className="font-medium text-primary-600 hover:underline "
                   >
                     Sign up
                   </a>
