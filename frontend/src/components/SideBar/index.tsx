@@ -10,8 +10,8 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { name: 'Dashboard', path: '/', icon: 'fas fa-tachometer-alt' },
-  { name: 'All Sessions', path: '/login', icon: 'fas fa-users' },
-  { name: 'Create Session', path: '/analytics', icon: 'fas fa-chart-bar' },
+  { name: 'All Sessions', path: '/Admin/Sessions/', icon: 'fas fa-users' },
+  { name: 'Create Session', path: '/Admin/Sessions/create-session', icon: 'fas fa-chart-bar' },
   { name: 'Settings', path: '/settings', icon: 'fas fa-cog' },
 ];
 
@@ -19,7 +19,7 @@ const Sidebar: React.FC = () => {
   const router = useRouter();
 
   return (
-    <div className="w-64 bg-gray-800 text-white p-6">
+    <div className="w-64 bg-[#1c1c1c] text-white p-6">
       <h2 className="text-2xl font-bold mb-8">Admin Panel</h2>
       <nav>
         <ul>
