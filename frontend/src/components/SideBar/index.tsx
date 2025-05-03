@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface NavItem {
   name: string;
@@ -8,15 +8,38 @@ interface NavItem {
   icon: string;
 }
 
-const navItems: NavItem[] = [
-  { name: 'Dashboard', path: '/', icon: 'fas fa-tachometer-alt' },
-  { name: 'All Sessions', path: '/Admin/Sessions/', icon: 'fas fa-users' },
-  { name: 'Create Session', path: '/Admin/Sessions/create-session', icon: 'fas fa-chart-bar' },
-  { name: 'Settings', path: '/settings', icon: 'fas fa-cog' },
-];
-
 const Sidebar: React.FC = () => {
   const router = useRouter();
+  const [role, setRole] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedRole = localStorage.getItem("role");
+      setRole(storedRole);
+    }
+  }, []);
+
+  const adminNavItems: NavItem[] = [
+    { name: 'Dashboard', path: '/', icon: 'fas fa-tachometer-alt' },
+    { name: 'All Sessions', path: '/Admin/Sessions/', icon: 'fas fa-users' },
+    { name: 'Create Session', path: '/Admin/Sessions/create-session', icon: 'fas fa-chart-bar' },
+    { name: 'Settings', path: '/settings', icon: 'fas fa-cog' },
+  ];
+
+  const trainerNavItems: NavItem[] = [
+    { name: 'Dashboard', path: '/', icon: 'fas fa-tachometer-alt' },
+    { name: 'My Sessions', path: '/trainer/sessions', icon: 'fas fa-chalkboard-teacher' },
+  ];
+
+  const clientNavItems: NavItem[] = [
+    { name: 'Dashboard', path: '/', icon: 'fas fa-tachometer-alt' },
+    { name: 'Available Sessions', path: '/sessions', icon: 'fas fa-calendar-alt' },
+  ];
+
+  let navItems: NavItem[] = [];
+  if (role === 'admin') navItems = adminNavItems;
+  else if (role === 'trainer') navItems = trainerNavItems;
+  else if (role === 'client') navItems = clientNavItems;
 
   return (
     <div className="w-64 bg-[#1c1c1c] text-white p-6">
