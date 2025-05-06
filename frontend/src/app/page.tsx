@@ -14,6 +14,7 @@ import F4 from "@/assets/icons/f4.png"
 import F5 from "@/assets/icons/f5.png"
 import Sessions  from "@/components/Sessions";
 import Footer from "@/components/Footer";
+import FeedbackPage from "@/components/Feedback";
 
 
 const cards = [
@@ -200,7 +201,9 @@ export default function Home() {
           <div></div>
         <Sessions/>
         </div>
-      
+        <section id="feedback">
+        <FeedbackPage />
+      </section>
 
       </section>
 

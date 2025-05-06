@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaStar, FaRegStar } from "react-icons/fa";
 import '../../app/globals.css';
 
@@ -9,9 +9,20 @@ const FeedbackPage: React.FC = () => {
     { name: "John Doe", rating: 5, comment: "Amazing gym and great staff!" },
     { name: "Emily Smith", rating: 4, comment: "Clean facilities and friendly trainers." },
     { name: "Alex Johnson", rating: 5, comment: "Top-notch equipment. Highly recommend!" },
+    { name: "Sarah Lee", rating: 4, comment: "Great atmosphere and professional trainers." },
+    { name: "David Brown", rating: 5, comment: "Best gym experience I've had!" },
   ]);
 
   const [formData, setFormData] = useState({ name: "", rating: 0, comment: "" });
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % feedbacks.length);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [feedbacks.length]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,11 +39,12 @@ const FeedbackPage: React.FC = () => {
     setFormData((prev) => ({ ...prev, rating: star }));
   };
 
+  const visibleFeedbacks = feedbacks.concat(feedbacks).slice(currentIndex, currentIndex + 3);
+
   return (
     <div className="min-h-screen bg-black text-white p-8 pt-28">
       <h1 className="text-4xl font-bold text-center mb-10">Client Feedback</h1>
 
-      {/* Feedback Form */}
       <form
         onSubmit={handleSubmit}
         className="bg-[#111] rounded-2xl shadow-lg p-6 max-w-xl mx-auto mb-12 border border-orange-500"
@@ -77,25 +89,32 @@ const FeedbackPage: React.FC = () => {
         </button>
       </form>
 
-      {/* Feedback Carousel */}
-      <div className="max-w-4xl mx-auto overflow-x-auto whitespace-nowrap scrollbar-hide">
-        <div className="flex gap-6 px-2 animate__animated animate__fadeInUp animate__slower">
-          {feedbacks.map((feedback, index) => (
+      <div className="max-w-5xl mx-auto overflow-hidden">
+        <div
+          className="flex gap-6 transition-transform duration-1000 ease-in-out"
+          style={{
+            transform: `translateX(-${currentIndex * (100 / 3)}%)`
+          }}
+        >
+          {feedbacks.concat(feedbacks).map((feedback, index) => (
             <div
               key={index}
-              className="min-w-[250px] bg-[#1a1a1a] p-4 rounded-xl border border-orange-400 shadow-md hover:scale-105 transition duration-300"
+              className="min-w-[300px] max-w-[300px] h-[220px] bg-[#1a1a1a] p-4 rounded-xl border border-orange-400 shadow-lg flex-shrink-0 flex flex-col justify-between"
+              style={{
+                background: "linear-gradient(135deg, black 30%, #EE7838 100%)",
+              }}
             >
-              <h3 className="text-lg font-bold text-orange-300 mb-2">{feedback.name}</h3>
-              <div className="flex mb-2">
+              <h3 className="text-lg font-bold text-orange-300 text-center">{feedback.name}</h3>
+              <div className="flex justify-center mb-2">
                 {[...Array(5)].map((_, i) =>
                   i < feedback.rating ? (
-                    <FaStar key={i} className="text-yellow-400" />
+                    <FaStar key={i} className="text-yellow-400 text-base" />
                   ) : (
-                    <FaRegStar key={i} className="text-gray-600" />
+                    <FaRegStar key={i} className="text-gray-600 text-base" />
                   )
                 )}
               </div>
-              <p className="text-sm text-gray-300">"{feedback.comment}"</p>
+              <p className="text-base text-gray-300 text-center">"{feedback.comment}"</p>
             </div>
           ))}
         </div>
