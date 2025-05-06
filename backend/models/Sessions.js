@@ -3,8 +3,8 @@ const sequelize = require('../config/db');
 
 const Session = sequelize.define('Session', {
   id: {
-    type: DataTypes.CHAR(36), // Use CHAR(36) for MySQL compatibility
-    defaultValue: DataTypes.UUIDV4, // Generate UUIDv4 in Node.js
+    type: DataTypes.CHAR(36),
+    defaultValue: DataTypes.UUIDV4,
     primaryKey: true,
     allowNull: false,
   },
@@ -16,15 +16,10 @@ const Session = sequelize.define('Session', {
     type: DataTypes.TEXT,
     allowNull: false,
   },
-  startDate: {
-    type: DataTypes.DATE,
+  weekDays: {
+    type: DataTypes.JSON, // store an array like ["Monday", "Wednesday"]
     allowNull: false,
-    field: 'start_date',
-  },
-  endDate: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    field: 'end_date',
+    field: 'week_days',
   },
   time: {
     type: DataTypes.TIME,
@@ -40,7 +35,6 @@ const Session = sequelize.define('Session', {
     defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
     field: 'created_at',
   },
-
 }, {
   tableName: 'sessions',
   timestamps: false,
