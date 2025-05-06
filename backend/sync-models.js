@@ -12,7 +12,7 @@ async function syncDatabase() {
     await sequelize.authenticate();
     console.log('Connection has been established successfully.');
 
-    await sequelize.sync({ force: false }); // Use { force: false } in production
+    await sequelize.sync({ force: true }); // Use { force: false } in production
     console.log('Database synchronized successfully with UUIDs.');
 
     process.exit(0);

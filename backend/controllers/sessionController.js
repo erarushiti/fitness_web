@@ -1,29 +1,35 @@
 const Session = require('../models/Sessions');
 
-
 const sessionController = {
   // CREATE a new session
   async createSession(req, res) {
     try {
-      const { name, description, startDate, endDate, time, price } = req.body;
-
-      if (!name || !description || !startDate || !endDate || !time || !price) {
-        return res.status(400).json({ error: 'All fields are required' });
+      const { name, description, time, price, weekDays } = req.body;
+  
+      // Ensure that all required fields are provided
+      // if (!name || !description || !startDate || !endDate || !time || !price || !weekDays) {
+      //   return res.status(400).json({ error: 'All fields are required' });
+      // }
+  
+      // Try to parse price to ensure it's a number
+      const parsedPrice = parseFloat(price);
+      if (isNaN(parsedPrice)) {
+        return res.status(400).json({ error: 'Price must be a valid number' });
       }
-
+  
+      // Create new session
       const newSession = await Session.create({
         name,
         description,
-        startDate,
-        endDate,
         time,
-        price,
+        price,  // Store price as a number
+        weekDays,  // assuming `weekDays` is an array
       });
-
+  
       res.status(201).json(newSession);
     } catch (error) {
-      console.error('Error creating session:', error);
-      res.status(500).json({ error: 'Failed to create session' });
+      console.error('Error creating session:', error);  // Log error details
+      res.status(500).json({ error: 'Failed to create session', details: error.message });  // Include error details
     }
   },
 
@@ -42,9 +48,12 @@ const sessionController = {
   async getSessionById(req, res) {
     try {
       const session = await Session.findByPk(req.params.id);
+
+      // Check if session exists
       if (!session) {
         return res.status(404).json({ error: 'Session not found' });
       }
+
       res.json(session);
     } catch (error) {
       console.error('Error fetching session:', error);
@@ -55,38 +64,52 @@ const sessionController = {
   // UPDATE a session by UUID
   async updateSession(req, res) {
     try {
-      const { name, description, startDate, endDate, time, price } = req.body;
+      const validWeekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+      const { name, description, weekDays, time, price } = req.body;
       const session = await Session.findByPk(req.params.id);
-
+  
       if (!session) {
         return res.status(404).json({ error: 'Session not found' });
       }
-
+  
+      // Validate price
+      const parsedPrice = parseFloat(price);
+      if (isNaN(parsedPrice) || parsedPrice < 0) {
+        return res.status(400).json({ error: 'Price must be a valid number and cannot be negative' });
+      }
+  
+      // Validate weekDays
+      if (weekDays && (!Array.isArray(weekDays) || !weekDays.every(day => validWeekDays.includes(day)))) {
+        return res.status(400).json({ error: 'weekDays must be an array of valid days of the week' });
+      }
+  
       await session.update({
         name: name || session.name,
         description: description || session.description,
-        startDate: startDate || session.startDate,
-        endDate: endDate || session.endDate,
+        weekDays: weekDays || session.weekDays,
         time: time || session.time,
-        price: price || session.price,
+        price: parsedPrice || session.price,
       });
-
+  
       res.json(session);
     } catch (error) {
       console.error('Error updating session:', error);
       res.status(500).json({ error: 'Failed to update session' });
     }
   },
+  
 
   // DELETE a session by UUID
   async deleteSession(req, res) {
     try {
       const session = await Session.findByPk(req.params.id);
 
+      // Check if session exists
       if (!session) {
         return res.status(404).json({ error: 'Session not found' });
       }
 
+      // Delete the session
       await session.destroy();
       res.status(204).send();
     } catch (error) {
@@ -97,6 +120,7 @@ const sessionController = {
 
   // Redirect to registration page
   registerSession(req, res) {
+    // Properly redirect to registration page
     res.redirect(`http://localhost:3001/sessions/${req.params.id}/register`);
   },
 };

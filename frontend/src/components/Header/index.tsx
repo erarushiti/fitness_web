@@ -39,6 +39,7 @@ export function Header() {
         <ul className="flex space-x-6">
           <li><a href="/" className="hover:text-[#EE7838]">Home</a></li>
           <li><a href="#about" className="hover:text-[#EE7838]">About</a></li>
+          <li><a href="/contact" className="hover:text-[#EE7838]">Contact Us</a></li>
           <li><a href="/login" className="hover:text-[#EE7838]">Login</a></li>
         </ul>
       </nav>
