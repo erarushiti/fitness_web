@@ -1,6 +1,6 @@
 // src/app/layout.tsx
 import Header from "../components/Header/index";
-import "../app/globals.css"; 
+import "../app/globals.css";
 
 export default function RootLayout({
   children,
@@ -9,7 +9,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body className="bg-[#111] text-white">
         <Header />
         {children}
       </body>
