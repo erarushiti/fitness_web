@@ -104,7 +104,7 @@ const ContactPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Contact Form Section */}
+          {/* Contact Form */}
           <div className="space-y-6 mt-16 animate__animated animate__fadeInUp animate__delay-2s">
             <h2 className="text-2xl font-semibold mb-4 text-center">Send Us Your Request or Complaint</h2>
             <form
@@ -118,7 +118,7 @@ const ContactPage: React.FC = () => {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full p-2 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                  className="bg-[#111] border border-gray-300 text-gray-100 rounded-lg focus:ring-orange-300 focus:border-orange-300 block w-full p-2.5"
                   required
                 />
               </div>
@@ -129,7 +129,7 @@ const ContactPage: React.FC = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full p-2 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                  className="bg-[#111] border border-gray-300 text-gray-100 rounded-lg focus:ring-orange-300 focus:border-orange-300 block w-full p-2.5"
                   required
                 />
               </div>
@@ -140,7 +140,7 @@ const ContactPage: React.FC = () => {
                   type="text"
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
-                  className="w-full p-2 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                  className="bg-[#111] border border-gray-300 text-gray-100 rounded-lg focus:ring-orange-300 focus:border-orange-300 block w-full p-2.5"
                   required
                 />
               </div>
@@ -151,7 +151,7 @@ const ContactPage: React.FC = () => {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   rows={4}
-                  className="w-full p-2 rounded bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+                  className="bg-[#111] border border-gray-300 text-gray-100 rounded-lg focus:ring-orange-300 focus:border-orange-300 block w-full p-2.5"
                   required
                 ></textarea>
               </div>
@@ -159,8 +159,7 @@ const ContactPage: React.FC = () => {
               <div className="flex justify-center">
                 <button
                   type="submit"
-                  className="bg-orange-700 text-white p-2 rounded-md hover:bg-orange-600 transition-all duration-300"
-                >
+                  className="bg-[#111] py-[10px] px-[20px] rounded-[8px] font-bold mb-[50px] text-white"                >
                   Send Message
                 </button>
               </div>
@@ -168,6 +167,7 @@ const ContactPage: React.FC = () => {
           </div>
         </div>
       </div>
+
 
       <Footer />
     </>
