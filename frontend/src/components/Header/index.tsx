@@ -41,6 +41,7 @@ export function Header() {
           <li><a href="#about" className="hover:text-[#EE7838]">About</a></li>
           <li><a href="/contact" className="hover:text-[#EE7838]">Contact Us</a></li>
           <li><a href="/login" className="hover:text-[#EE7838]">Login</a></li>
+          <li><a href="/trainers" className="hover:text-[#EE7838]">Trainers</a></li>
         </ul>
       </nav>
     </div>
