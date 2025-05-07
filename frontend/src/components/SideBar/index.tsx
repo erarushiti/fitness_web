@@ -1,6 +1,8 @@
-import Link from 'next/link';
-import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+
+import Link from "next/link";
+import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+
 
 interface NavItem {
   name: string;
@@ -19,40 +21,38 @@ const Sidebar: React.FC = () => {
     }
   }, []);
 
-  const adminNavItems: NavItem[] = [
-    { name: 'Dashboard', path: '/', icon: 'fas fa-tachometer-alt' },
-    { name: 'All Sessions', path: '/Admin/Sessions/', icon: 'fas fa-users' },
-    { name: 'Create Session', path: '/Admin/Sessions/create-session', icon: 'fas fa-chart-bar' },
-    { name: 'Settings', path: '/settings', icon: 'fas fa-cog' },
-  ];
 
-  const trainerNavItems: NavItem[] = [
-    { name: 'Dashboard', path: '/', icon: 'fas fa-tachometer-alt' },
-    { name: 'My Sessions', path: '/trainer/sessions', icon: 'fas fa-chalkboard-teacher' },
-  ];
+  const navMap: Record<string, NavItem[]> = {
+    admin: [
+      { name: "All Sessions", path: "/Admin/Sessions/", icon: "fas fa-users" },
+      { name: "Create Session", path: "/Admin/Sessions/create-session", icon: "fas fa-chart-bar" },
+      { name: "Register", path: "/Admin/register", icon: "fas fa-cog" },
+    ],
+    trainer: [
+      { name: "Dashboard", path: "/", icon: "fas fa-tachometer-alt" },
+      { name: "My Sessions", path: "/trainer/sessions", icon: "fas fa-chalkboard-teacher" },
+    ],
+    client: [
+      { name: "Dashboard", path: "/", icon: "fas fa-tachometer-alt" },
+      { name: "Available Sessions", path: "/sessions", icon: "fas fa-calendar-alt" },
+    ],
+  };
 
-  const clientNavItems: NavItem[] = [
-    { name: 'Dashboard', path: '/', icon: 'fas fa-tachometer-alt' },
-    { name: 'Available Sessions', path: '/sessions', icon: 'fas fa-calendar-alt' },
-  ];
-
-  let navItems: NavItem[] = [];
-  if (role === 'admin') navItems = adminNavItems;
-  else if (role === 'trainer') navItems = trainerNavItems;
-  else if (role === 'client') navItems = clientNavItems;
+  const navItems = role ? navMap[role] || [] : [];
 
   return (
     <div className="w-64 bg-[#1c1c1c] text-white p-6">
-      <h2 className="text-2xl font-bold mb-8">Admin Panel</h2>
+      <h2 className="text-2xl font-bold mb-8 capitalize">{role} Panel</h2>
+
       <nav>
         <ul>
           {navItems.map((item) => (
             <li key={item.name} className="mb-4">
               <Link
                 href={item.path}
-                className={`flex items-center hover:text-gray-300 ${
-                  router.pathname === item.path ? 'text-blue-400' : ''
-                }`}
+
+                className={`flex items-center hover:text-gray-300 ${router.pathname === item.path ? 'text-blue-400' : ''}`}
+
               >
                 <i className={`${item.icon} mr-2`}></i>
                 {item.name}
@@ -60,7 +60,16 @@ const Sidebar: React.FC = () => {
             </li>
           ))}
           <li className="mb-4">
-            <a href="#" className="flex items-center hover:text-gray-300">
+
+            <a
+              href="#"
+              onClick={() => {
+                localStorage.clear();
+                router.push("/login");
+              }}
+              className="flex items-center hover:text-gray-300"
+            >
+
               <i className="fas fa-sign-out-alt mr-2"></i>
               Logout
             </a>

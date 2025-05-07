@@ -1,35 +1,38 @@
+// routes/sessions.js
 const express = require('express');
 const router = express.Router();
 const sessionController = require('../controllers/sessionController');
 const registrationController = require('../controllers/sessionRegistrationController');
+const { authenticateToken, isAdmin } = require('../middleware/auth'); // ✅ correct path
 
-router.post('/', sessionController.createSession);
+// Protected routes
+router.post('/', authenticateToken, isAdmin, sessionController.createSession);
+router.put('/:id', authenticateToken, isAdmin, sessionController.updateSession);
+router.delete('/:id', authenticateToken, isAdmin, sessionController.deleteSession);
 
-// READ all sessions
+// Public routes
 router.get('/', sessionController.getAllSessions);
-
-// READ a single session by UUID
 router.get('/:id', sessionController.getSessionById);
-
-// UPDATE a session by UUID
-router.put('/:id', sessionController.updateSession);
-
-// DELETE a session by UUID
-router.delete('/:id', sessionController.deleteSession);
-
-// Handle registration form submission
 router.post('/:sessionId/register', registrationController.createSessionRegistration);
-
-// Get all registrations for a session
 router.get('/:sessionId/registrations', registrationController.getRegistrationsBySession);
-
-// Get a single registration by UUID
 router.get('/registrations/:id', registrationController.getSessionRegistrationById);
-
-// Update a registration by UUID
 router.put('/registrations/:id', registrationController.updateSessionRegistration);
-
-// Delete a registration by UUID
 router.delete('/registrations/:id', registrationController.deleteSessionRegistration);
+
+router.post('/refresh', (req, res) => {
+  const refreshToken = req.body.token;
+  if (!refreshToken) {
+    return res.status(401).json({ error: 'Refresh token required' });
+  }
+
+  try {
+    const { verifyRefreshToken, generateAccessToken } = require('../utils/jwt');
+    const payload = verifyRefreshToken(refreshToken);
+    const accessToken = generateAccessToken({ id: payload.id, role: payload.role });
+    res.json({ accessToken });
+  } catch (error) {
+    return res.status(403).json({ error: 'Invalid or expired refresh token' });
+  }
+});
 
 module.exports = router;

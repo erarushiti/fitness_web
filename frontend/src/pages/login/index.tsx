@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useState, useEffect, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import "../../app/globals.css";
@@ -50,22 +50,33 @@ const LoginForm: React.FC = () => {
         {
           email: formData.email,
           password: formData.password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         }
       );
 
-      // Store tokens in localStorage
+      // Store tokens and user info in localStorage
       localStorage.setItem("accessToken", response.data.accessToken);
       localStorage.setItem("refreshToken", response.data.refreshToken);
       localStorage.setItem("user", JSON.stringify(response.data.user));
-      localStorage.setItem("role", response.data.user.role);
+
+      localStorage.setItem("role", response.data.user.role);  // Store the user role
+
 
       setSuccess("Login successful! Redirecting...");
       setFormData({ email: "", password: "" });
+
+      // Redirect to dashboard
       setTimeout(() => {
         router.push("/dashboard");
       }, 1000);
     } catch (err: any) {
-      setError(err.response?.data?.error || "An error occurred");
+      const errorMessage = err.response?.data?.error || err.message || "An error occurred";
+      console.error("Login error details:", err.response?.data);  // Log full error response for debugging
+      setError(errorMessage);
       setSuccess(null);
     } finally {
       setLoading(false);
@@ -109,29 +120,6 @@ const LoginForm: React.FC = () => {
                     required
                   />
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-start">
-                    <div className="flex items-center h-5">
-                      <input
-                        id="remember"
-                        aria-describedby="remember"
-                        type="checkbox"
-                        className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 "
-                      />
-                    </div>
-                    <div className="ml-3 text-sm">
-                      <label className="text-gray-500 dark:text-gray-300">
-                        Remember me
-                      </label>
-                    </div>
-                  </div>
-                  <a
-                    href="#"
-                    className="text-sm font-medium text-primary-600 hover:underline dark:text-primary-500"
-                  >
-                    Forgot password?
-                  </a>
-                </div>
                 <button
                   className="bg-[#111] py-[10px] px-[20px] rounded-[8px] font-bold mb-[50px] text-white"
                   type="submit"
@@ -139,23 +127,8 @@ const LoginForm: React.FC = () => {
                 >
                   {loading ? "Logging in..." : "Submit Login"}
                 </button>
-                {error && (
-                  <p className="text-red-600 text-center text-base">{error}</p>
-                )}
-                {success && (
-                  <p className="text-green-600 text-center text-base">
-                    {success}
-                  </p>
-                )}
-                <p className="text-sm font-light text-gray-500 ">
-                  Don’t have an account yet?{" "}
-                  <a
-                    href="#"
-                    className="font-medium text-primary-600 hover:underline "
-                  >
-                    Sign up
-                  </a>
-                </p>
+                {error && <p className="text-red-600 text-center text-base">{error}</p>}
+                {success && <p className="text-green-600 text-center text-base">{success}</p>}
               </form>
             </div>
           </div>

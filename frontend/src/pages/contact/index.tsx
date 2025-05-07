@@ -118,7 +118,9 @@ const ContactPage: React.FC = () => {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="bg-[#111] border border-gray-300 text-gray-100 rounded-lg focus:ring-orange-300 focus:border-orange-300 block w-full p-2.5"
+
+                  className="w-full p-2 rounded bg-black text-white border border-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+
                   required
                 />
               </div>
@@ -129,7 +131,9 @@ const ContactPage: React.FC = () => {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="bg-[#111] border border-gray-300 text-gray-100 rounded-lg focus:ring-orange-300 focus:border-orange-300 block w-full p-2.5"
+
+                  className="w-full p-2 rounded bg-black text-white border border-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+
                   required
                 />
               </div>
@@ -140,7 +144,9 @@ const ContactPage: React.FC = () => {
                   type="text"
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
-                  className="bg-[#111] border border-gray-300 text-gray-100 rounded-lg focus:ring-orange-300 focus:border-orange-300 block w-full p-2.5"
+
+                  className="w-full p-2 rounded bg-black text-white border border-white focus:outline-none focus:ring-2 focus:ring-orange-300"
+
                   required
                 />
               </div>
@@ -151,7 +157,9 @@ const ContactPage: React.FC = () => {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   rows={4}
-                  className="bg-[#111] border border-gray-300 text-gray-100 rounded-lg focus:ring-orange-300 focus:border-orange-300 block w-full p-2.5"
+
+                  className="w-full p-2 rounded bg-black text-white border border-whitefocus:outline-none focus:ring-2 focus:ring-orange-300"
+
                   required
                 ></textarea>
               </div>

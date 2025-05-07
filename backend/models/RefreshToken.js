@@ -14,10 +14,10 @@ const RefreshToken = sequelize.define('RefreshToken', {
     allowNull: false,
     field: 'user_id',
     references: {
-      model: User,
+      model: User,  // User model association
       key: 'id',
     },
-    onDelete: 'CASCADE',
+    onDelete: 'CASCADE',  // If the user is deleted, the refresh token should also be deleted
   },
   token: {
     type: DataTypes.TEXT,
@@ -26,18 +26,17 @@ const RefreshToken = sequelize.define('RefreshToken', {
   expiresAt: {
     type: DataTypes.DATE,
     allowNull: false,
-    field: 'expires_at',
+    field: 'expires_at',  // Custom field name
   },
   createdAt: {
     type: DataTypes.DATE,
     allowNull: false,
     defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-    field: 'created_at',
+    field: 'created_at',  // Custom field name
   },
-  
 }, {
-  tableName: 'refresh_tokens',
-  timestamps: false,
+  tableName: 'refresh_tokens',  // Custom table name
+  timestamps: false,  // This disables the automatic createdAt and updatedAt columns.
 });
 
 RefreshToken.belongsTo(User, { foreignKey: 'userId', as: 'user' });
