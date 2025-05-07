@@ -5,6 +5,7 @@ const DB = require("./config/db");
 const cors = require("cors");
 const sessionRoutes = require("./routes/sessions");
 const authRouter = require("./routes/auth");
+const WaterLog = require("./models/WaterLog");
 // const { authenticateToken } = require("./middleware/authenticateToken");
 
 dotenv.config();
