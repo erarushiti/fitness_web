@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DashboardLayout from "../../../components/DashboardLayout";
 
 const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
@@ -12,6 +12,15 @@ interface FormData {
 }
 
 export default function CreateSession() {
+  const [token, setToken] = useState('');
+
+  useEffect(() => {
+    // Retrieve token from localStorage when component mounts
+    const storedToken = localStorage.getItem('accessToken');
+    if (storedToken) {
+      setToken(storedToken);
+    }
+  }, []);
   const [formData, setFormData] = useState<FormData>({
     name: "",
     description: "",
@@ -22,6 +31,8 @@ export default function CreateSession() {
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -54,7 +65,10 @@ export default function CreateSession() {
     try {
       const response = await fetch("http://localhost:8080/api/sessions", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          "Content-Type": "application/json",
+         },
         body: JSON.stringify(formData),
       });
 

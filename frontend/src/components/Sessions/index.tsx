@@ -79,6 +79,12 @@ export default function Sessions() {
                 <span>{session.time}</span>
               </div>
             </div>
+
+            <div className="flex flex-col  mt-2 text-gray-300 text-base justify-between font-extrabold">
+              <div className="flex items-center">
+                <span>{session.price}€</span>
+              </div>
+            </div>
           </div>
           {/* Join Now Button */}
           <button
