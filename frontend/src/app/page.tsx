@@ -203,13 +203,13 @@ export default function Home() {
       
 
       </section>
-      <div className="text-center mt-10">
+      {/* <div className="text-center mt-10">
   <a href="/trainers">
     <button className="bg-[#EE7838] text-white px-6 py-3 rounded-full hover:bg-orange-600 transition">
       Shiko të gjithë trajnerët
     </button>
   </a>
-</div>
+</div> */}
 
 
       <Footer/>

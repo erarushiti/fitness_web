@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, FormEvent, ChangeEvent } from "react";
-import "../../app/globals.css";
+import "../../../app/globals.css";
 interface FormData {
   email: string;
   password: string;

@@ -5,7 +5,7 @@ const DB = require("./config/db");
 const cors = require("cors");
 const sessionRoutes = require("./routes/sessions");
 const authRouter = require("./routes/auth");
-const { authenticateToken } = require("./middleware/auth");
+// const { authenticateToken } = require("./middleware/authenticateToken");
 
 dotenv.config();
 const app = express();
