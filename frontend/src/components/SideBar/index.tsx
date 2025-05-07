@@ -1,6 +1,8 @@
+
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
+
 
 interface NavItem {
   name: string;
@@ -18,6 +20,7 @@ const Sidebar: React.FC = () => {
       setRole(storedRole);
     }
   }, []);
+
 
   const navMap: Record<string, NavItem[]> = {
     admin: [
@@ -40,13 +43,16 @@ const Sidebar: React.FC = () => {
   return (
     <div className="w-64 bg-[#1c1c1c] text-white p-6">
       <h2 className="text-2xl font-bold mb-8 capitalize">{role} Panel</h2>
+
       <nav>
         <ul>
           {navItems.map((item) => (
             <li key={item.name} className="mb-4">
               <Link
                 href={item.path}
+
                 className={`flex items-center hover:text-gray-300 ${router.pathname === item.path ? 'text-blue-400' : ''}`}
+
               >
                 <i className={`${item.icon} mr-2`}></i>
                 {item.name}
@@ -54,6 +60,7 @@ const Sidebar: React.FC = () => {
             </li>
           ))}
           <li className="mb-4">
+
             <a
               href="#"
               onClick={() => {
@@ -62,6 +69,7 @@ const Sidebar: React.FC = () => {
               }}
               className="flex items-center hover:text-gray-300"
             >
+
               <i className="fas fa-sign-out-alt mr-2"></i>
               Logout
             </a>

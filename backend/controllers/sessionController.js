@@ -27,29 +27,37 @@ const isAdmin = (req, res, next) => {
   }
 };
 
+
 const sessionController = {
   // CREATE a new session (admin only)
   async createSession(req, res) {
     try {
       const { name, description, time, price, weekDays } = req.body;
 
+
+
       const parsedPrice = parseFloat(price);
       if (isNaN(parsedPrice)) {
         return res.status(400).json({ error: 'Price must be a valid number' });
       }
-
+  
+      // Create new session
       const newSession = await Session.create({
         name,
         description,
         time,
+
         price: parsedPrice,
         weekDays,
-      });
 
+      });
+  
       res.status(201).json(newSession);
     } catch (error) {
+
       console.error('Error creating session:', error);
       res.status(500).json({ error: 'Failed to create session', details: error.message });
+
     }
   },
 
@@ -69,6 +77,8 @@ const sessionController = {
     try {
       const session = await Session.findByPk(req.params.id);
 
+
+
       if (!session) {
         return res.status(404).json({ error: 'Session not found' });
       }
@@ -86,7 +96,7 @@ const sessionController = {
       const validWeekDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
       const { name, description, weekDays, time, price } = req.body;
       const session = await Session.findByPk(req.params.id);
-
+  
       if (!session) {
         return res.status(404).json({ error: 'Session not found' });
       }
@@ -95,6 +105,7 @@ const sessionController = {
       if (isNaN(parsedPrice) || parsedPrice < 0) {
         return res.status(400).json({ error: 'Price must be a valid number and cannot be negative' });
       }
+
 
       if (weekDays && (!Array.isArray(weekDays) || !weekDays.every(day => validWeekDays.includes(day)))) {
         return res.status(400).json({ error: 'weekDays must be an array of valid days of the week' });
@@ -107,23 +118,26 @@ const sessionController = {
         time: time || session.time,
         price: parsedPrice || session.price,
       });
-
+  
       res.json(session);
     } catch (error) {
       console.error('Error updating session:', error);
       res.status(500).json({ error: 'Failed to update session' });
     }
   },
+  
 
   // DELETE a session by UUID (admin only)
   async deleteSession(req, res) {
     try {
       const session = await Session.findByPk(req.params.id);
 
+      // Check if session exists
       if (!session) {
         return res.status(404).json({ error: 'Session not found' });
       }
 
+      // Delete the session
       await session.destroy();
       res.status(204).send();
     } catch (error) {
@@ -134,7 +148,9 @@ const sessionController = {
 
   // Redirect to registration page
   registerSession(req, res) {
+
     res.redirect(`http://localhost:3000/sessions/${req.params.id}/register`);
+
   },
 };
 

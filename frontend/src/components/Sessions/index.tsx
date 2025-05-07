@@ -73,6 +73,7 @@ export default function Sessions() {
                 <FaCalendarAlt className="mr-2" />
                 {/* Example days, adjust based on your data */}
                 <span>{session.weekDays.join(" - ")}</span>
+
               </div>
               <div className="flex items-center">
                 <FaClock className="mr-2" />
@@ -83,6 +84,7 @@ export default function Sessions() {
             <div className="flex flex-col  mt-2 text-gray-300 text-base justify-between font-extrabold">
               <div className="flex items-center">
                 <span>{session.price}€</span>
+
               </div>
             </div>
           </div>
