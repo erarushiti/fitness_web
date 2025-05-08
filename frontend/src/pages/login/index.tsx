@@ -57,7 +57,7 @@ const LoginForm: React.FC = () => {
           },
         }
       );
-
+      console.log("response" ,response);
       // Store tokens and user info in localStorage
       localStorage.setItem("accessToken", response.data.accessToken);
       localStorage.setItem("refreshToken", response.data.refreshToken);

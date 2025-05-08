@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const sessionController = require('../controllers/sessionController');
 const registrationController = require('../controllers/sessionRegistrationController');
-const { authenticateToken, isAdmin } = require('../middleware/auth'); // ✅ correct path
+const { authenticateToken, isAdmin } = require('../middleware/auth'); 
 
 // Protected routes
 router.post('/', authenticateToken, isAdmin, sessionController.createSession);

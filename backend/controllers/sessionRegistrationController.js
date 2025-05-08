@@ -1,8 +1,8 @@
 const SessionRegistration = require('../models/SessionRegistration');
 const Session = require('../models/Sessions');
 
-// Create a new registration
-exports.createSessionRegistration = async (req, res) => {
+// CREATE a new registration
+const createSessionRegistration = async (req, res) => {
   try {
     const { sessionId } = req.params;
     const { fullName, email, phone } = req.body;
@@ -46,8 +46,8 @@ exports.createSessionRegistration = async (req, res) => {
   }
 };
 
-// Get all registrations for a session
-exports.getRegistrationsBySession = async (req, res) => {
+// READ all registrations for a session
+const getRegistrationsBySession = async (req, res) => {
   try {
     const { sessionId } = req.params;
 
@@ -68,8 +68,8 @@ exports.getRegistrationsBySession = async (req, res) => {
   }
 };
 
-// Get a single registration
-exports.getSessionRegistrationById = async (req, res) => {
+// READ a single registration
+const getSessionRegistrationById = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -88,13 +88,13 @@ exports.getSessionRegistrationById = async (req, res) => {
   }
 };
 
-// Update a registration
-exports.updateSessionRegistration = async (req, res) => {
+// UPDATE a registration
+const updateSessionRegistration = async (req, res) => {
   try {
     const { id } = req.params;
     const { fullName, email, phone, status } = req.body;
 
-    const registration = await SessionRegistration.findByPk(id); // Fixed model name from Registration to SessionRegistration
+    const registration = await SessionRegistration.findByPk(id);
     if (!registration) {
       return res.status(404).json({ error: 'Registration not found' });
     }
@@ -121,8 +121,8 @@ exports.updateSessionRegistration = async (req, res) => {
   }
 };
 
-// Delete a registration
-exports.deleteSessionRegistration = async (req, res) => {
+// DELETE a registration
+const deleteSessionRegistration = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -139,3 +139,14 @@ exports.deleteSessionRegistration = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+// Export the sessionRegistrationController object with all methods
+const sessionRegistrationController = {
+  createSessionRegistration,
+  getRegistrationsBySession,
+  getSessionRegistrationById,
+  updateSessionRegistration,
+  deleteSessionRegistration,
+};
+
+module.exports = sessionRegistrationController;

@@ -1,18 +1,21 @@
-// /routes/protected.js
+const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = process.env;
 
-const express = require('express');
-const router = express.Router();
-const authenticateToken = require('../middleware/authenticateToken'); // Import authenticateToken middleware
+const authenticateToken = (req, res, next) => {
+  const token = req.headers['authorization']?.split(' ')[1];  // Extract token from Authorization header
 
-// Example protected route
-router.get('/admin-dashboard', authenticateToken, (req, res) => {
-  // The user will be attached to the request if the token is valid
-  res.json({
-    message: 'Welcome to the admin dashboard',
-    user: req.user, // Attach user data to the response
+  if (!token) {
+    return res.status(401).json({ error: 'Token is required' });
+  }
+
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).json({ error: 'Forbidden: Invalid or expired token' });
+    }
+
+    req.user = user;  // Attach the decoded user to the request object
+    next();  // Continue to the next middleware or controller
   });
-});
+};
 
-// Other protected routes can go here...
-
-module.exports = router; // Export the protected routes
+module.exports = authenticateToken;
