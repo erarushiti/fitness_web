@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
-const Client = require('./Client');
+const User = require('./User');
 
 const WaterLog = sequelize.define('WaterLog', {
   id: {
@@ -14,7 +14,7 @@ const WaterLog = sequelize.define('WaterLog', {
     allowNull: false,
     field: 'client_id',
     references: {
-      model: Client,
+      model: User,
       key: 'id',
     },
     onDelete: 'CASCADE',
@@ -22,6 +22,9 @@ const WaterLog = sequelize.define('WaterLog', {
   amount: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    validate: {
+      min: 0, // Ensure non-negative water amounts
+    },
     comment: 'Amount of water in milliliters',
   },
   timestamp: {
@@ -29,12 +32,14 @@ const WaterLog = sequelize.define('WaterLog', {
     allowNull: false,
     defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
   },
+
 }, {
   tableName: 'water_logs',
   timestamps: false,
 });
 
-WaterLog.belongsTo(Client, { foreignKey: 'clientId', as: 'client' });
-Client.hasMany(WaterLog, { foreignKey: 'clientId', as: 'waterLogs' });
+// Associations
+WaterLog.belongsTo(User, { foreignKey: 'clientId', as: 'client' });
+User.hasMany(WaterLog, { foreignKey: 'clientId', as: 'waterLogs' });
 
 module.exports = WaterLog;

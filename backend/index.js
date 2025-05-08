@@ -6,7 +6,8 @@ const cors = require("cors");
 const sessionRoutes = require("./routes/sessions");
 const authRouter = require("./routes/auth");
 const WaterLog = require("./models/WaterLog");
-// const { authenticateToken } = require("./middleware/authenticateToken");
+const waterLogRoutes = require('./routes/waterLog');
+const { authenticateToken } = require("./middleware/authenticateToken");
 
 dotenv.config();
 const app = express();
@@ -25,6 +26,7 @@ app.use(
 
 app.use("/api/auth", authRouter);
 app.use("/api/sessions", sessionRoutes);
+app.use('/api/waterlog', waterLogRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
