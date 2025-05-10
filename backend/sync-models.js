@@ -7,6 +7,7 @@ const SessionRegistration = require('./models/SessionRegistration');
 const RefreshToken = require('./models/RefreshToken');
 const Trainer = require('./models/Trainer');
 const WaterLog = require('./models/WaterLog');
+const Supplement = require('./models/Supplement');
 
 async function syncDatabase() {
   try {

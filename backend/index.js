@@ -5,8 +5,8 @@ const DB = require("./config/db");
 const cors = require("cors");
 const sessionRoutes = require("./routes/sessions");
 const authRouter = require("./routes/auth");
-const WaterLog = require("./models/WaterLog");
 const waterLogRoutes = require('./routes/waterLog');
+const supplementRoutes = require("./routes/supplements");
 const { authenticateToken } = require("./middleware/authenticateToken");
 
 dotenv.config();
@@ -14,7 +14,8 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "public")));
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+
 
 app.use(
   cors({
@@ -27,6 +28,7 @@ app.use(
 app.use("/api/auth", authRouter);
 app.use("/api/sessions", sessionRoutes);
 app.use('/api/waterlog', waterLogRoutes);
+app.use('/api/supplement', supplementRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

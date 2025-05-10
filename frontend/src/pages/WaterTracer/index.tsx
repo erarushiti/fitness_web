@@ -18,13 +18,13 @@ export default function WaterTracker() {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("accessToken");
-    console.log("Stored Token:", storedToken);  // Log token
+    console.log("Stored Token:", storedToken);
     if (storedToken) setToken(storedToken);
   }, []);
 
  useEffect(() => {
     const storedToken = localStorage.getItem("accessToken");
-    const clientData = localStorage.getItem("user"); // Or get this from auth/user context
+    const clientData = localStorage.getItem("user");
     console.log("clientdata", clientData);
 
     if (!storedToken || !clientData) {
