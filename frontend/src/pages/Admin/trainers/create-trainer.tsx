@@ -38,10 +38,10 @@ export default function CreateTrainer() {
     setSuccess(null);
 
     try {
-      const response = await fetch("http://localhost:8080/api/trainers", {
+      const response = await fetch("http://localhost:8080/api/trainer", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          // "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),

@@ -8,6 +8,7 @@ const authRouter = require("./routes/auth");
 const waterLogRoutes = require('./routes/waterLog');
 const supplementRoutes = require("./routes/supplements");
 const trainerRoutes = require("./routes/trainer");
+const ordesRoutes = require("./routes/orders");
 const { authenticateToken } = require("./middleware/authenticateToken");
 
 dotenv.config();
@@ -31,6 +32,7 @@ app.use("/api/sessions", sessionRoutes);
 app.use('/api/waterlog', waterLogRoutes);
 app.use('/api/supplement', supplementRoutes);
 app.use('/api/trainer', trainerRoutes);
+app.use('/api/order', ordesRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

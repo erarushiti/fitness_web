@@ -44,6 +44,7 @@ export function Header() {
           <li><a href="/contact" className="hover:text-[#EE7838]">Contact Us</a></li>
           <li><a href="/login" className="hover:text-[#EE7838]">Login</a></li>
           <li><a href="/WaterTracer" className="hover:text-[#EE7838]">WaterTracer</a></li>
+          <li><a href="/supplements" className="hover:text-[#EE7838]">Supplements</a></li>
         </ul>
       </nav>
     </div>
