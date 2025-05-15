@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const ordersController = require('../controllers/ordersController');
+const orderController = require('../controllers/ordersController'); // Corrected to singular 'orderController'
 
-router.post('/', ordersController.createOrder);
-router.get('/', ordersController.getAllOrders);
-router.get('/:id', ordersController.getOrderById);
-router.delete('/:id', ordersController.deleteOrder);
+router.post('/', orderController.createOrder);
+router.get('/', orderController.getAllOrders);
+router.get('/user/:userId', orderController.getOrdersByUserId);
+router.put('/:id', orderController.updateOrder); // Added for edit functionality
+router.delete('/:id', orderController.deleteOrder);
 
 module.exports = router;
