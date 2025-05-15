@@ -32,7 +32,7 @@ app.use("/api/sessions", sessionRoutes);
 app.use('/api/waterlog', waterLogRoutes);
 app.use('/api/supplement', supplementRoutes);
 app.use('/api/trainer', trainerRoutes);
-app.use('/api/order', ordesRoutes);
+app.use('/api/orders', ordesRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
