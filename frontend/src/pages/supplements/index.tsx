@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import img from "next/image";
+// import img from "next/img"; // Correct import for Next.js img
 import { useRouter } from "next/router";
+import axios from "axios"; // Add axios for API requests
 import "../../app/globals.css";
 import female from "../../assets/images/female.png";
 import male from "../../assets/images/male.png";
@@ -24,7 +25,7 @@ interface Supplement {
   name: string;
   description: string;
   price: number;
-  image: string | null;
+  img: string | null;
   goal: string;
   gender: string;
   activity: string;
@@ -52,7 +53,7 @@ const StartToday: React.FC = () => {
       const response = await fetch("http://localhost:8080/api/supplement");
       if (!response.ok) throw new Error(`Failed to fetch supplements: ${response.statusText}`);
       const data: Supplement[] = await response.json();
-      console.log("Fetched supplements:", data); // Debug: Log API response
+      console.log("Fetched supplements:", data);
       setSupplements(data);
     } catch (error) {
       console.error("Error fetching supplements:", error);
@@ -81,15 +82,34 @@ const StartToday: React.FC = () => {
   const nextStep = () => setStep((prev) => prev + 1);
   const prevStep = () => setStep((prev) => prev - 1);
 
-  const handleSeeMore = (supplement: Supplement) => {
-    // Open a new tab with the session registration URL
-    // window.open(`/sessions/${supplement.id}/register`, "_blank");
-  };
+const handleSeeMore = async (supplement: Supplement) => {
+  try {
+    const response = await fetch(`http://localhost:8080/api/supplement/${supplement.id}/payment`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      // Optional: Include userId if authenticated
+      // body: JSON.stringify({ userId: 'your-user-id' }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to initiate payment: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    const { url } = data;
+
+    window.location.href = url;
+  } catch (error) {
+    console.error('Error initiating payment:', error);
+    // alert(`Failed to initiate payment: ${error.message || 'Unknown error'}`);
+  }
+};
 
   const handleSubmit = () => {
-    console.log("Submit clicked, form values:", values); // Debug: Log form values
+    console.log("Submit clicked, form values:", values);
     const { gender, age, goal, activity } = values;
-    // Relaxed filtering: match at least one criterion
     let matchingSupplements = supplements.filter(
       (supplement) =>
         (!gender || supplement.gender.toLowerCase() === gender.toLowerCase()) &&
@@ -97,13 +117,13 @@ const StartToday: React.FC = () => {
         (!goal || supplement.goal.toLowerCase() === goal.toLowerCase()) &&
         (!activity || supplement.activity.toLowerCase() === activity.toLowerCase())
     );
-    console.log("Matching supplements:", matchingSupplements); // Debug: Log filtered results
+    console.log("Matching supplements:", matchingSupplements);
 
     if (matchingSupplements.length > 0) {
       setStep(6);
     } else {
       console.log("No matching supplements found. Showing all supplements as fallback.");
-      setStep(6); // Fallback: Show all supplements
+      setStep(6);
     }
   };
 
@@ -126,15 +146,15 @@ const StartToday: React.FC = () => {
         return (
           <div className="container mx-auto px-4 py-[50px]">
             <div className="max-w-lg mx-auto text-center">
-              <h2 className="text-2xl font-bold text-white mb-[200px] ">Select Your Gender</h2>
-              <div className="flex justify-center gap-4 ">
+              <h2 className="text-2xl font-bold text-white mb-[200px]">Select Your Gender</h2>
+              <div className="flex justify-center gap-4">
                 <div
                   className={`flex flex-col items-center p-4 rounded-lg cursor-pointer transition bg-black border-2 ${
                     values.gender === "male" ? "border-[#EE7838]" : "border-gray-700"
                   } hover:border-[#EE7838]`}
                   onClick={() => handleChangeAndNext("gender", "male")}
                 >
-                  <img src={male.src} alt="male" className="rounded w-[150px] h-[150px] object-contain" />
+                  <img src={male.src} alt="male" width={150} height={150} className="rounded object-contain" />
                   <p className="mt-2 text-white">Male</p>
                 </div>
                 <div
@@ -143,7 +163,7 @@ const StartToday: React.FC = () => {
                   } hover:border-[#EE7838]`}
                   onClick={() => handleChangeAndNext("gender", "female")}
                 >
-                  <img src={female.src} alt="female"  className="rounded w-[150px] h-[150px] object-contain" />
+                  <img src={female.src} alt="female" width={150} height={150} className="rounded object-contain" />
                   <p className="mt-2 text-white">Female</p>
                 </div>
               </div>
@@ -191,7 +211,7 @@ const StartToday: React.FC = () => {
                   } hover:border-[#EE7838]`}
                   onClick={() => handleChangeAndNext("goal", "lose")}
                 >
-                  <img src={losew.src} alt="lose weight"  className="rounded w-[150px] h-[150px] object-contain" />
+                  <img src={losew.src} alt="lose weight" width={150} height={150} className="rounded object-contain" />
                   <p className="mt-2 text-white">Lose Weight</p>
                 </div>
                 <div
@@ -200,7 +220,7 @@ const StartToday: React.FC = () => {
                   } hover:border-[#EE7838]`}
                   onClick={() => handleChangeAndNext("goal", "gain")}
                 >
-                  <img src={gain.src} alt="gain weight"  className="rounded w-[150px] h-[150px] object-contain" />
+                  <img src={gain.src} alt="gain weight" width={150} height={150} className="rounded object-contain" />
                   <p className="mt-2 text-white">Gain Weight</p>
                 </div>
               </div>
@@ -227,7 +247,7 @@ const StartToday: React.FC = () => {
                   } hover:border-[#EE7838]`}
                   onClick={() => handleChangeAndNext("activity", "low")}
                 >
-                  <img src={light.src} alt="low activity"  className="rounded w-[150px] h-[150px] object-contain" />
+                  <img src={light.src} alt="low activity" width={150} height={150} className="rounded object-contain" />
                   <p className="mt-2 text-white">Low</p>
                 </div>
                 <div
@@ -236,7 +256,7 @@ const StartToday: React.FC = () => {
                   } hover:border-[#EE7838]`}
                   onClick={() => handleChangeAndNext("activity", "moderate")}
                 >
-                  <img src={medium.src} alt="moderate activity"  className="rounded w-[150px] h-[150px] object-contain" />
+                  <img src={medium.src} alt="moderate activity" width={150} height={150} className="rounded object-contain" />
                   <p className="mt-2 text-white">Moderate</p>
                 </div>
                 <div
@@ -245,7 +265,7 @@ const StartToday: React.FC = () => {
                   } hover:border-[#EE7838]`}
                   onClick={() => handleChangeAndNext("activity", "high")}
                 >
-                  <img src={active.src} alt="high activity"  className="rounded w-[150px] h-[150px] object-contain" />
+                  <img src={active.src} alt="high activity" width={150} height={150} className="rounded object-contain" />
                   <p className="mt-2 text-white">High</p>
                 </div>
               </div>
@@ -317,9 +337,9 @@ const StartToday: React.FC = () => {
                       className="bg-black p-6 rounded-lg shadow border-2 border-[#EE7838] hover:shadow-lg transition"
                     >
                       <div className="text-sm text-[#EE7838] font-semibold mb-2">{supplement.goal} weight</div>
-                      {supplement.image ? (
+                      {supplement.img ? (
                         <img
-                          src={`http://localhost:8080/uploads/${supplement.image}`}
+                          src={`http://localhost:8080/uploads/${supplement.img}`}
                           alt={supplement.name}
                           width={200}
                           height={200}
