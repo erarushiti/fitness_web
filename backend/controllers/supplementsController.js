@@ -1,6 +1,7 @@
 const Supplement = require("../models/Supplement");
 const { verifyAccessToken } = require("../utils/jwt");
 const path = require('path');
+const { validate: isUUID } = require('uuid');
 
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -75,6 +76,29 @@ const supplementController = {
     }
   },
 
+  // READ a single registration
+async  getSupplementById(req, res) {
+  try {
+    const { id } = req.params;
+
+    // Validate UUID
+    if (!id || !isUUID(id)) {
+      return res.status(400).json({ error: 'Invalid or missing UUID' });
+    }
+
+    // Fetch single supplement by primary key
+    const supplement = await Supplement.findByPk(id);
+
+    if (!supplement) {
+      return res.status(404).json({ error: 'Supplement not found' });
+    }
+
+    res.status(200).json(supplement);
+  } catch (error) {
+    console.error('Error fetching supplement:', error);
+    res.status(500).json({ error: 'Failed to fetch supplement', details: error.message });
+  }
+},
   // UPDATE a session by UUID (admin only)
   async updateSupplement(req, res) {
   try {

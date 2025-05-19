@@ -1,47 +1,29 @@
-
 "use client";
 
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import DataTable, { Column } from "@/components/Table";
-import DeleteModal from "@/components/DeleteModal";
 import EditModal from "@/components/EditModal";
-
-interface OrderItem {
-  id: string;
-  quantity: number;
-  unitPrice: number;
-  Supplement: {
-    id: string;
-    name: string;
-  };
-}
+import DeleteModal from "@/components/DeleteModal";
 
 interface Order {
   id: string;
   userId: string;
-  totalAmount: number;
+  totalAmount: string;
   status: string;
   createdAt: string;
-  User: {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-  };
-  OrderItems: OrderItem[];
 }
 
-export default function AllOrdersPage() {
+export default function OrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [orderToDelete, setOrderToDelete] = useState<Order | null>(null);
+
   const [token, setToken] = useState("");
 
   useEffect(() => {
-    // Retrieve token from localStorage when component mounts
     const storedToken = localStorage.getItem("accessToken");
     if (storedToken) {
       setToken(storedToken);
@@ -49,18 +31,14 @@ export default function AllOrdersPage() {
   }, []);
 
   useEffect(() => {
-    // Fetch all orders
     fetch("http://localhost:8080/api/orders", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to fetch orders");
-        return res.json();
-      })
+      .then((res) => res.json())
       .then((data) => {
-        setOrders(Array.isArray(data) ? data : []);
+        setOrders(data);
       })
       .catch((err) => {
         console.error("Fetch orders failed:", err);
@@ -81,13 +59,17 @@ export default function AllOrdersPage() {
   const confirmDelete = async () => {
     if (!orderToDelete) return;
     try {
-      const res = await fetch(`http://localhost:8080/api/orders/${orderToDelete.id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      if (res.status === 200) {
+      const res = await fetch(
+        `http://localhost:8080/api/orders/${orderToDelete.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.status === 204) {
         setOrders((prev) => prev.filter((o) => o.id !== orderToDelete.id));
       } else {
         console.error("Failed to delete order");
@@ -109,18 +91,20 @@ export default function AllOrdersPage() {
 
     const updatedOrder = {
       ...formEntries,
-      totalAmount: parseFloat(formEntries.totalAmount as string),
     };
 
     try {
-      const res = await fetch(`http://localhost:8080/api/orders/${selectedOrder.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(updatedOrder),
-      });
+      const res = await fetch(
+        `http://localhost:8080/api/orders/${selectedOrder.id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(updatedOrder),
+        }
+      );
 
       if (!res.ok) throw new Error("Update failed");
 
@@ -135,21 +119,11 @@ export default function AllOrdersPage() {
   };
 
   const columns: Column<Order>[] = [
-    {
-      header: "User",
-      accessor: "User",
-      render: (data) => `${data.User.firstName} ${data.User.lastName} (${data.User.email})`,
-    },
-    { header: "Total Amount", accessor: "totalAmount" },
+    { header: "User ID", accessor: "userId" },
+    { header: "Total", accessor: "totalAmount" },
     { header: "Status", accessor: "status" },
     {
-      header: "Items",
-      accessor: "OrderItems",
-      render: (data) =>
-        data.OrderItems.map((item) => `${item.Supplement.name} (x${item.quantity})`).join(", "),
-    },
-    {
-      header: "Created At",
+      header: "Date",
       accessor: "createdAt",
       render: (data) => new Date(data.createdAt).toLocaleDateString(),
     },
@@ -159,7 +133,7 @@ export default function AllOrdersPage() {
     <DashboardLayout>
       <div className="p-6">
         <DataTable
-          data={orders}
+          data={Array.isArray(orders) ? orders : []}
           columns={columns}
           onEdit={handleEdit}
           onDelete={handleDeleteClick}
@@ -172,29 +146,20 @@ export default function AllOrdersPage() {
         >
           {selectedOrder && (
             <form onSubmit={handleModalSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-black">Total Amount</label>
-                <input
-                  type="number"
-                  name="totalAmount"
-                  defaultValue={selectedOrder.totalAmount}
-                  className="w-full border p-2 rounded text-black"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-black">Status</label>
-                <select
-                  name="status"
-                  defaultValue={selectedOrder.status}
-                  className="w-full border p-2 rounded text-black"
-                  required
-                >
-                  <option value="pending">Pending</option>
-                  <option value="completed">Completed</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
-              </div>
+              {columns.map((col) => (
+                <div key={col.accessor}>
+                  <label className="block text-sm font-medium text-black">
+                    {col.header}
+                  </label>
+                  <input
+                    type={col.accessor === "totalAmount" ? "number" : "text"}
+                    name={col.accessor}
+                    defaultValue={(selectedOrder as any)[col.accessor]}
+                    className="w-full border p-2 rounded text-black"
+                    required
+                  />
+                </div>
+              ))}
               <div className="flex justify-end">
                 <button
                   type="submit"
@@ -211,7 +176,7 @@ export default function AllOrdersPage() {
           isOpen={isDeleteModalOpen}
           onClose={() => setIsDeleteModalOpen(false)}
           onConfirm={confirmDelete}
-          title={`Delete Order #${orderToDelete?.id.slice(0, 8)}...?`}
+          title={`Delete Order "${orderToDelete?.id}"?`}
           message="Are you sure you want to delete this order? This action cannot be undone."
         />
       </div>

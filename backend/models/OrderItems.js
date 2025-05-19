@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
-const Order = require('./Orders'); // Adjust path as needed
-const Supplement = require('./Supplement'); // Adjust path as needed
+const Order = require('./Orders'); // Corrected from 'Orders'
+const Supplement = require('./Supplement');
 
 const OrderItem = sequelize.define('OrderItem', {
   id: {
@@ -18,6 +18,7 @@ const OrderItem = sequelize.define('OrderItem', {
       key: 'id',
     },
     field: 'order_id',
+    onDelete: 'CASCADE',
   },
   supplementId: {
     type: DataTypes.UUID,
@@ -27,6 +28,7 @@ const OrderItem = sequelize.define('OrderItem', {
       key: 'id',
     },
     field: 'supplement_id',
+    onDelete: 'CASCADE',
   },
   quantity: {
     type: DataTypes.INTEGER,
@@ -34,7 +36,7 @@ const OrderItem = sequelize.define('OrderItem', {
     defaultValue: 1,
   },
   unitPrice: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
     field: 'unit_price',
   },
@@ -50,9 +52,9 @@ const OrderItem = sequelize.define('OrderItem', {
 });
 
 // Define associations
-OrderItem.belongsTo(Order, { foreignKey: 'orderId' });
-Order.hasMany(OrderItem, { foreignKey: 'orderId' });
-OrderItem.belongsTo(Supplement, { foreignKey: 'supplementId' });
-Supplement.hasMany(OrderItem, { foreignKey: 'supplementId' });
+OrderItem.belongsTo(Order, { foreignKey: 'orderId', as: 'order' });
+Order.hasMany(OrderItem, { foreignKey: 'orderId', as: 'orderItems' });
+OrderItem.belongsTo(Supplement, { foreignKey: 'supplementId', as: 'supplement' });
+Supplement.hasMany(OrderItem, { foreignKey: 'supplementId', as: 'orderItems' });
 
 module.exports = OrderItem;

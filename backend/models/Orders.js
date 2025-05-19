@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
-const User = require('./User'); // Adjust path as needed
+const User = require('./User');
 
 const Order = sequelize.define('Order', {
   id: {
@@ -9,25 +9,29 @@ const Order = sequelize.define('Order', {
     primaryKey: true,
     allowNull: false,
   },
-  userId: {
-    type: DataTypes.UUID,
-    allowNull: false,
-    references: {
-      model: 'users',
-      key: 'id',
-    },
-    field: 'user_id',
+userId: {
+  type: DataTypes.UUID,
+  allowNull: false,
+  references: {
+    model: 'users',
+    key: 'id',
   },
+  field: 'user_id', // matches your DB naming convention
+},
   totalAmount: {
-    type: DataTypes.FLOAT,
+    type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
-    defaultValue: 0.0,
     field: 'total_amount',
   },
   status: {
-    type: DataTypes.ENUM('pending', 'completed', 'cancelled'),
+    type: DataTypes.ENUM('pending', 'completed', 'cancelled', 'failed'),
     allowNull: false,
     defaultValue: 'pending',
+  },
+  stripeSessionId: {
+    type: DataTypes.STRING(255),
+    allowNull: true,
+    field: 'stripe_session_id',
   },
   createdAt: {
     type: DataTypes.DATE,
@@ -40,8 +44,9 @@ const Order = sequelize.define('Order', {
   timestamps: false,
 });
 
-// Define associations
-Order.belongsTo(User, { foreignKey: 'userId' });
-User.hasMany(Order, { foreignKey: 'userId' });
+
+Order.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
+User.hasMany(Order, { foreignKey: 'user_id', as: 'orders' });
+
 
 module.exports = Order;
