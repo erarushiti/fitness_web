@@ -38,6 +38,7 @@ const Sidebar: React.FC = () => {
     client: [
       { name: "Dashboard", path: "/", icon: "fas fa-tachometer-alt" },
       { name: "Water Tracer", path: "/WaterTracer", icon: "fas fa-calendar-alt" },
+      { name: "Orders", path: "/orders", icon: "fas fa-calendar-alt" },
     ],
   };
 

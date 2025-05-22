@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-// import img from "next/img"; // Correct import for Next.js img
 import { useRouter } from "next/router";
-import axios from "axios"; // Add axios for API requests
 import "../../app/globals.css";
 import female from "../../assets/images/female.png";
 import male from "../../assets/images/male.png";
@@ -21,11 +19,11 @@ interface FormValues {
 
 // Interface for supplement data
 interface Supplement {
-  id: string; // UUID as string
+  id: string;
   name: string;
   description: string;
   price: number;
-  img: string | null;
+  image: string | null;
   goal: string;
   gender: string;
   activity: string;
@@ -41,8 +39,17 @@ const StartToday: React.FC = () => {
     return savedValues ? JSON.parse(savedValues) : { gender: "", age: "", goal: "", activity: "" };
   });
   const [supplements, setSupplements] = useState<Supplement[]>([]);
+  const [token, setToken] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
 
   useEffect(() => {
+    // Retrieve token from localStorage
+    const storedToken = localStorage.getItem("accessToken");
+    if (storedToken) {
+      setToken(storedToken);
+    }
+
     if (typeof window !== "undefined" && sessionStorage.getItem("startTodayValues")) {
       setStep(6);
     }
@@ -50,25 +57,42 @@ const StartToday: React.FC = () => {
 
   const fetchSupplements = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/supplement");
-      if (!response.ok) throw new Error(`Failed to fetch supplements: ${response.statusText}`);
+      const response = await fetch("http://localhost:8080/api/supplement", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        if (response.status === 401) {
+          setError("Session expired. Please log in again.");
+          localStorage.removeItem("accessToken");
+          setToken("");
+          router.push("/login"); // Redirect to login page
+          return;
+        }
+        throw new Error(`Failed to fetch supplements: ${response.statusText}`);
+      }
       const data: Supplement[] = await response.json();
       console.log("Fetched supplements:", data);
       setSupplements(data);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching supplements:", error);
+      setError("Failed to load supplements.");
     }
   };
 
   useEffect(() => {
     document.body.style.background = "#1c1c1c";
     document.body.style.padding = "50px 0 50px 0";
-    fetchSupplements();
+    if (token) {
+      fetchSupplements();
+    }
 
     return () => {
       document.body.style.background = "";
+      document.body.style.padding = "";
     };
-  }, []);
+  }, [token]);
 
   const handleChangeAndNext = (name: keyof FormValues, value: string) => {
     const updatedValues: FormValues = { ...values, [name]: value };
@@ -82,30 +106,36 @@ const StartToday: React.FC = () => {
   const nextStep = () => setStep((prev) => prev + 1);
   const prevStep = () => setStep((prev) => prev - 1);
 
-const handleSeeMore = async (supplement: Supplement) => {
-  try {
-    const response = await fetch(`http://localhost:8080/api/supplement/${supplement.id}/payment`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      // Optional: Include userId if authenticated
-      // body: JSON.stringify({ userId: 'your-user-id' }),
-    });
+  const handleSeeMore = async (supplement: Supplement) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/supplement/${supplement.id}/checkout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    if (!response.ok) {
-      throw new Error(`Failed to initiate payment: ${response.statusText}`);
+      if (!response.ok) {
+        if (response.status === 401) {
+          setError("Session expired. Please log in again.");
+          localStorage.removeItem("accessToken");
+          setToken("");
+          router.push("/login");
+          return;
+        }
+        throw new Error(`Failed to initiate payment: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const { url } = data;
+
+      window.location.href = url;
+    } catch (error: any) {
+      console.error("Error initiating payment:", error);
+      setError(`Failed to initiate payment: ${error.message || "Unknown error"}`);
     }
-
-    const data = await response.json();
-    const { url } = data;
-
-    window.location.href = url;
-  } catch (error) {
-    console.error('Error initiating payment:', error);
-    // alert(`Failed to initiate payment: ${error.message || 'Unknown error'}`);
-  }
-};
+  };
 
   const handleSubmit = () => {
     console.log("Submit clicked, form values:", values);
@@ -120,6 +150,7 @@ const handleSeeMore = async (supplement: Supplement) => {
     console.log("Matching supplements:", matchingSupplements);
 
     if (matchingSupplements.length > 0) {
+      setSupplements(matchingSupplements);
       setStep(6);
     } else {
       console.log("No matching supplements found. Showing all supplements as fallback.");
@@ -138,7 +169,56 @@ const handleSeeMore = async (supplement: Supplement) => {
       goal: "",
       activity: "",
     });
+    setSupplements([]);
+    fetchSupplements();
   };
+
+const addToCart = async (supplement: Supplement) => {
+  // Assuming userId is stored in localStorage or available in state/context
+  const clientData = localStorage.getItem("user");
+    console.log("clientdata", clientData);
+
+    if (!clientData) {
+      console.warn("Missing clientId");
+      return;
+    }
+
+    const userId = JSON.parse(clientData).id; // Replace with your method to get userId
+
+
+  try {
+    const response = await fetch("http://localhost:8080/api/cart", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId,
+        supplementId: supplement.id,
+        quantity: 1,
+      }),
+    });
+
+    if (!response.ok) {
+      if (response.status === 400) {
+        setError("Invalid request. Please check your input and try again.");
+        return;
+      }
+      if (response.status === 404) {
+        setError("Supplement not found.");
+        return;
+      }
+      throw new Error(`Failed to add to cart: ${response.statusText}`);
+    }
+
+    const newCartItem = await response.json();
+    setSuccess(`${supplement.name} added to cart!`);
+    setTimeout(() => setSuccess(""), 3000); // Clear success message after 3 seconds
+  } catch (error: any) {
+    console.error("Error adding to cart:", error);
+    setError(`Failed to add to cart: ${error.message || "Unknown error"}`);
+  }
+};
 
   const renderStep = () => {
     switch (step) {
@@ -154,7 +234,7 @@ const handleSeeMore = async (supplement: Supplement) => {
                   } hover:border-[#EE7838]`}
                   onClick={() => handleChangeAndNext("gender", "male")}
                 >
-                  <img src={male.src} alt="male" width={150} height={150} className="rounded object-contain" />
+                  <img src={male.src} alt="male" className="rounded object-contain w-[150px] h-[150px]" />
                   <p className="mt-2 text-white">Male</p>
                 </div>
                 <div
@@ -163,7 +243,7 @@ const handleSeeMore = async (supplement: Supplement) => {
                   } hover:border-[#EE7838]`}
                   onClick={() => handleChangeAndNext("gender", "female")}
                 >
-                  <img src={female.src} alt="female" width={150} height={150} className="rounded object-contain" />
+                  <img src={female.src} alt="female" className="rounded object-contain w-[150px] h-[150px]" />
                   <p className="mt-2 text-white">Female</p>
                 </div>
               </div>
@@ -211,7 +291,7 @@ const handleSeeMore = async (supplement: Supplement) => {
                   } hover:border-[#EE7838]`}
                   onClick={() => handleChangeAndNext("goal", "lose")}
                 >
-                  <img src={losew.src} alt="lose weight" width={150} height={150} className="rounded object-contain" />
+                  <img src={losew.src} alt="lose weight" className="rounded object-contain w-[150px] h-[150px]" />
                   <p className="mt-2 text-white">Lose Weight</p>
                 </div>
                 <div
@@ -220,7 +300,7 @@ const handleSeeMore = async (supplement: Supplement) => {
                   } hover:border-[#EE7838]`}
                   onClick={() => handleChangeAndNext("goal", "gain")}
                 >
-                  <img src={gain.src} alt="gain weight" width={150} height={150} className="rounded object-contain" />
+                  <img src={gain.src} alt="gain weight" className="rounded object-contain w-[150px] h-[150px]" />
                   <p className="mt-2 text-white">Gain Weight</p>
                 </div>
               </div>
@@ -247,7 +327,7 @@ const handleSeeMore = async (supplement: Supplement) => {
                   } hover:border-[#EE7838]`}
                   onClick={() => handleChangeAndNext("activity", "low")}
                 >
-                  <img src={light.src} alt="low activity" width={150} height={150} className="rounded object-contain" />
+                  <img src={light.src} alt="low activity" className="rounded object-contain w-[150px] h-[150px]" />
                   <p className="mt-2 text-white">Low</p>
                 </div>
                 <div
@@ -256,7 +336,7 @@ const handleSeeMore = async (supplement: Supplement) => {
                   } hover:border-[#EE7838]`}
                   onClick={() => handleChangeAndNext("activity", "moderate")}
                 >
-                  <img src={medium.src} alt="moderate activity" width={150} height={150} className="rounded object-contain" />
+                  <img src={medium.src} alt="moderate activity" className="rounded object-contain w-[150px] h-[150px]" />
                   <p className="mt-2 text-white">Moderate</p>
                 </div>
                 <div
@@ -265,7 +345,7 @@ const handleSeeMore = async (supplement: Supplement) => {
                   } hover:border-[#EE7838]`}
                   onClick={() => handleChangeAndNext("activity", "high")}
                 >
-                  <img src={active.src} alt="high activity" width={150} height={150} className="rounded object-contain" />
+                  <img src={active.src} alt="high activity" className="rounded object-contain w-[150px] h-[150px]" />
                   <p className="mt-2 text-white">High</p>
                 </div>
               </div>
@@ -329,6 +409,8 @@ const handleSeeMore = async (supplement: Supplement) => {
                   Start Again
                 </button>
               </div>
+              {error && <p className="text-red-600 mb-4">{error}</p>}
+              {success && <p className="text-green-600 mb-4">{success}</p>}
               {supplements.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {supplements.map((supplement) => (
@@ -337,9 +419,9 @@ const handleSeeMore = async (supplement: Supplement) => {
                       className="bg-black p-6 rounded-lg shadow border-2 border-[#EE7838] hover:shadow-lg transition"
                     >
                       <div className="text-sm text-[#EE7838] font-semibold mb-2">{supplement.goal} weight</div>
-                      {supplement.img ? (
+                      {supplement.image ? (
                         <img
-                          src={`http://localhost:8080/uploads/${supplement.img}`}
+                          src={`http://localhost:8080/uploads/${supplement.image}`}
                           alt={supplement.name}
                           width={200}
                           height={200}
@@ -353,12 +435,14 @@ const handleSeeMore = async (supplement: Supplement) => {
                       <h3 className="text-xl font-semibold text-white mt-4">{supplement.name}</h3>
                       <p className="text-gray-300 mt-2">{supplement.description}</p>
                       <p className="text-[#EE7838] font-bold mt-2">{supplement.price}€</p>
-                      <button
-                        className="mt-4 px-4 py-2 bg-[#EE7838] text-black rounded hover:bg-[#d66b30]"
-                        onClick={() => handleSeeMore(supplement)}
-                      >
-                        Buy Now
-                      </button>
+                      <div className="mt-4 flex justify-center gap-4">
+                        <button
+                          className="px-4 py-2 bg-[#EE7838] text-black rounded hover:bg-[#d66b30]"
+                          onClick={() => addToCart(supplement)}
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
