@@ -10,6 +10,7 @@ const WaterLog = require('./models/WaterLog');
 const Supplement = require('./models/Supplement');
 const Orders = require('./models/Orders');
 const OrderItems = require('./models/OrderItems');
+const Cart = require('./models/Cart');
 
 async function syncDatabase() {
   try {

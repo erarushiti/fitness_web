@@ -7,128 +7,107 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const Supplement = require('../models/Supplement');
 const Order = require('../models/Orders');
 const OrderItem = require('../models/OrderItems');
+const Cart = require('../models/Cart'); // Add Cart model import
 const { validate: isUUID } = require('uuid');
-
 
 // Protected routes
 router.post('/', authenticateToken, isAdmin, upload.single('image'), Supplements.createSupplement);
-router.put('/:id', authenticateToken, isAdmin,  upload.single('image'),  Supplements.updateSupplement);
+router.put('/:id', authenticateToken, isAdmin, upload.single('image'), Supplements.updateSupplement);
 router.delete('/:id', authenticateToken, isAdmin, Supplements.deleteSupplement);
 
 router.get('/', Supplements.getAllSupplements);
 router.get('/:id', Supplements.getSupplementById);
 
-router.post('/:id/payment', async (req, res) => {
+router.post('/checkout', async (req, res) => {
   try {
-    const { id } = req.params || {};
-    if (!id || !isUUID(id)) {
-      return res.status(400).json({ error: 'Invalid or missing UUID' });
+    console.log('Request body:', req.body);
+    const { userId } = req.body;
+    if (!userId) {
+      return res.status(400).json({ error: 'User ID is required' });
+    }
+    // Optional: Validate userId format if using UUID
+    if (!isUUID(userId)) {
+      return res.status(400).json({ error: 'Invalid User ID format' });
     }
 
-    const supplement = await Supplement.findByPk(id);
-    if (!supplement) {
-      return res.status(404).json({ error: 'Supplement not found' });
+    const cartItems = await Cart.findAll({
+      where: { userId },
+      include: [{ model: Supplement, as: 'supplement' }],
+    });
+    console.log('Cart items:', JSON.stringify(cartItems, null, 2));
+
+    if (!cartItems || cartItems.length === 0) {
+      return res.status(400).json({ error: 'Cart is empty' });
     }
 
-    if (!supplement.name || !supplement.price || isNaN(supplement.price)) {
-      return res.status(400).json({ error: 'Invalid supplement data (name or price missing)' });
-    }
+    let totalAmount = 0;
+    const lineItems = cartItems.map((item) => {
+      const supplement = item.supplement;
+      console.log('Supplement:', supplement);
+      if (!supplement || !supplement.name || supplement.price == null || isNaN(parseFloat(supplement.price))) {
+        console.error('Invalid supplement:', supplement);
+        throw new Error(`Invalid supplement data for supplement ID ${item.supplementId}`);
+      }
+      const price = parseFloat(supplement.price);
+      if (price <= 0) {
+        throw new Error(`Invalid price for supplement ID ${item.supplementId}`);
+      }
+      totalAmount += price * item.quantity;
+      return {
+        price_data: {
+          currency: 'eur',
+          product_data: {
+            name: supplement.name,
+            description: supplement.description || 'No description available',
+          },
+          unit_amount: Math.round(price * 100), // Convert to cents
+        },
+        quantity: item.quantity,
+      };
+    });
+    console.log('Line items:', JSON.stringify(lineItems, null, 2));
 
-    const price = parseFloat(supplement.price);
-    const quantity = 1;
-
-    // Create an order
     const order = await Order.create({
-      userId: req.body.userId || null,
-      totalAmount: price * quantity,
+      userId,
+      totalAmount,
       status: 'pending',
     });
+    console.log('Order created:', order.id);
 
-    // Create an order item
-    await OrderItem.create({
-      orderId: order.id,
-      supplementId: id,
-      quantity,
-      unitPrice: price,
-    });
+    await Promise.all(
+      cartItems.map((item) =>
+        OrderItem.create({
+          orderId: order.id,
+          supplementId: item.supplementId,
+          quantity: item.quantity,
+          unitPrice: parseFloat(item.supplement.price),
+        })
+      )
+    );
+    console.log('Order items created');
 
-    // Create a Stripe Checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      line_items: [
-        {
-          price_data: {
-            currency: 'eur',
-            product_data: {
-              name: supplement.name,
-              description: supplement.description || 'No description available',
-            },
-            unit_amount: Math.round(price * 100),
-          },
-          quantity,
-        },
-      ],
+      line_items: lineItems,
       mode: 'payment',
-      success_url: `http://localhost:3000/supplements/success?session_id={CHECKOUT_SESSION_ID}&order_id=${order.id}`,
-      cancel_url: `http://localhost:3000/supplements/cancel`,
+      success_url: `http://localhost:3000/Cart/success?session_id={CHECKOUT_SESSION_ID}&order_id=${order.id}`,
+      cancel_url: `http://localhost:3000/Cart/cancel`,
       metadata: {
-        supplementId: id,
-        orderId: order.id,
-        userId: req.body.userId || 'anonymous',
+        orderId: order.id.toString(), // Ensure string for Stripe metadata
+        userId: userId || 'anonymous',
       },
     });
+    console.log('Stripe session:', session.id);
 
-    // Update order with Stripe session ID
     await order.update({ stripeSessionId: session.id });
+    await Cart.destroy({ where: { userId } });
+    console.log('Cart cleared');
 
     res.status(200).json({ url: session.url });
   } catch (error) {
-    console.error('Error creating Stripe Checkout session:', error);
+    console.error('Error creating cart checkout session:', error);
     res.status(500).json({ error: 'Failed to create payment session', details: error.message });
   }
 });
 
-router.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
-  const sig = req.headers['stripe-signature'];
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-
-  let event;
-
-  try {
-    event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
-  } catch (error) {
-    console.error('Webhook signature verification failed:', error);
-    return res.status(400).json({ error: 'Webhook verification failed' });
-  }
-
-  if (event.type === 'checkout.session.completed') {
-    const session = event.data.object;
-    const orderId = session.metadata.orderId;
-
-    try {
-      const order = await Order.findByPk(orderId);
-      if (order) {
-        await order.update({ status: 'completed' });
-        console.log(`Order ${orderId} marked as completed`);
-      }
-    } catch (error) {
-      console.error('Error updating order status:', error);
-    }
-  } else if (event.type === 'checkout.session.expired') {
-    const session = event.data.object;
-    const orderId = session.metadata.orderId;
-
-    try {
-      const order = await Order.findByPk(orderId);
-      if (order) {
-        await order.update({ status: 'cancelled' });
-        consoles.log(`Order ${orderId} marked as cancelled`);
-      }
-    } catch (error) {
-      console.error('Error updating order status:', error);
-    }
-  }
-
-  res.status(200).json({ received: true });
-});
 module.exports = router;
