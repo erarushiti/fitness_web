@@ -8,6 +8,7 @@ import gain from "../../assets/images/gain.png";
 import light from "../../assets/images/light.png";
 import medium from "../../assets/images/medium.png";
 import active from "../../assets/images/active.png";
+import Header from "@/components/Header";
 
 // Interface for form values
 interface FormValues {
@@ -212,7 +213,7 @@ const addToCart = async (supplement: Supplement) => {
     }
 
     const newCartItem = await response.json();
-    setSuccess(`${supplement.name} added to cart!`);
+   alert( `${supplement.name} added to cart!`)
     setTimeout(() => setSuccess(""), 3000); // Clear success message after 3 seconds
   } catch (error: any) {
     console.error("Error adding to cart:", error);
@@ -398,7 +399,7 @@ const addToCart = async (supplement: Supplement) => {
         );
       case 6:
         return (
-          <div className="container mx-auto px-4 py-8">
+          <div className="container mx-auto mt-[70px] px-4 py-8">
             <div className="text-center">
               <div className="flex justify-between items-center mb-6">
                 <h2 className="text-2xl font-bold text-white">Your Recommended Supplements</h2>
@@ -409,8 +410,8 @@ const addToCart = async (supplement: Supplement) => {
                   Start Again
                 </button>
               </div>
-              {error && <p className="text-red-600 mb-4">{error}</p>}
-              {success && <p className="text-green-600 mb-4">{success}</p>}
+              {error && <p className="text-red-600 mb-4 mt-[70px]">{error}</p>}
+              {success && <p className="text-green-600 mb-4 mt-[70px]">{success}</p>}
               {supplements.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {supplements.map((supplement) => (
@@ -457,7 +458,10 @@ const addToCart = async (supplement: Supplement) => {
     }
   };
 
-  return <>{renderStep()}</>;
+  return <>
+    <Header/>
+    {renderStep()}
+    </>;
 };
 
 export default StartToday;

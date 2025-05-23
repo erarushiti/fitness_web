@@ -33,6 +33,16 @@ export default function AllSessionsPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [sessionToDelete, setSessionToDelete] = useState<Session | null>(null);
 
+  const [token, setToken] = useState("");
+  
+    useEffect(() => {
+      // Retrieve token from localStorage when component mounts
+      const storedToken = localStorage.getItem("accessToken");
+      if (storedToken) {
+        setToken(storedToken);
+      }
+    }, []);
+
   useEffect(() => {
     fetch("http://localhost:8080/api/sessions")
       .then((res) => res.json())
@@ -69,6 +79,11 @@ export default function AllSessionsPage() {
         `http://localhost:8080/api/sessions/${sessionToDelete.id}`,
         {
           method: "DELETE",
+        
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+         }
         }
       );
       if (res.status === 204) {
@@ -102,7 +117,10 @@ export default function AllSessionsPage() {
     try {
       const res = await fetch(`http://localhost:8080/api/sessions/${selectedSession.id}`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+         },
         body: JSON.stringify(updatedSession),
       });
   

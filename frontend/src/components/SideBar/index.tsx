@@ -40,6 +40,7 @@ const Sidebar: React.FC = () => {
       { name: "Water Tracer", path: "/WaterTracer", icon: "fas fa-calendar-alt" },
       { name: "Orders", path: "/orders", icon: "fas fa-calendar-alt" },
       { name: "Cart", path: "/Cart", icon: "fas fa-calendar-alt" },
+      { name: "Supplements", path: "/supplements", icon: "fas fa-calendar-alt" },
     ],
   };
 
