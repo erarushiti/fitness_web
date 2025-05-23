@@ -25,20 +25,20 @@ const Supplement = sequelize.define('Supplement', {
     type: DataTypes.STRING(500), // Assuming URL or path
     allowNull: true,
   },
-  goal: {
-    type: DataTypes.STRING(100), // E.g., "muscle gain", "fat loss"
+   goal: {
+    type: DataTypes.ENUM('lose weight', 'gain weight'),
+    allowNull: false,
+  },
+  activity: {
+    type: DataTypes.ENUM('high', 'low', 'moderate'),
     allowNull: false,
   },
   gender: {
     type: DataTypes.ENUM('male', 'female', 'other'),
     allowNull: false,
   },
-  activity: {
-    type: DataTypes.STRING(100), // E.g., "high", "moderate", "low"
-    allowNull: false,
-  },
   age: {
-    type: DataTypes.STRING(100),
+    type: DataTypes.ENUM('18-29', '30-39', '40-54', '55+'),
     allowNull: false,
   },
   userId: {

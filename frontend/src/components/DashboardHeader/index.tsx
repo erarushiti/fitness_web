@@ -1,7 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import React from 'react';
 
 interface HeaderProps {
@@ -20,6 +20,14 @@ const Header: React.FC<HeaderProps> = ({ children }) => {
   const pathname = usePathname() || '/';
 
   const pageTitle = useMemo(() => formatTitle(pathname), [pathname]);
+    const [role, setRole] = useState<string | null>(null);
+  
+    useEffect(() => {
+      if (typeof window !== "undefined") {
+        const storedRole = localStorage.getItem("role");
+        setRole(storedRole);
+      }
+    }, []);
 
   return (
     <header className="bg-white shadow p-4 flex justify-between items-center">
@@ -34,7 +42,7 @@ const Header: React.FC<HeaderProps> = ({ children }) => {
           >
             <path d="M10 10a4 4 0 100-8 4 4 0 000 8zM2 18a8 8 0 0116 0H2z" />
           </svg>
-          <span className='text-[#111]'>Admin User</span>
+          <span className='text-[#111]'>Logged in as {role}</span>
         </div>
       </div>
     </header>

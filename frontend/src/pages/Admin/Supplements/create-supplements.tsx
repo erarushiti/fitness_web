@@ -17,15 +17,6 @@ export default function CreateSupplement() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  
-    useEffect(() => {
-      // Retrieve token from localStorage when component mounts
-      const storedToken = localStorage.getItem("accessToken");
-      if (storedToken) {
-        setToken(storedToken);
-      }
-    }, []);
-
   const [formData, setFormData] = useState<FormData>({
     name: "",
     description: "",
@@ -38,6 +29,7 @@ export default function CreateSupplement() {
   });
 
   useEffect(() => {
+    // Retrieve token from localStorage when component mounts
     const storedToken = localStorage.getItem("accessToken");
     if (storedToken) {
       setToken(storedToken);
@@ -77,10 +69,9 @@ export default function CreateSupplement() {
     try {
       const response = await fetch("http://localhost:8080/api/supplement", {
         method: "POST",
-       headers: {
-            // "Content-Type": "application/json",  kur ki image ose files qikjo ta prish error 500
-            Authorization: `Bearer ${token}`,
-          },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: payload,
       });
 
@@ -145,26 +136,33 @@ export default function CreateSupplement() {
 
           <div>
             <label className="block text-sm font-medium text-black">Goal</label>
-            <input
-              type="text"
+            <select
               name="goal"
               value={formData.goal}
               onChange={handleChange}
               required
               className="mt-1 block w-full p-2 border rounded-lg text-black"
-            />
+            >
+              <option value="">Select</option>
+              <option value="lose weight">Lose Weight</option>
+              <option value="gain weight">Gain Weight</option>
+            </select>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-black">Activity Level</label>
-            <input
-              type="text"
+            <select
               name="activity"
               value={formData.activity}
               onChange={handleChange}
               required
               className="mt-1 block w-full p-2 border rounded-lg text-black"
-            />
+            >
+              <option value="">Select</option>
+              <option value="high">High</option>
+              <option value="low">Low</option>
+              <option value="moderate">Moderate</option>
+            </select>
           </div>
 
           <div>
@@ -184,20 +182,24 @@ export default function CreateSupplement() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-black">Age</label>
-            <input
-              type="number"
+            <label className="block text-sm font-medium text-black">Age Range</label>
+            <select
               name="age"
               value={formData.age}
               onChange={handleChange}
-              min="0"
               required
               className="mt-1 block w-full p-2 border rounded-lg text-black"
-            />
+            >
+              <option value="">Select</option>
+              <option value="18-29">18-29</option>
+              <option value="30-39">30-39</option>
+              <option value="40-54">40-54</option>
+              <option value="55+">55+</option>
+            </select>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-black">Price ($)</label>
+            <label className="block text-sm font-medium text-black">Price (€)</label>
             <input
               type="number"
               name="price"

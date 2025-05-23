@@ -33,17 +33,40 @@ const supplementController = {
   // CREATE a new session (admin only)
   async createSupplement(req, res) {
     try {
-      const { name, description, price, age, gender, activity, goal } =
-        req.body;
+      const { name, description, price, age, gender, activity, goal } = req.body;
+      const image = req.file ? req.file.filename : null;
 
-      const parsedPrice = parseFloat(price);
-      if (isNaN(parsedPrice)) {
-        return res.status(400).json({ error: "Price must be a valid number" });
+      // Validate required fields
+      if (!name || !description || !price || !age || !gender || !activity || !goal) {
+        return res.status(400).json({ error: "All fields are required" });
       }
 
-       const image = req.file ? req.file.filename : null;
+      // Validate ENUM values
+      const validGoals = ['lose weight', 'gain weight'];
+      const validActivities = ['high', 'low', 'moderate'];
+      const validGenders = ['male', 'female', 'other'];
+      const validAges = ['18-29', '30-39', '40-54', '55+'];
 
-      // Create new session
+      if (!validGoals.includes(goal)) {
+        return res.status(400).json({ error: `Invalid goal value. Must be one of: ${validGoals.join(', ')}` });
+      }
+      if (!validActivities.includes(activity)) {
+        return res.status(400).json({ error: `Invalid activity value. Must be one of: ${validActivities.join(', ')}` });
+      }
+      if (!validGenders.includes(gender)) {
+        return res.status(400).json({ error: `Invalid gender value. Must be one of: ${validGenders.join(', ')}` });
+      }
+      if (!validAges.includes(age)) {
+        return res.status(400).json({ error: `Invalid age value. Must be one of: ${validAges.join(', ')}` });
+      }
+
+      // Validate price
+      const parsedPrice = parseFloat(price);
+      if (isNaN(parsedPrice) || parsedPrice <= 0) {
+        return res.status(400).json({ error: "Price must be a valid positive number" });
+      }
+
+      // Create new supplement
       const newSupplement = await Supplement.create({
         name,
         description,
@@ -59,9 +82,7 @@ const supplementController = {
       res.status(201).json(newSupplement);
     } catch (error) {
       console.error("Error creating supplement:", error);
-      res
-        .status(500)
-        .json({ error: "Failed to create supplement", details: error.message });
+      res.status(500).json({ error: "Failed to create supplement", details: error.message });
     }
   },
 

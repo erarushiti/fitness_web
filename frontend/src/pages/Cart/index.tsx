@@ -16,7 +16,7 @@ interface Supplement {
   id: string;
   name: string;
   price: number;
-  img?: string;
+  image: string;
 }
 
 export default function CartPage() {
@@ -214,8 +214,8 @@ const handleCheckout = async () => {
                 >
                   <img
                     src={
-                      item.supplement.img
-                        ? `http://localhost:8080/uploads/${item.supplement.img}`
+                      item.supplement.image
+                        ? `http://localhost:8080/uploads/${item.supplement.image}`
                         : "/placeholder.png"
                     }
                     alt={item.supplement.name}

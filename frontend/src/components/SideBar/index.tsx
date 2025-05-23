@@ -30,15 +30,16 @@ const Sidebar: React.FC = () => {
       { name: "Create Supplement", path: "/Admin/Supplements/create-supplements", icon: "fas fa-cog" },
       { name: "All Supplements", path: "/Admin/Supplements/", icon: "fas fa-cog" },
       { name: "All Orders", path: "/Admin/orders/", icon: "fas fa-cog" },
+       { name: "All Users", path: "/Admin/users/", icon: "fas fa-cog" },
     ],
     trainer: [
       { name: "Dashboard", path: "/", icon: "fas fa-tachometer-alt" },
       { name: "My Sessions", path: "/trainer/sessions", icon: "fas fa-chalkboard-teacher" },
     ],
     client: [
-      { name: "Dashboard", path: "/", icon: "fas fa-tachometer-alt" },
       { name: "Water Tracer", path: "/WaterTracer", icon: "fas fa-calendar-alt" },
       { name: "Orders", path: "/orders", icon: "fas fa-calendar-alt" },
+      { name: "Cart", path: "/Cart", icon: "fas fa-calendar-alt" },
     ],
   };
 

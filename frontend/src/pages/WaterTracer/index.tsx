@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import "../../app/globals.css"
+import DashboardLayout from "@/components/DashboardLayout";
 interface WaterLogEntry {
   id: string;
   amount: number;
@@ -124,6 +125,7 @@ export default function WaterTracker() {
   const percentage = Math.min((intake / GOAL) * 100, 100);
 
   return (
+      <DashboardLayout>
     <div className="min-h-screen bg-blue-50 flex items-center justify-center p-6">
       <div className="bg-white rounded-2xl shadow-lg p-6 w-full max-w-4xl grid md:grid-cols-2 gap-6">
         {/* Left Side */}
@@ -215,5 +217,6 @@ export default function WaterTracker() {
         </div>
       </div>
     </div>
+    </DashboardLayout>
   );
 }
