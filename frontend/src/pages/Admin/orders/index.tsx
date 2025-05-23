@@ -119,6 +119,7 @@ export default function OrdersPage() {
   };
 
   const columns: Column<Order>[] = [
+    { header: "Order ID", accessor: "id" },
     { header: "User ID", accessor: "userId" },
     { header: "Total", accessor: "totalAmount" },
     { header: "Status", accessor: "status" },
