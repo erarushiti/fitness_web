@@ -11,6 +11,8 @@ router.get('/', orderController.getAllOrders);
 router.get('/user/:userId', orderController.getOrdersByUserId);
 router.put('/:id', orderController.updateOrder); // Added for edit functionality
 router.delete('/:id', orderController.deleteOrder);
+router.get('/:id', orderController.getOrderById);
+
 
 router.get('/', async (req, res) => {
   try {
