@@ -4,6 +4,7 @@ const OrderItem = require("../models/OrderItems"); // Updated to use new OrderIt
 const User = require("../models/User"); // Use User model
 const Supplement = require("../models/Supplement"); // Existing Supplement model
 
+
 module.exports = {
   // Create a new order with items
   createOrder: async (req, res) => {
@@ -124,6 +125,45 @@ module.exports = {
       return res.status(500).json({ error: "Internal server error." });
     }
   },
+
+// READ a single order by ID
+  getOrderById: async  (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({ error: 'Missing order ID' });
+    }
+
+    const order = await Order.findByPk(id, {
+      include: [
+        {
+          model: OrderItem,
+          as: 'orderItems', // ✅ use alias
+          include: [
+            {
+              model: Supplement,
+              as: 'supplement', // only if you used 'as' for Supplement relation
+            },
+          ],
+        },
+        {
+          model: User,
+          as: 'user', // only if you used alias for user relation
+        },
+      ],
+    });
+
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    res.status(200).json(order);
+  } catch (error) {
+    console.error('Error fetching order:', error);
+    res.status(500).json({ error: 'Failed to fetch order', details: error.message });
+  }
+},
 
   // Update an order
   updateOrder: async (req, res) => {
