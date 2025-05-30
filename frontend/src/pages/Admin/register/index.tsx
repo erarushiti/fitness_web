@@ -3,6 +3,7 @@
 import { useState, FormEvent, ChangeEvent } from "react";
 import "../../../app/globals.css";
 import DashboardLayout from "@/components/DashboardLayout";
+import { fetchWithAuth } from "utils/api";
 interface FormData {
   email: string;
   password: string;
@@ -76,9 +77,8 @@ const RegisterForm: React.FC<RegisterFormProps> = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/api/auth/admin/register", {
+      const response = await fetchWithAuth("http://localhost:8080/api/auth/admin/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 

@@ -4,7 +4,7 @@ const router = express.Router();
 const sessionController = require('../controllers/sessionController');
 const registrationController = require('../controllers/sessionRegistrationController');
 const { authenticateToken, isAdmin } = require('../middleware/auth'); 
-
+const { verifyRefreshToken, signAccessToken } = require('../utils/jwt');
 // Protected routes
 router.post('/', authenticateToken, isAdmin, sessionController.createSession);
 router.put('/:id', authenticateToken, isAdmin, sessionController.updateSession);
@@ -19,19 +19,16 @@ router.get('/registrations/:id', registrationController.getSessionRegistrationBy
 router.put('/registrations/:id', registrationController.updateSessionRegistration);
 router.delete('/registrations/:id', registrationController.deleteSessionRegistration);
 
-router.post('/refresh', (req, res) => {
-  const refreshToken = req.body.token;
-  if (!refreshToken) {
-    return res.status(401).json({ error: 'Refresh token required' });
-  }
+router.post('/refresh-token', (req, res) => {
+  const { refreshToken } = req.body;
+  if (!refreshToken) return res.status(401).json({ error: 'Refresh token required' });
 
   try {
-    const { verifyRefreshToken, generateAccessToken } = require('../utils/jwt');
-    const payload = verifyRefreshToken(refreshToken);
-    const accessToken = generateAccessToken({ id: payload.id, role: payload.role });
-    res.json({ accessToken });
-  } catch (error) {
-    return res.status(403).json({ error: 'Invalid or expired refresh token' });
+    const userData = verifyRefreshToken(refreshToken);
+    const newAccessToken = signAccessToken({ id: userData.id, role: userData.role });
+    res.json({ accessToken: newAccessToken });
+  } catch (err) {
+    res.status(403).json({ error: 'Invalid or expired refresh token' });
   }
 });
 
