@@ -28,6 +28,13 @@ export default function AllSupplementsPage() {
     useState<Supplement | null>(null);
 
   const [token, setToken] = useState("");
+  const [searchParams, setSearchParams] = useState({
+  name: "",
+  goal: "",
+  gender: "",
+});
+
+
 
   useEffect(() => {
     // Retrieve token from localStorage when component mounts
@@ -37,17 +44,42 @@ export default function AllSupplementsPage() {
     }
   }, []);
 
-  useEffect(() => {
-    fetch("http://localhost:8080/api/supplement")
-      .then((res) => res.json())
-      .then((data) => {
-        setSupplements(data); // ✅ set supplements array into state
-      })
-      .catch((err) => {
-        console.error("Fetch supplements failed:", err);
-        setSupplements([]);
-      });
-  }, []);
+  // useEffect(() => {
+  //   fetch("http://localhost:8080/api/supplement")
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       setSupplements(data); // ✅ set supplements array into state
+  //     })
+  //     .catch((err) => {
+  //       console.error("Fetch supplements failed:", err);
+  //       setSupplements([]);
+  //     });
+  // }, []);
+
+useEffect(() => {
+  const { name, goal, gender } = searchParams;
+
+  const query = new URLSearchParams();
+  if (name) query.append("name", name);
+  if (goal) query.append("goal", goal);
+  if (gender) query.append("gender", gender);
+
+  const url = query.toString()
+    ? `http://localhost:8080/api/supplement/search?${query.toString()}`
+    : `http://localhost:8080/api/supplement`;
+
+  fetch(url)
+    .then((res) => res.json())
+    .then((data) => setSupplements(data))
+    .catch((err) => {
+      console.error("Filtered fetch failed:", err);
+      setSupplements([]);
+    });
+}, [searchParams.name, searchParams.goal, searchParams.gender]);
+
+
+
+
 
   const handleEdit = (supplements: Supplement) => {
     setSelectedSupplement(supplements);
@@ -66,7 +98,7 @@ export default function AllSupplementsPage() {
         `http://localhost:8080/api/supplement/${supplementoDelete.id}`,
         {
           method: "DELETE",
-           headers: {
+          headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
@@ -147,6 +179,40 @@ export default function AllSupplementsPage() {
   return (
     <DashboardLayout>
       <div className="p-6">
+        <div className="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+          <input
+            type="text"
+            placeholder="Search by name..."
+            className="border p-2 rounded text-black"
+            onChange={(e) =>
+              setSearchParams((prev) => ({ ...prev, name: e.target.value }))
+            }
+          />
+
+          <select
+            className="border p-2 rounded text-black"
+            onChange={(e) =>
+              setSearchParams((prev) => ({ ...prev, goal: e.target.value }))
+            }
+          >
+            <option value="">All Goals</option>
+            <option value="lose weight">Lose Weight</option>
+            <option value="gain weight">Gain Weight</option>
+          </select>
+
+          <select
+            className="border p-2 rounded text-black"
+            onChange={(e) =>
+              setSearchParams((prev) => ({ ...prev, gender: e.target.value }))
+            }
+          >
+            <option value="">All Genders</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
         <DataTable
           data={Array.isArray(supplements) ? supplements : []}
           columns={columns}

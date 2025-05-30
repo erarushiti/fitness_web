@@ -2,6 +2,9 @@ const Supplement = require("../models/Supplement");
 const { verifyAccessToken } = require("../utils/jwt");
 const path = require('path');
 const { validate: isUUID } = require('uuid');
+const { Op } = require('sequelize');
+
+
 
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -30,6 +33,56 @@ const isAdmin = (req, res, next) => {
 };
 
 const supplementController = {
+
+ 
+async advancedSearch(req, res) {
+  try {
+    const {
+      name,
+      goal,
+      activity,
+      gender,
+      age,
+      minPrice,
+      maxPrice,
+      userId,
+    } = req.query;
+
+    const whereClause = {};
+
+    if (name) {
+     whereClause.name = { [Op.like]: `%${name}%` }; // ✅ Compatible with MySQL
+// case-insensitive match
+    }
+
+    if (goal) whereClause.goal = goal;
+    if (activity) whereClause.activity = activity;
+    if (gender) whereClause.gender = gender;
+    if (age) whereClause.age = age;
+    if (userId) whereClause.userId = userId;
+
+    if (minPrice || maxPrice) {
+      whereClause.price = {};
+      if (minPrice && !isNaN(parseFloat(minPrice))) {
+        whereClause.price[Op.gte] = parseFloat(minPrice);
+      }
+      if (maxPrice && !isNaN(parseFloat(maxPrice))) {
+        whereClause.price[Op.lte] = parseFloat(maxPrice);
+      }
+    }
+
+    const supplements = await Supplement.findAll({
+      where: whereClause,
+      order: [['createdAt', 'DESC']],
+      limit: 100,
+    });
+
+    res.status(200).json(supplements);
+  } catch (error) {
+    console.error('Advanced search error:', error);
+    res.status(500).json({ message: 'Server error', error });
+  }
+},
   // CREATE a new session (admin only)
   async createSupplement(req, res) {
     try {
@@ -101,9 +154,9 @@ const supplementController = {
 async  getSupplementById(req, res) {
   try {
     const { id } = req.params;
-
+      console.log("id", id)
     // Validate UUID
-    if (!id || !isUUID(id)) {
+    if (!id) {
       return res.status(400).json({ error: 'Invalid or missing UUID' });
     }
 
@@ -164,23 +217,30 @@ async  getSupplementById(req, res) {
 
 
   // DELETE a session by UUID (admin only)
-  async deleteSupplement(req, res) {
-    try {
-      const supplement = await Supplement.findByPk(req.params.id);
+ // DELETE a supplement by UUID (admin only)
+async deleteSupplement(req, res) {
+  try {
+    const { id } = req.params;
 
-      // Check if session exists
-      if (!supplement) {
-        return res.status(404).json({ error: "Supplement not found" });
-      }
-
-      // Delete the session
-      await supplement.destroy();
-      res.status(204).send();
-    } catch (error) {
-      console.error("Error deleting supplement:", error);
-      res.status(500).json({ error: "Failed to delete supplement" });
+    // ✅ Validate UUID first
+    if (!id) {
+      return res.status(400).json({ error: "Invalid or missing UUID" });
     }
-  },
+
+    const supplement = await Supplement.findByPk(id);
+
+    if (!supplement) {
+      return res.status(404).json({ error: "Supplement not found" });
+    }
+
+    await supplement.destroy();
+    res.status(204).send();
+  } catch (error) {
+    console.error("Error deleting supplement:", error);
+    res.status(500).json({ error: "Failed to delete supplement" });
+  }
+},
+
 };
 
 module.exports = supplementController;
