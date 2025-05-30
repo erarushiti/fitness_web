@@ -16,7 +16,9 @@ router.put('/:id', authenticateToken, isAdmin, upload.single('image'), Supplemen
 router.delete('/:id', authenticateToken, isAdmin, Supplements.deleteSupplement);
 
 router.get('/', Supplements.getAllSupplements);
-router.get('/:id', Supplements.getSupplementById);
+router.get('/search', Supplements.advancedSearch); // ← match first
+router.get('/:id', Supplements.getSupplementById); // ← fallback for IDs
+
 
 router.post('/checkout', async (req, res) => {
   try {
