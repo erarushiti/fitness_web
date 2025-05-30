@@ -10,11 +10,21 @@ const usersController = require("../controllers/userController");
 router.post("/login", login);
 router.post("/admin/register", register);
 
-// Protected routes
-router.get('/', authenticateToken, isAdmin, usersController.getAllUsers);
-router.get('/:id', authenticateToken, usersController.getUserById);
-router.put('/:id', authenticateToken, usersController.updateUser);
-router.delete('/:id', authenticateToken, isAdmin, usersController.deleteUser);
+// USERS
+router.get('/users', authenticateToken, isAdmin, usersController.getAllUsers);
+router.get('/users/:id', authenticateToken, usersController.getUserById);
+router.put('/users/:id', authenticateToken, usersController.updateUser);
+router.delete('/users/:id', authenticateToken, isAdmin, usersController.deleteUser);
+
+// CLIENTS
+router.get('/clients', authenticateToken, usersController.getAllClients);
+router.put('/clients/:id', authenticateToken, usersController.updateClient);
+router.delete('/clients/:id', authenticateToken, usersController.deleteClient);
+
+// TRAINERS
+router.get('/trainers', authenticateToken, usersController.getAllTrainers);
+router.put('/trainers/:id', authenticateToken, usersController.updateTrainer);
+router.delete('/trainers/:id', authenticateToken, usersController.deleteTrainer);
 
 // Protected route for refreshing token
 router.post("/refresh-token", authenticateToken, refreshToken);
