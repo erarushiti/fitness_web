@@ -114,15 +114,6 @@ export default function OrdersPage() {
                     height={200}
                     className=" rounded w-[92px]"
                   />
-
-                  <div>
-                    {/* <p className="text-sm font-medium">
-                      {item.supplement.name}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Sasia: {item.quantity}
-                    </p> */}
-                  </div>
                 </div>
               ))}
             </div>

@@ -25,20 +25,40 @@ export default function AllTrainersPage() {
   const [trainerToDelete, setTrainerToDelete] = useState<Trainer | null>(null);
   const [token, setToken] = useState("");
 
-  useEffect(() => {
-    const storedToken = localStorage.getItem("accessToken");
-    if (storedToken) setToken(storedToken);
-  }, []);
-
-  useEffect(() => {
-    fetch("http://localhost:8080/api/trainer")
-      .then((res) => res.json())
-      .then((data) => setTrainers(data))
-      .catch((err) => {
-        console.error("Failed to fetch trainers:", err);
-        setTrainers([]);
-      });
-  }, []);
+   useEffect(() => {
+      // Retrieve token and fetch users in a single useEffect
+      const fetchUsers = async () => {
+        const storedToken = localStorage.getItem("accessToken");
+        console.log("Fetching users with token:", storedToken); // Debug token
+        if (!storedToken) {
+          console.warn("No token found, skipping fetch");
+          setTrainers([]);
+          return;
+        }
+  
+        setToken(storedToken);
+        try {
+          const res = await fetch("http://localhost:8080/api/auth/trainers", {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${storedToken}`,
+            },
+          });
+          console.log("Fetch response status:", res.status); // Debug response
+          if (res.status === 401 || res.status === 403) {
+            throw new Error("Unauthorized or forbidden access");
+          }
+          const data = await res.json();
+          console.log("Fetched users:", data); // Debug data
+          setTrainers(Array.isArray(data) ? data : []);
+        } catch (err) {
+          console.error("Fetch users failed:", err);
+          setTrainers([]);
+        }
+      };
+  
+      fetchUsers();
+    }, []);
 
   const handleEdit = (trainer: Trainer) => {
     setSelectedTrainer(trainer);

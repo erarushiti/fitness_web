@@ -15,115 +15,134 @@ interface User {
   createdAt: string;
 }
 
+interface Client {
+  id: string;
+  email: string;
+  name: string;
+  fitnessGoals: string;
+  weight: number;
+  height: number;
+}
+
+interface Trainer {
+  id: string;
+  name: string;
+  email: string;
+  specialization: string;
+  experienceYears: number;
+}
+
+const TABS = ["All", "Clients", "Trainers"];
+
 export default function AllUsersPage() {
-  const [users, setUsers] = useState<User[]>([]);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [selectedTab, setSelectedTab] = useState("All");
+  const [data, setData] = useState<any[]>([]);
   const [token, setToken] = useState("");
 
+  const [selectedItem, setSelectedItem] = useState<any | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<any | null>(null);
+
   useEffect(() => {
-    // Retrieve token from localStorage when component mounts
     const storedToken = localStorage.getItem("accessToken");
-    if (storedToken) {
-      setToken(storedToken);
-    }
+    if (storedToken) setToken(storedToken);
   }, []);
 
-    useEffect(() => {
-    // Retrieve token and fetch users in a single useEffect
-    const fetchUsers = async () => {
-      const storedToken = localStorage.getItem("accessToken");
-      console.log("Fetching users with token:", storedToken); // Debug token
-      if (!storedToken) {
-        console.warn("No token found, skipping fetch");
-        setUsers([]);
-        return;
-      }
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!token) return;
+      let endpoint = "/api/auth/users";
+      if (selectedTab === "Clients") endpoint = "/api/auth/clients";
+      if (selectedTab === "Trainers") endpoint = "/api/auth/trainers";
 
-      setToken(storedToken);
       try {
-        const res = await fetch("http://localhost:8080/api/auth", {
+        const res = await fetch(`http://localhost:8080${endpoint}`, {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${storedToken}`,
+            Authorization: `Bearer ${token}`,
           },
         });
-        console.log("Fetch response status:", res.status); // Debug response
-        if (res.status === 401 || res.status === 403) {
-          throw new Error("Unauthorized or forbidden access");
-        }
-        const data = await res.json();
-        console.log("Fetched users:", data); // Debug data
-        setUsers(Array.isArray(data) ? data : []);
+        const result = await res.json();
+        setData(Array.isArray(result) ? result : []);
       } catch (err) {
-        console.error("Fetch users failed:", err);
-        setUsers([]);
+        console.error(`Failed to fetch ${selectedTab}:`, err);
       }
     };
 
-    fetchUsers();
-  }, []);
-  const handleEdit = (user: User) => {
-    setSelectedUser(user);
+    fetchData();
+  }, [selectedTab, token]);
+
+  const handleEdit = (item: any) => {
+    setSelectedItem(item);
     setIsModalOpen(true);
   };
 
-  const handleDeleteClick = (user: User) => {
-    setUserToDelete(user);
+  const handleDeleteClick = (item: any) => {
+    setItemToDelete(item);
     setIsDeleteModalOpen(true);
   };
 
   const confirmDelete = async () => {
-    if (!userToDelete) return;
+    if (!itemToDelete) return;
+
+    let endpoint = "/api/auth";
+    if (selectedTab === "Clients")
+      endpoint = `/api/auth/clients/${itemToDelete.id}`;
+    else if (selectedTab === "Trainers")
+      endpoint = `/api/auth/trainers/${itemToDelete.id}`;
+    else endpoint = `/api/auth/${itemToDelete.id}`;
+
     try {
-      const res = await fetch(`http://localhost:8080/api/auth/${userToDelete.id}`, {
+      const res = await fetch(`http://localhost:8080${endpoint}`, {
         method: "DELETE",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
-      if (res.status === 200) {
-        setUsers((prev) => prev.filter((u) => u.id !== userToDelete.id));
-      } else {
-        console.error("Failed to delete user");
+
+      if (res.ok) {
+        setData((prev) => prev.filter((u) => u.id !== itemToDelete.id));
       }
     } catch (err) {
       console.error("Delete failed:", err);
     } finally {
       setIsDeleteModalOpen(false);
-      setUserToDelete(null);
+      setItemToDelete(null);
     }
   };
 
   const handleModalSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!selectedUser) return;
+    if (!selectedItem) return;
 
     const formData = new FormData(e.currentTarget);
-    const formEntries = Object.fromEntries(formData.entries());
+    const updatedItem = Object.fromEntries(formData.entries());
 
-    const updatedUser = {
-      ...formEntries,
-    };
+    let endpoint = "/api/auth";
+    if (selectedTab === "Clients")
+      endpoint = `/api/auth/clients/${selectedItem.id}`;
+    else if (selectedTab === "Trainers")
+      endpoint = `/api/auth/trainers/${selectedItem.id}`;
+    else endpoint = `/api/auth/${selectedItem.id}`;
 
     try {
-      const res = await fetch(`http://localhost:8080/api/auth/${selectedUser.id}`, {
+      const res = await fetch(`http://localhost:8080${endpoint}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(updatedUser),
+        body: JSON.stringify(updatedItem),
       });
 
-      if (!res.ok) throw new Error("Update failed");
-
       const updated = await res.json();
-      setUsers((prev) =>
-        prev.map((u) => (u.id === selectedUser.id ? updated.user : u))
+      setData((prev) =>
+        prev.map((u) =>
+          u.id === selectedItem.id
+            ? updated.client || updated.trainer || updated.user
+            : u
+        )
       );
       setIsModalOpen(false);
     } catch (err) {
@@ -131,24 +150,67 @@ export default function AllUsersPage() {
     }
   };
 
-  const columns: Column<User>[] = [
-    { header: "Email", accessor: "email" },
-    { header: "First Name", accessor: "firstName" },
-    { header: "Last Name", accessor: "lastName" },
-    { header: "Role", accessor: "role" },
-    {
-      header: "Created At",
-      accessor: "createdAt",
-      render: (data) => new Date(data.createdAt).toLocaleDateString(),
-    },
-  ];
+  const getColumns = (): Column<any>[] => {
+    if (selectedTab === "All") {
+      return [
+        { header: "First Name", accessor: "firstName" },
+        { header: "Last Name", accessor: "lastName" },
+        { header: "Email", accessor: "email" },
+        { header: "Role", accessor: "role" },
+        {
+          header: "Created At",
+          accessor: "createdAt",
+          render: (row) => new Date(row.createdAt).toLocaleDateString(),
+        },
+      ];
+    }
+
+    if (selectedTab === "Trainers") {
+      return [
+        { header: "Name", accessor: "name" },
+        { header: "Email", accessor: "email" },
+        { header: "Specialization", accessor: "specialization" },
+        { header: "Experience Years", accessor: "experienceYears" },
+      ];
+    }
+
+    if (selectedTab === "Clients") {
+      return [
+        { header: "Name", accessor: "name" },
+        { header: "Email", accessor: "email" },
+        { header: "Goals", accessor: "fitnessGoals" },
+        { header: "Weight", accessor: "weight" },
+        { header: "Height", accessor: "height" },
+      ];
+    }
+
+    return [];
+  };
 
   return (
     <DashboardLayout>
       <div className="p-6">
+        <div className="mb-4 border-b border-gray-200">
+          <nav className="flex space-x-4">
+            {TABS.map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setSelectedTab(tab)}
+                className={`px-4 py-2 text-sm font-medium ${
+                  selectedTab === tab
+                    ? "bg-gray-300 text-black"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </nav>
+        </div>
+
         <DataTable
-          data={Array.isArray(users) ? users : []}
-          columns={columns}
+          data={data}
+          columns={getColumns()}
           onEdit={handleEdit}
           onDelete={handleDeleteClick}
         />
@@ -156,38 +218,25 @@ export default function AllUsersPage() {
         <EditModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          title="Edit User"
+          title="Edit Record"
         >
-          {selectedUser && (
+          {selectedItem && (
             <form onSubmit={handleModalSubmit} className="space-y-4">
-              {columns.map((col) => (
-                <div key={col.accessor}>
-                  <label className="block text-sm font-medium text-black">
-                    {col.header}
-                  </label>
-                  {col.accessor === "role" ? (
-                    <select
-                      name={col.accessor}
-                      defaultValue={(selectedUser as any)[col.accessor]}
-                      className="w-full border p-2 rounded text-black"
-                      required
-                    >
-                      <option value="client">Client</option>
-                      <option value="trainer">Trainer</option>
-                      <option value="admin">Admin</option>
-                    </select>
-                  ) : (
+              {Object.entries(selectedItem).map(([key, value]) =>
+                typeof value === "string" || typeof value === "number" ? (
+                  <div key={key}>
+                    <label className="block text-sm font-medium text-black capitalize">
+                      {key}
+                    </label>
                     <input
-                      type={col.accessor === "email" ? "email" : "text"}
-                      name={col.accessor}
-                      defaultValue={(selectedUser as any)[col.accessor]}
+                      name={key}
+                      defaultValue={value as any}
                       className="w-full border p-2 rounded text-black"
                       required
-                      readOnly={col.accessor === "createdAt"} // Disable editing for createdAt
                     />
-                  )}
-                </div>
-              ))}
+                  </div>
+                ) : null
+              )}
               <div className="flex justify-end">
                 <button
                   type="submit"
@@ -204,8 +253,8 @@ export default function AllUsersPage() {
           isOpen={isDeleteModalOpen}
           onClose={() => setIsDeleteModalOpen(false)}
           onConfirm={confirmDelete}
-          title={`Delete "${userToDelete?.email}"?`}
-          message="Are you sure you want to delete this user? This action cannot be undone."
+          title={`Delete "${itemToDelete?.email || itemToDelete?.name}"?`}
+          message="Are you sure you want to delete this entry? This action cannot be undone."
         />
       </div>
     </DashboardLayout>
