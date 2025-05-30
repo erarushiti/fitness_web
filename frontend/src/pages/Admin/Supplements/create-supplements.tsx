@@ -1,5 +1,8 @@
+
+
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import DashboardLayout from "../../../components/DashboardLayout";
+import { fetchWithAuth } from "utils/api";
 
 interface FormData {
   name: string;
@@ -67,11 +70,8 @@ export default function CreateSupplement() {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/api/supplement", {
+      const response = await fetchWithAuth("http://localhost:8080/api/supplement", {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
         body: payload,
       });
 

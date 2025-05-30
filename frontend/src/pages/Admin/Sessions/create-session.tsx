@@ -1,7 +1,8 @@
-
+"use client";
 import React, { useState, useEffect } from "react";
 
 import DashboardLayout from "../../../components/DashboardLayout";
+import { fetchWithAuth } from "utils/api";
 
 const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -66,13 +67,8 @@ export default function CreateSession() {
     // }
 
     try {
-      const response = await fetch("http://localhost:8080/api/sessions", {
+      const response = await fetchWithAuth("http://localhost:8080/api/sessions", {
         method: "POST",
-
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          "Content-Type": "application/json",
-         },
         body: JSON.stringify(formData),
       });
 

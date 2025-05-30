@@ -5,6 +5,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import DataTable, { Column } from "@/components/Table";
 import EditModal from "@/components/EditModal";
 import DeleteModal from "@/components/DeleteModal";
+import { fetchWithAuth } from "utils/api";
 
 interface Supplement {
   id: string;
@@ -15,7 +16,7 @@ interface Supplement {
   gender: string;
   age: string;
   price: string;
-  image: File | null;
+  image: string | null; // Changed File | null to string | null because you use image filename for src
 }
 
 export default function AllSupplementsPage() {
@@ -29,72 +30,53 @@ export default function AllSupplementsPage() {
 
   const [token, setToken] = useState("");
   const [searchParams, setSearchParams] = useState({
-  name: "",
-  goal: "",
-  gender: "",
-});
-
-
+    name: "",
+    goal: "",
+    gender: "",
+  });
 
   useEffect(() => {
-    // Retrieve token from localStorage when component mounts
     const storedToken = localStorage.getItem("accessToken");
     if (storedToken) {
       setToken(storedToken);
     }
   }, []);
 
-  // useEffect(() => {
-  //   fetch("http://localhost:8080/api/supplement")
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       setSupplements(data); // ✅ set supplements array into state
-  //     })
-  //     .catch((err) => {
-  //       console.error("Fetch supplements failed:", err);
-  //       setSupplements([]);
-  //     });
-  // }, []);
+  useEffect(() => {
+    const { name, goal, gender } = searchParams;
 
-useEffect(() => {
-  const { name, goal, gender } = searchParams;
+    const query = new URLSearchParams();
+    if (name) query.append("name", name);
+    if (goal) query.append("goal", goal);
+    if (gender) query.append("gender", gender);
 
-  const query = new URLSearchParams();
-  if (name) query.append("name", name);
-  if (goal) query.append("goal", goal);
-  if (gender) query.append("gender", gender);
+    const url = query.toString()
+      ? `http://localhost:8080/api/supplement/search?${query.toString()}`
+      : `http://localhost:8080/api/supplement`;
 
-  const url = query.toString()
-    ? `http://localhost:8080/api/supplement/search?${query.toString()}`
-    : `http://localhost:8080/api/supplement`;
+    fetchWithAuth(url)
+      .then((res) => res.json())
+      .then((data) => setSupplements(data))
+      .catch((err) => {
+        console.error("Filtered fetch failed:", err);
+        setSupplements([]);
+      });
+  }, [searchParams.name, searchParams.goal, searchParams.gender]);
 
-  fetch(url)
-    .then((res) => res.json())
-    .then((data) => setSupplements(data))
-    .catch((err) => {
-      console.error("Filtered fetch failed:", err);
-      setSupplements([]);
-    });
-}, [searchParams.name, searchParams.goal, searchParams.gender]);
-
-
-
-
-
-  const handleEdit = (supplements: Supplement) => {
-    setSelectedSupplement(supplements);
+  const handleEdit = (supplement: Supplement) => {
+    setSelectedSupplement(supplement);
     setIsModalOpen(true);
   };
 
-  const handleDeleteClick = (supplements: Supplement) => {
-    setSupplementToDelete(supplements);
+  const handleDeleteClick = (supplement: Supplement) => {
+    setSupplementToDelete(supplement);
     setIsDeleteModalOpen(true);
   };
 
   const confirmDelete = async () => {
     if (!supplementoDelete) return;
     try {
-      const res = await fetch(
+      const res = await fetchWithAuth(
         `http://localhost:8080/api/supplement/${supplementoDelete.id}`,
         {
           method: "DELETE",
@@ -131,7 +113,7 @@ useEffect(() => {
     };
 
     try {
-      const res = await fetch(
+      const res = await fetchWithAuth(
         `http://localhost:8080/api/supplement/${selectedSupplement.id}`,
         {
           method: "PUT",
@@ -165,13 +147,14 @@ useEffect(() => {
     {
       header: "Image",
       accessor: "image",
-      render: (data) => (
-        <img
-          src={`http://localhost:8080/uploads/${data.image}`}
-          alt={data.name}
-          className="w-16 h-16 object-cover rounded"
-        />
-      ),
+      render: (data) =>
+        data.image ? (
+          <img
+            src={`http://localhost:8080/uploads/${data.image}`}
+            alt={data.name}
+            className="w-16 h-16 object-cover rounded"
+          />
+        ) : null,
     },
     { header: "Price", accessor: "price" },
   ];
@@ -198,6 +181,7 @@ useEffect(() => {
             <option value="">All Goals</option>
             <option value="lose weight">Lose Weight</option>
             <option value="gain weight">Gain Weight</option>
+            <option value="maintain weight">Maintain Weight</option>
           </select>
 
           <select
@@ -227,22 +211,111 @@ useEffect(() => {
         >
           {selectedSupplement && (
             <form onSubmit={handleModalSubmit} className="space-y-4">
-              {columns.map((col) => (
-                <div key={col.accessor}>
-                  <div>
+              {columns.map((col) => {
+                const val = (selectedSupplement as any)[col.accessor];
+
+                if (col.accessor === "goal") {
+                  return (
+                    <div key={col.accessor}>
+                      <label className="block text-sm font-medium text-black">
+                        {col.header}
+                      </label>
+                      <select
+                        name="goal"
+                        defaultValue={val}
+                        className="w-full border p-2 rounded text-black"
+                        required
+                      >
+                        <option value="">Select Goal</option>
+                        <option value="lose weight">Lose Weight</option>
+                        <option value="gain weight">Gain Weight</option>
+                        <option value="maintain weight">Maintain Weight</option>
+                      </select>
+                    </div>
+                  );
+                }
+
+                if (col.accessor === "activity") {
+                  return (
+                    <div key={col.accessor}>
+                      <label className="block text-sm font-medium text-black">
+                        {col.header}
+                      </label>
+                      <select
+                        name="activity"
+                        defaultValue={val}
+                        className="w-full border p-2 rounded text-black"
+                        required
+                      >
+                        <option value="">Select Activity</option>
+                        <option value="low">Low</option>
+                        <option value="moderate">Moderate</option>
+                        <option value="active">Active</option>
+                      </select>
+                    </div>
+                  );
+                }
+
+                if (col.accessor === "gender") {
+                  return (
+                    <div key={col.accessor}>
+                      <label className="block text-sm font-medium text-black">
+                        {col.header}
+                      </label>
+                      <select
+                        name="gender"
+                        defaultValue={val}
+                        className="w-full border p-2 rounded text-black"
+                        required
+                      >
+                        <option value="">Select Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                  );
+                }
+
+                if (col.accessor === "age") {
+                  return (
+                    <div key={col.accessor}>
+                      <label className="block text-sm font-medium text-black">
+                        {col.header}
+                      </label>
+                      <select
+                        name="age"
+                        defaultValue={val}
+                        className="w-full border p-2 rounded text-black"
+                        required
+                      >
+                        <option value="">Select Age Group</option>
+                        <option value="18-25">18-25</option>
+                        <option value="26-35">26-35</option>
+                        <option value="36-45">36-45</option>
+                        <option value="46-60">46-60</option>
+                        <option value="60+">60+</option>
+                      </select>
+                    </div>
+                  );
+                }
+
+                // Default input for other fields
+                return (
+                  <div key={col.accessor}>
                     <label className="block text-sm font-medium text-black">
                       {col.header}
                     </label>
                     <input
                       type={col.accessor === "price" ? "number" : "text"}
                       name={col.accessor}
-                      defaultValue={(selectedSupplement as any)[col.accessor]}
+                      defaultValue={val}
                       className="w-full border p-2 rounded text-black"
                       required
                     />
                   </div>
-                </div>
-              ))}
+                );
+              })}
               <div className="flex justify-end">
                 <button
                   type="submit"

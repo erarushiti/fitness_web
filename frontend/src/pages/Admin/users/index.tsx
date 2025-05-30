@@ -5,6 +5,8 @@ import DashboardLayout from "@/components/DashboardLayout";
 import DataTable, { Column } from "@/components/Table";
 import EditModal from "@/components/EditModal";
 import DeleteModal from "@/components/DeleteModal";
+import { fetchWithAuth } from "utils/api";
+
 
 interface User {
   id: string;
@@ -37,32 +39,31 @@ const TABS = ["All", "Clients", "Trainers"];
 export default function AllUsersPage() {
   const [selectedTab, setSelectedTab] = useState("All");
   const [data, setData] = useState<any[]>([]);
-  const [token, setToken] = useState("");
+  const [token, setToken] = useState<string | null>(null);
 
   const [selectedItem, setSelectedItem] = useState<any | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<any | null>(null);
 
+  // Load token on client
   useEffect(() => {
     const storedToken = localStorage.getItem("accessToken");
-    if (storedToken) setToken(storedToken);
+    setToken(storedToken);
   }, []);
 
+  // Fetch data only once token is loaded
   useEffect(() => {
+    if (!token) return; // wait for token
+
     const fetchData = async () => {
-      if (!token) return;
       let endpoint = "/api/auth/users";
       if (selectedTab === "Clients") endpoint = "/api/auth/clients";
       if (selectedTab === "Trainers") endpoint = "/api/auth/trainers";
 
       try {
-        const res = await fetch(`http://localhost:8080${endpoint}`, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await fetchWithAuth(`http://localhost:8080${endpoint}`);
+        if (!res.ok) throw new Error("Fetch failed");
         const result = await res.json();
         setData(Array.isArray(result) ? result : []);
       } catch (err) {
@@ -94,11 +95,8 @@ export default function AllUsersPage() {
     else endpoint = `/api/auth/${itemToDelete.id}`;
 
     try {
-      const res = await fetch(`http://localhost:8080${endpoint}`, {
+      const res = await fetchWithAuth(`http://localhost:8080${endpoint}`, {
         method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
       });
 
       if (res.ok) {
@@ -127,15 +125,12 @@ export default function AllUsersPage() {
     else endpoint = `/api/auth/${selectedItem.id}`;
 
     try {
-      const res = await fetch(`http://localhost:8080${endpoint}`, {
+      const res = await fetchWithAuth(`http://localhost:8080${endpoint}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify(updatedItem),
       });
 
+      if (!res.ok) throw new Error("Update failed");
       const updated = await res.json();
       setData((prev) =>
         prev.map((u) =>
@@ -160,7 +155,7 @@ export default function AllUsersPage() {
         {
           header: "Created At",
           accessor: "createdAt",
-          render: (row) => new Date(row.createdAt).toLocaleDateString(),
+          render: (row) => new Date(row.createdAt).toISOString().split("T")[0], // fixed date format
         },
       ];
     }
@@ -186,6 +181,11 @@ export default function AllUsersPage() {
 
     return [];
   };
+
+  if (token === null) {
+    // Waiting for token load
+    return <div>Loading...</div>;
+  }
 
   return (
     <DashboardLayout>
@@ -240,9 +240,9 @@ export default function AllUsersPage() {
               <div className="flex justify-end">
                 <button
                   type="submit"
-                  className="bg-blue-600 text-white px-4 py-2 rounded"
+                  className="bg-blue-600 px-4 py-2 text-white rounded hover:bg-blue-700"
                 >
-                  Save Changes
+                  Save
                 </button>
               </div>
             </form>
@@ -253,8 +253,10 @@ export default function AllUsersPage() {
           isOpen={isDeleteModalOpen}
           onClose={() => setIsDeleteModalOpen(false)}
           onConfirm={confirmDelete}
-          title={`Delete "${itemToDelete?.email || itemToDelete?.name}"?`}
-          message="Are you sure you want to delete this entry? This action cannot be undone."
+          title="Confirm Delete"
+          message={`Are you sure you want to delete ${
+            itemToDelete?.name || itemToDelete?.email || "this item"
+          }?`}
         />
       </div>
     </DashboardLayout>

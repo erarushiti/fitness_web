@@ -5,6 +5,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import DataTable, { Column } from "@/components/Table";
 import EditModal from "@/components/EditModal";
 import DeleteModal from "@/components/DeleteModal";
+import { fetchWithAuth } from "utils/api";
 
 interface Order {
   id: string;
@@ -31,11 +32,8 @@ export default function OrdersPage() {
   }, []);
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/orders", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    fetchWithAuth("http://localhost:8080/api/orders"
+    )
       .then((res) => res.json())
       .then((data) => {
         setOrders(data);
@@ -59,7 +57,7 @@ export default function OrdersPage() {
   const confirmDelete = async () => {
     if (!orderToDelete) return;
     try {
-      const res = await fetch(
+      const res = await fetchWithAuth(
         `http://localhost:8080/api/orders/${orderToDelete.id}`,
         {
           method: "DELETE",
@@ -94,14 +92,10 @@ export default function OrdersPage() {
     };
 
     try {
-      const res = await fetch(
+      const res = await fetchWithAuth(
         `http://localhost:8080/api/orders/${selectedOrder.id}`,
         {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
           body: JSON.stringify(updatedOrder),
         }
       );
@@ -166,7 +160,7 @@ export default function OrdersPage() {
                   type="submit"
                   className="bg-blue-600 text-white px-4 py-2 rounded"
                 >
-                  Save Changes
+                  Save Changes  
                 </button>
               </div>
             </form>

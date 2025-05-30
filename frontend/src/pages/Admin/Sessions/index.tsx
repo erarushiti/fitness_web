@@ -1,10 +1,11 @@
-"use client";
+
 
 import React, { useEffect, useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import DataTable, { Column } from "@/components/Table";
 import EditModal from "@/components/EditModal";
 import DeleteModal from "@/components/DeleteModal";
+import { fetchWithAuth } from "utils/api";
 
 interface Session {
   id: string;
@@ -115,12 +116,8 @@ export default function AllSessionsPage() {
     };
   
     try {
-      const res = await fetch(`http://localhost:8080/api/sessions/${selectedSession.id}`, {
+      const res = await fetchWithAuth(`http://localhost:8080/api/sessions/${selectedSession.id}`, {
         method: "PUT",
-        headers: { 
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-         },
         body: JSON.stringify(updatedSession),
       });
   
