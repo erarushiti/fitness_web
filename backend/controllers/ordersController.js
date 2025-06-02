@@ -166,44 +166,47 @@ module.exports = {
 },
 
   // Update an order
-  updateOrder: async (req, res) => {
-    const { id } = req.params;
-    const { totalAmount, status } = req.body;
+ updateOrder: async (req, res) => {
+  const { id } = req.params;
+  const { totalAmount, status } = req.body;
 
-    if (!totalAmount || !status) {
-      return res
-        .status(400)
-        .json({ error: "Total amount and status are required." });
-    }
+  if (!totalAmount || !status) {
+    return res
+      .status(400)
+      .json({ error: "Total amount and status are required." });
+  }
 
-    try {
-      const order = await Order.findByPk(id, {
-        include: [
-          {
-            model: User,
-            as: "User",
-            attributes: ["id", "email", "firstName", "lastName"],
-          },
-          {
-            model: OrderItem,
-            as: "OrderItems",
-            include: [{ model: Supplement, as: "Supplement" }],
-          },
-        ],
-      });
-      if (!order) return res.status(404).json({ error: "Order not found." });
+  try {
+    const order = await Order.findByPk(id);
+    if (!order) return res.status(404).json({ error: "Order not found." });
 
-      await order.update({
-        totalAmount: parseFloat(totalAmount),
-        status,
-      });
+    await order.update({
+      totalAmount: parseFloat(totalAmount),
+      status,
+    });
 
-      return res.status(200).json(order);
-    } catch (error) {
-      console.error("Update Order Error:", error);
-      return res.status(500).json({ error: "Internal server error." });
-    }
-  },
+    // Reload updated order with associations
+    const updatedOrder = await Order.findByPk(id, {
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "email", "firstName", "lastName"],
+        },
+        {
+          model: OrderItem,
+          as: "orderItems",
+          include: [{ model: Supplement, as: "supplement" }],
+        },
+      ],
+    });
+
+    return res.status(200).json(updatedOrder);
+  } catch (error) {
+    console.error("Update Order Error:", error);
+    return res.status(500).json({ error: "Internal server error." });
+  }
+},
 
   // Delete an order
   deleteOrder: async (req, res) => {
