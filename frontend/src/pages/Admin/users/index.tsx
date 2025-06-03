@@ -6,6 +6,7 @@ import DataTable, { Column } from "@/components/Table";
 import EditModal from "@/components/EditModal";
 import DeleteModal from "@/components/DeleteModal";
 import { fetchWithAuth } from "utils/api";
+import useAdminRedirect from "../../../../hooks/useAdminRedirect";
 
 interface User {
   id: string;
@@ -44,6 +45,8 @@ export default function AllUsersPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<any | null>(null);
+  
+  useAdminRedirect(); // Call hook at top level
 
   // Load token on client
   useEffect(() => {
@@ -151,15 +154,13 @@ export default function AllUsersPage() {
         { header: "Last Name", accessor: "lastName" },
         { header: "Email", accessor: "email" },
         { header: "Role", accessor: "role" },
-        {
+          {
           header: "Created At",
           accessor: "createdAt",
-          render: (row) => {
-            const date = new Date(row.createdAt);
-            return !isNaN(date.getTime())
-              ? date.toISOString().split("T")[0]
-              : "Invalid date";
-          },
+
+          render: (row) => new Date(row.createdAt).toLocaleDateString(),
+
+
         },
       ];
     }
