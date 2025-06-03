@@ -8,7 +8,6 @@ import DeleteModal from "@/components/DeleteModal";
 import { fetchWithAuth } from "utils/api";
 import useAdminRedirect from "../../../../hooks/useAdminRedirect";
 
-
 interface User {
   id: string;
   email: string;
@@ -158,7 +157,10 @@ export default function AllUsersPage() {
           {
           header: "Created At",
           accessor: "createdAt",
+
           render: (row) => new Date(row.createdAt).toLocaleDateString(),
+
+
         },
       ];
     }
