@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-
+import { useForm, Controller } from "react-hook-form";
 import DashboardLayout from "../../../components/DashboardLayout";
 import { fetchWithAuth } from "utils/api";
 import useAdminRedirect from "../../../../hooks/useAdminRedirect";
@@ -10,83 +10,57 @@ const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Satur
 interface FormData {
   name: string;
   description: string;
-  weekDays: string[]; // updated
+  weekDays: string[];
   time: string;
   price: string;
 }
 
 export default function CreateSession() {
-
-  const [token, setToken] = useState('');
-   useAdminRedirect(); // Call hook at top level
-   
-  useEffect(() => {
-    // Retrieve token from localStorage when component mounts
-    const storedToken = localStorage.getItem('accessToken');
-    if (storedToken) {
-      setToken(storedToken);
-    }
-  }, []);
-
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    description: "",
-    weekDays: [], // updated
-    time: "",
-    price: "",
-  });
-
+  const [token, setToken] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  useAdminRedirect();
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  useEffect(() => {
+    const storedToken = localStorage.getItem("accessToken");
+    if (storedToken) setToken(storedToken);
+  }, []);
 
-  const handleWeekDayToggle = (day: string) => {
-    setFormData((prev) => {
-      const exists = prev.weekDays.includes(day);
-      const weekDays = exists
-        ? prev.weekDays.filter((d) => d !== day)
-        : [...prev.weekDays, day];
-      return { ...prev, weekDays };
-    });
-  };
+  // Initialize react-hook-form
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm<FormData>({
+    defaultValues: {
+      name: "",
+      description: "",
+      weekDays: [],
+      time: "",
+      price: "",
+    },
+  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: FormData) => {
     setError(null);
     setSuccess(null);
-
-    const { name, description, weekDays, time, price } = formData;
-    // if (!name || !description || weekDays.length === 0 || !time || !price) {
-    //   setError("All fields are required, including at least one weekday.");
-    //   return;
-    // }
 
     try {
       const response = await fetchWithAuth("http://localhost:8080/api/session", {
         method: "POST",
-        body: JSON.stringify(formData),
+        body: JSON.stringify(data),
       });
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to create session");
+        const result = await response.json();
+        throw new Error(result.error || "Failed to create session");
       }
 
       setSuccess("Session created successfully!");
-      setFormData({
-        name: "",
-        description: "",
-        weekDays: [],
-        time: "",
-        price: "",
-      });
+      reset(); // Reset form after successful submission
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     }
@@ -99,24 +73,21 @@ export default function CreateSession() {
           <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">{error}</div>
         )}
         {success && (
-          <div className="mb-4 p-4 bg-green-100 text-green-700 rounded-lg">
-            {success}
-          </div>
+          <div className="mb-4 p-4 bg-green-100 text-green-700 rounded-lg">{success}</div>
         )}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <label htmlFor="name" className="block text-sm font-medium text-black">
               Session Name
             </label>
             <input
-              type="text"
               id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
+              {...register("name", { required: "Session name is required", minLength: { value: 3, message: "Name must be at least 3 characters" } })}
               className="mt-1 block w-full p-2 border border-[#1c1c1c] rounded-lg text-black"
-              required
             />
+            {errors.name && (
+              <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+            )}
           </div>
 
           <div>
@@ -125,33 +96,46 @@ export default function CreateSession() {
             </label>
             <textarea
               id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
+              {...register("description", { required: "Description is required", minLength: { value: 10, message: "Description must be at least 10 characters" } })}
               className="mt-1 block w-full p-2 border border-[#1c1c1c] rounded-lg text-black"
               rows={4}
-              required
             />
+            {errors.description && (
+              <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
+            )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-black mb-1">
-              Week Days
-            </label>
-            <div className="grid grid-cols-2 gap-2">
-              {WEEKDAYS.map((day) => (
-                <label key={day} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    value={day}
-                    checked={formData.weekDays.includes(day)}
-                    onChange={() => handleWeekDayToggle(day)}
-                    className="accent-blue-600"
-                  />
-                  <span>{day}</span>
-                </label>
-              ))}
-            </div>
+            <label className="block text-sm font-medium text-black mb-1">Week Days</label>
+            <Controller
+              name="weekDays"
+              control={control}
+              rules={{ validate: (value) => value.length > 0 || "Select at least one weekday" }}
+              render={({ field }) => (
+                <div className="grid grid-cols-2 gap-2">
+                  {WEEKDAYS.map((day) => (
+                    <label key={day} className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        value={day}
+                        checked={field.value.includes(day)}
+                        onChange={(e) => {
+                          const updatedDays = e.target.checked
+                            ? [...field.value, day]
+                            : field.value.filter((d: string) => d !== day);
+                          field.onChange(updatedDays);
+                        }}
+                        className="accent-blue-600"
+                      />
+                      <span>{day}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+            />
+            {errors.weekDays && (
+              <p className="mt-1 text-sm text-red-600">{errors.weekDays.message}</p>
+            )}
           </div>
 
           <div>
@@ -161,12 +145,12 @@ export default function CreateSession() {
             <input
               type="time"
               id="time"
-              name="time"
-              value={formData.time}
-              onChange={handleChange}
+              {...register("time", { required: "Time is required" })}
               className="mt-1 block w-full p-2 border border-[#1c1c1c] rounded-lg text-black"
-              required
             />
+            {errors.time && (
+              <p className="mt-1 text-sm text-red-600">{errors.time.message}</p>
+            )}
           </div>
 
           <div>
@@ -176,20 +160,19 @@ export default function CreateSession() {
             <input
               type="number"
               id="price"
-              name="price"
-              value={formData.price}
-              onChange={handleChange}
+              {...register("price", {
+                required: "Price is required",
+                min: { value: 0, message: "Price cannot be negative" },
+              })}
               className="mt-1 block w-full p-2 border border-[#1c1c1c] rounded-lg text-black"
-              min="0"
               step="0.01"
-              required
             />
+            {errors.price && (
+              <p className="mt-1 text-sm text-red-600">{errors.price.message}</p>
+            )}
           </div>
 
-          <button
-            type="submit"
-            className="w-full bg-[#111] text-white p-2 rounded-lg"
-          >
+          <button type="submit" className="w-full bg-[#111] text-white p-2 rounded-lg">
             Create Session
           </button>
         </form>

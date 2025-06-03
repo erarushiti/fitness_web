@@ -1,6 +1,6 @@
-
-
-import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
+"use client";
+import React, { useState, useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
 import DashboardLayout from "../../../components/DashboardLayout";
 import { fetchWithAuth } from "utils/api";
 import useAdminRedirect from "../../../../hooks/useAdminRedirect";
@@ -20,79 +20,64 @@ export default function CreateSupplement() {
   const [token, setToken] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-   useAdminRedirect(); // Call hook at top level
-  const [formData, setFormData] = useState<FormData>({
-    name: "",
-    description: "",
-    goal: "",
-    activity: "",
-    gender: "",
-    age: "",
-    price: "",
-    image: null,
-  });
+
+  useAdminRedirect();
 
   useEffect(() => {
-    // Retrieve token from localStorage when component mounts
     const storedToken = localStorage.getItem("accessToken");
-    if (storedToken) {
-      setToken(storedToken);
-    }
+    if (storedToken) setToken(storedToken);
   }, []);
 
-  const handleChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  // Initialize react-hook-form
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors },
+  } = useForm<FormData>({
+    defaultValues: {
+      name: "",
+      description: "",
+      goal: "",
+      activity: "",
+      gender: "",
+      age: "",
+      price: "",
+      image: null,
+    },
+  });
 
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFormData((prev) => ({ ...prev, image: e.target.files![0] }));
-    }
-  };
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: FormData) => {
     setError(null);
     setSuccess(null);
 
+    // Create FormData for API request
     const payload = new FormData();
-    payload.append("name", formData.name);
-    payload.append("description", formData.description);
-    payload.append("goal", formData.goal);
-    payload.append("activity", formData.activity);
-    payload.append("gender", formData.gender);
-    payload.append("age", formData.age);
-    payload.append("price", formData.price);
-    if (formData.image) {
-      payload.append("image", formData.image);
+    payload.append("name", data.name);
+    payload.append("description", data.description);
+    payload.append("goal", data.goal);
+    payload.append("activity", data.activity);
+    payload.append("gender", data.gender);
+    payload.append("age", data.age);
+    payload.append("price", data.price);
+    if (data.image) {
+      payload.append("image", data.image);
     }
 
     try {
       const response = await fetchWithAuth("http://localhost:8080/api/supplement", {
         method: "POST",
-       body: JSON.stringify(formData),
+        body: JSON.stringify(data),
       });
-      console.log("payload", payload)
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Failed to create supplement");
+        const result = await response.json();
+        throw new Error(result.error || "Failed to create supplement");
       }
 
       setSuccess("Supplement created successfully!");
-      setFormData({
-        name: "",
-        description: "",
-        goal: "",
-        activity: "",
-        gender: "",
-        age: "",
-        price: "",
-        image: null,
-      });
+      reset(); // Reset form after successful submission
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     }
@@ -102,62 +87,61 @@ export default function CreateSupplement() {
     <DashboardLayout>
       <div className="max-w-2xl mx-auto p-6">
         {error && (
-          <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">
-            {error}
-          </div>
+          <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg">{error}</div>
         )}
         {success && (
-          <div className="mb-4 p-4 bg-green-100 text-green-700 rounded-lg">
-            {success}
-          </div>
+          <div className="mb-4 p-4 bg-green-100 text-green-700 rounded-lg">{success}</div>
         )}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <label className="block text-sm font-medium text-black">Name</label>
             <input
               type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
+              {...register("name", {
+                required: "Name is required",
+                minLength: { value: 3, message: "Name must be at least 3 characters" },
+              })}
               className="mt-1 block w-full p-2 border rounded-lg text-black"
             />
+            {errors.name && (
+              <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+            )}
           </div>
 
           <div>
             <label className="block text-sm font-medium text-black">Description</label>
             <textarea
-              name="description"
-              value={formData.description}
-              onChange={handleChange}
-              rows={3}
-              required
+              {...register("description", {
+                required: "Description is required",
+                minLength: { value: 10, message: "Description must be at least 10 characters" },
+              })}
               className="mt-1 block w-full p-2 border rounded-lg text-black"
+              rows={3}
             />
+            {errors.description && (
+              <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
+            )}
           </div>
 
           <div>
             <label className="block text-sm font-medium text-black">Goal</label>
             <select
-              name="goal"
-              value={formData.goal}
-              onChange={handleChange}
-              required
+              {...register("goal", { required: "Goal is required" })}
               className="mt-1 block w-full p-2 border rounded-lg text-black"
             >
               <option value="">Select</option>
               <option value="lose weight">Lose Weight</option>
               <option value="gain weight">Gain Weight</option>
             </select>
+            {errors.goal && (
+              <p className="mt-1 text-sm text-red-600">{errors.goal.message}</p>
+            )}
           </div>
 
           <div>
             <label className="block text-sm font-medium text-black">Activity Level</label>
             <select
-              name="activity"
-              value={formData.activity}
-              onChange={handleChange}
-              required
+              {...register("activity", { required: "Activity level is required" })}
               className="mt-1 block w-full p-2 border rounded-lg text-black"
             >
               <option value="">Select</option>
@@ -165,15 +149,15 @@ export default function CreateSupplement() {
               <option value="low">Low</option>
               <option value="moderate">Moderate</option>
             </select>
+            {errors.activity && (
+              <p className="mt-1 text-sm text-red-600">{errors.activity.message}</p>
+            )}
           </div>
 
           <div>
             <label className="block text-sm font-medium text-black">Gender</label>
             <select
-              name="gender"
-              value={formData.gender}
-              onChange={handleChange}
-              required
+              {...register("gender", { required: "Gender is required" })}
               className="mt-1 block w-full p-2 border rounded-lg text-black"
             >
               <option value="">Select</option>
@@ -181,15 +165,15 @@ export default function CreateSupplement() {
               <option value="female">Female</option>
               <option value="other">Other</option>
             </select>
+            {errors.gender && (
+              <p className="mt-1 text-sm text-red-600">{errors.gender.message}</p>
+            )}
           </div>
 
           <div>
             <label className="block text-sm font-medium text-black">Age Range</label>
             <select
-              name="age"
-              value={formData.age}
-              onChange={handleChange}
-              required
+              {...register("age", { required: "Age range is required" })}
               className="mt-1 block w-full p-2 border rounded-lg text-black"
             >
               <option value="">Select</option>
@@ -198,31 +182,57 @@ export default function CreateSupplement() {
               <option value="40-54">40-54</option>
               <option value="55+">55+</option>
             </select>
+            {errors.age && (
+              <p className="mt-1 text-sm text-red-600">{errors.age.message}</p>
+            )}
           </div>
 
           <div>
             <label className="block text-sm font-medium text-black">Price (€)</label>
             <input
               type="number"
-              name="price"
-              value={formData.price}
-              onChange={handleChange}
-              min="0"
-              step="0.01"
-              required
+              {...register("price", {
+                required: "Price is required",
+                min: { value: 0, message: "Price cannot be negative" },
+              })}
               className="mt-1 block w-full p-2 border rounded-lg text-black"
+              step="0.01"
             />
+            {errors.price && (
+              <p className="mt-1 text-sm text-red-600">{errors.price.message}</p>
+            )}
           </div>
 
           <div>
             <label className="block text-sm font-medium text-black">Image</label>
-            <input
-              type="file"
+            <Controller
               name="image"
-              onChange={handleImageChange}
-              accept="image/*"
-              className="mt-1 block w-full p-2 border rounded-lg text-black"
+              control={control}
+              rules={{
+                required: "Image is required",
+                validate: (value) =>
+                  !value ||
+                  (value.size <= 5 * 1024 * 1024 && /^image\/(jpeg|png|gif|webp)$/.test(value.type)) ||
+                  "Image must be JPEG, PNG, GIF, or WebP and less than 5MB",
+              }}
+              render={({ field }) => (
+                <input
+                  type="file"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files[0]) {
+                      field.onChange(e.target.files[0]);
+                    } else {
+                      field.onChange(null);
+                    }
+                  }}
+                  accept="image/*"
+                  className="mt-1 block w-full p-2 border rounded-lg text-black"
+                />
+              )}
             />
+            {errors.image && (
+              <p className="mt-1 text-sm text-red-600">{errors.image.message}</p>
+            )}
           </div>
 
           <button
