@@ -8,6 +8,7 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
   };
 
   let response = await fetch(url, options);
+  console.log("response", response)
 
   if (response.status === 401 || response.status === 403) {
     // Try to refresh token
@@ -21,7 +22,7 @@ export async function fetchWithAuth(url: string, options: RequestInit = {}) {
     });
 
     if (!refreshResponse.ok) {
-      throw new Error("Refresh token expired or invalid");
+      console.log("Refresh token expired or invalid");
     }
 
     const { accessToken: newAccessToken } = await refreshResponse.json();

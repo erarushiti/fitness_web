@@ -6,6 +6,7 @@ import DataTable, { Column } from "@/components/Table";
 import EditModal from "@/components/EditModal";
 import DeleteModal from "@/components/DeleteModal";
 import { fetchWithAuth } from "utils/api";
+import useAdminRedirect from "../../../../hooks/useAdminRedirect";
 
 interface Order {
   id: string;
@@ -16,6 +17,7 @@ interface Order {
 }
 
 export default function OrdersPage() {
+  useAdminRedirect(); // Call hook at top level
   const [orders, setOrders] = useState<Order[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
