@@ -1,7 +1,9 @@
-
+"use client";
 import React, { useState, useEffect } from "react";
 
 import DashboardLayout from "../../../components/DashboardLayout";
+import { fetchWithAuth } from "utils/api";
+import useAdminRedirect from "../../../../hooks/useAdminRedirect";
 
 const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -16,7 +18,8 @@ interface FormData {
 export default function CreateSession() {
 
   const [token, setToken] = useState('');
-
+   useAdminRedirect(); // Call hook at top level
+   
   useEffect(() => {
     // Retrieve token from localStorage when component mounts
     const storedToken = localStorage.getItem('accessToken');
@@ -66,13 +69,8 @@ export default function CreateSession() {
     // }
 
     try {
-      const response = await fetch("http://localhost:8080/api/sessions", {
+      const response = await fetchWithAuth("http://localhost:8080/api/session", {
         method: "POST",
-
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          "Content-Type": "application/json",
-         },
         body: JSON.stringify(formData),
       });
 

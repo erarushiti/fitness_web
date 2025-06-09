@@ -1,228 +1,467 @@
-// "use client";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import "../../app/globals.css";
+import female from "../../assets/images/female.png";
+import male from "../../assets/images/male.png";
+import losew from "../../assets/images/losew.png";
+import gain from "../../assets/images/gain.png";
+import light from "../../assets/images/light.png";
+import medium from "../../assets/images/medium.png";
+import active from "../../assets/images/active.png";
+import Header from "@/components/Header";
 
-// import { useEffect, useState } from "react";
-// import Image from "next/image";
-// import male from "@/public/assets/male.png";
-// import female from "@/public/assets/female.png";
-// import gain from "@/public/assets/gain.png";
-// import losew from "@/public/assets/losew.png";
-// import light from "@/public/assets/light.png";
-// import medium from "@/public/assets/medium.png";
-// import active from "@/public/assets/active.png";
+// Interface for form values
+interface FormValues {
+  gender: string;
+  age: string;
+  goal: string;
+  activity: string;
+}
 
-// export default function StartTodaySupplements() {
-//   const [step, setStep] = useState(1);
-//   const [values, setValues] = useState(() => {
-//     if (typeof window !== "undefined") {
-//       const saved = sessionStorage.getItem("startTodayValues");
-//       return saved ? JSON.parse(saved) : { gender: "", age: "", goal: "", activity: "" };
-//     }
-//     return { gender: "", age: "", goal: "", activity: "" };
-//   });
-//   const [supplements, setSupplements] = useState([]);
+// Interface for supplement data
+interface Supplement {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  image: string | null;
+  goal: string;
+  gender: string;
+  activity: string;
+  age: string;
+  userId: string;
+}
 
-//   useEffect(() => {
-//     if (typeof window !== "undefined" && sessionStorage.getItem("startTodayValues")) {
-//       setStep(6);
-//     }
-//   }, []);
+const StartToday: React.FC = () => {
+  const router = useRouter();
+  const [step, setStep] = useState<number>(1);
+  const [values, setValues] = useState<FormValues>(() => {
+    const savedValues = typeof window !== "undefined" ? sessionStorage.getItem("startTodayValues") : null;
+    return savedValues ? JSON.parse(savedValues) : { gender: "", age: "", goal: "", activity: "" };
+  });
+  const [supplements, setSupplements] = useState<Supplement[]>([]);
+  const [token, setToken] = useState<string>("");
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
 
-//   useEffect(() => {
-//     const fetchSupplements = async () => {
-//       try {
-//         const res = await fetch("/api/supplements");
-//         const data = await res.json();
-//         setSupplements(data);
-//       } catch (err) {
-//         console.error("Error fetching supplements", err);
-//       }
-//     };
-//     fetchSupplements();
-//   }, []);
+  useEffect(() => {
+    // Retrieve token from localStorage
+    const storedToken = localStorage.getItem("accessToken");
+    if (storedToken) {
+      setToken(storedToken);
+    }
 
-//   const next = () => setStep((prev) => prev + 1);
-//   const back = () => setStep((prev) => prev - 1);
+    if (typeof window !== "undefined" && sessionStorage.getItem("startTodayValues")) {
+      setStep(6);
+    }
+  }, []);
 
-//   const updateValue = (key: string, val: string) => {
-//     const updated = { ...values, [key]: val };
-//     setValues(updated);
-//     sessionStorage.setItem("startTodayValues", JSON.stringify(updated));
-//     next();
-//   };
+  const fetchSupplements = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/api/supplement", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!response.ok) {
+        if (response.status === 401) {
+          setError("Session expired. Please log in again.");
+          localStorage.removeItem("accessToken");
+          setToken("");
+          router.push("/login"); // Redirect to login page
+          return;
+        }
+        throw new Error(`Failed to fetch supplements: ${response.statusText}`);
+      }
+      const data: Supplement[] = await response.json();
+      console.log("Fetched supplements:", data);
+      setSupplements(data);
+    } catch (error: any) {
+      console.error("Error fetching supplements:", error);
+      setError("Failed to load supplements.");
+    }
+  };
 
-//   const reset = () => {
-//     sessionStorage.clear();
-//     setValues({ gender: "", age: "", goal: "", activity: "" });
-//     setStep(1);
-//   };
+  useEffect(() => {
+    document.body.style.background = "#1c1c1c";
+    document.body.style.padding = "50px 0 50px 0";
+    if (token) {
+      fetchSupplements();
+    }
 
-//   const handleSubmit = () => {
-//     const { gender, age, goal, activity } = values;
-//     const matched = supplements.filter(
-//       (s: any) =>
-//         s.gender.toLowerCase() === gender &&
-//         s.age === age &&
-//         s.goal.toLowerCase() === goal &&
-//         s.activity.toLowerCase() === activity
-//     );
-//     if (matched.length > 0) {
-//       setStep(6);
-//     } else {
-//       alert("No matching supplement plans found.");
-//     }
-//   };
+    return () => {
+      document.body.style.background = "";
+      document.body.style.padding = "";
+    };
+  }, [token]);
 
-//   const renderStep = () => {
-//     const Button = ({ children, onClick }: any) => (
-//       <button
-//         onClick={onClick}
-//         className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 mt-4"
-//       >
-//         {children}
-//       </button>
-//     );
+  const handleChangeAndNext = (name: keyof FormValues, value: string) => {
+    const updatedValues: FormValues = { ...values, [name]: value };
+    setValues(updatedValues);
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("startTodayValues", JSON.stringify(updatedValues));
+    }
+    nextStep();
+  };
 
-//     switch (step) {
-//       case 1:
-//         return (
-//           <div className="text-center p-6">
-//             <h2 className="text-2xl font-bold mb-4">Select Your Gender</h2>
-//             <div className="flex justify-center gap-8">
-//               {["male", "female"].map((gender) => (
-//                 <div
-//                   key={gender}
-//                   className={`cursor-pointer p-2 border-2 rounded-lg ${
-//                     values.gender === gender ? "border-blue-500" : "border-gray-300"
-//                   }`}
-//                   onClick={() => updateValue("gender", gender)}
-//                 >
-//                   <Image
-//                     src={gender === "male" ? male : female}
-//                     alt={gender}
-//                     width={100}
-//                     height={100}
-//                   />
-//                   <p>{gender.charAt(0).toUpperCase() + gender.slice(1)}</p>
-//                 </div>
-//               ))}
-//             </div>
-//           </div>
-//         );
-//       case 2:
-//         return (
-//           <div className="text-center p-6">
-//             <h2 className="text-2xl font-bold mb-4">Select Your Age Group</h2>
-//             <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto">
-//               {["18-29", "30-39", "40-54", "55+"].map((age) => (
-//                 <button
-//                   key={age}
-//                   className={`p-4 rounded border ${
-//                     values.age === age ? "bg-blue-500 text-white" : "bg-white"
-//                   }`}
-//                   onClick={() => updateValue("age", age)}
-//                 >
-//                   {age}
-//                 </button>
-//               ))}
-//             </div>
-//             <Button onClick={back}>Back</Button>
-//           </div>
-//         );
-//       case 3:
-//         return (
-//           <div className="text-center p-6">
-//             <h2 className="text-2xl font-bold mb-4">What’s Your Goal?</h2>
-//             <div className="flex justify-center gap-8">
-//               <div
-//                 className={`cursor-pointer p-2 border-2 rounded-lg ${
-//                   values.goal === "gain" ? "border-blue-500" : "border-gray-300"
-//                 }`}
-//                 onClick={() => updateValue("goal", "gain")}
-//               >
-//                 <Image src={gain} alt="gain" width={100} height={100} />
-//                 <p>Gain</p>
-//               </div>
-//               <div
-//                 className={`cursor-pointer p-2 border-2 rounded-lg ${
-//                   values.goal === "lose" ? "border-blue-500" : "border-gray-300"
-//                 }`}
-//                 onClick={() => updateValue("goal", "lose")}
-//               >
-//                 <Image src={losew} alt="lose" width={100} height={100} />
-//                 <p>Lose</p>
-//               </div>
-//             </div>
-//             <Button onClick={back}>Back</Button>
-//           </div>
-//         );
-//       case 4:
-//         return (
-//           <div className="text-center p-6">
-//             <h2 className="text-2xl font-bold mb-4">How Active Are You?</h2>
-//             <div className="flex justify-center gap-8">
-//               {[{ key: "low", img: light }, { key: "moderate", img: medium }, { key: "high", img: active }].map(({ key, img }) => (
-//                 <div
-//                   key={key}
-//                   className={`cursor-pointer p-2 border-2 rounded-lg ${
-//                     values.activity === key ? "border-blue-500" : "border-gray-300"
-//                   }`}
-//                   onClick={() => updateValue("activity", key)}
-//                 >
-//                   <Image src={img} alt={key} width={100} height={100} />
-//                   <p>{key.charAt(0).toUpperCase() + key.slice(1)}</p>
-//                 </div>
-//               ))}
-//             </div>
-//             <Button onClick={back}>Back</Button>
-//           </div>
-//         );
-//      case 5:
-//   return (
-//     <div className="text-center p-6">
-//       <h2 className="text-xl font-bold mb-4">Summary</h2>
-//       <ul className="mb-4">
-//         {Object.entries(values).map(([k, v]) => (
-//           <li key={k}>
-//             {/* <strong>{k}:</strong> {v || "N/A"} */}
-//           </li>
-//         ))}
-//       </ul>
-//       <Button onClick={handleSubmit}>Submit</Button>
-//       <Button onClick={reset}>Restart</Button>
-//     </div>
-//   );
+  const nextStep = () => setStep((prev) => prev + 1);
+  const prevStep = () => setStep((prev) => prev - 1);
 
-//       case 6:
-//         return (
-//           <div className="p-6">
-//             <div className="flex justify-between items-center mb-4">
-//               <h2 className="text-2xl font-bold">Supplement Recommendations</h2>
-//               <Button onClick={reset}>Start Over</Button>
-//             </div>
-//             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-//               {supplements
-//                 .filter(
-//                   (s: any) =>
-//                     s.gender === values.gender &&
-//                     s.age === values.age &&
-//                     s.goal === values.goal &&
-//                     s.activity === values.activity
-//                 )
-//                 .map((s: any) => (
-//                   <div key={s.id} className="border rounded p-4 shadow">
-//                     <h3 className="text-xl font-semibold mb-2">{s.name}</h3>
-//                     <p className="mb-2">{s.description}</p>
-//                     <p className="mb-2 font-bold">{s.price} €</p>
-//                     <Button onClick={() => alert(`Proceed to buy: ${s.name}`)}>See More & Pay</Button>
-//                   </div>
-//                 ))}
-//             </div>
-//           </div>
-//         );
-//       default:
-//         return null;
-//     }
-//   };
+  const handleSeeMore = async (supplement: Supplement) => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/supplement/${supplement.id}/checkout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-//   return <div className="min-h-screen bg-gradient-to-br from-green-100 to-pink-100">{renderStep()}</div>;
-// }
+      if (!response.ok) {
+        if (response.status === 401) {
+          setError("Session expired. Please log in again.");
+          localStorage.removeItem("accessToken");
+          setToken("");
+          router.push("/login");
+          return;
+        }
+        throw new Error(`Failed to initiate payment: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const { url } = data;
+
+      window.location.href = url;
+    } catch (error: any) {
+      console.error("Error initiating payment:", error);
+      setError(`Failed to initiate payment: ${error.message || "Unknown error"}`);
+    }
+  };
+
+  const handleSubmit = () => {
+    console.log("Submit clicked, form values:", values);
+    const { gender, age, goal, activity } = values;
+    let matchingSupplements = supplements.filter(
+      (supplement) =>
+        (!gender || supplement.gender.toLowerCase() === gender.toLowerCase()) &&
+        (!age || supplement.age === age) &&
+        (!goal || supplement.goal.toLowerCase() === goal.toLowerCase()) &&
+        (!activity || supplement.activity.toLowerCase() === activity.toLowerCase())
+    );
+    console.log("Matching supplements:", matchingSupplements);
+
+    if (matchingSupplements.length > 0) {
+      setSupplements(matchingSupplements);
+      setStep(6);
+    } else {
+      console.log("No matching supplements found. Showing all supplements as fallback.");
+      setStep(6);
+    }
+  };
+
+  const resetForm = () => {
+    if (typeof window !== "undefined") {
+      sessionStorage.clear();
+    }
+    setStep(1);
+    setValues({
+      gender: "",
+      age: "",
+      goal: "",
+      activity: "",
+    });
+    setSupplements([]);
+    fetchSupplements();
+  };
+
+const addToCart = async (supplement: Supplement) => {
+  // Assuming userId is stored in localStorage or available in state/context
+  const clientData = localStorage.getItem("user");
+    console.log("clientdata", clientData);
+
+    if (!clientData) {
+      console.warn("Missing clientId");
+      return;
+    }
+
+    const userId = JSON.parse(clientData).id; // Replace with your method to get userId
+
+
+  try {
+    const response = await fetch("http://localhost:8080/api/cart", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userId,
+        supplementId: supplement.id,
+        quantity: 1,
+      }),
+    });
+
+    if (!response.ok) {
+      if (response.status === 400) {
+        setError("Invalid request. Please check your input and try again.");
+        return;
+      }
+      if (response.status === 404) {
+        setError("Supplement not found.");
+        return;
+      }
+      throw new Error(`Failed to add to cart: ${response.statusText}`);
+    }
+
+    const newCartItem = await response.json();
+   alert( `${supplement.name} added to cart!`)
+    setTimeout(() => setSuccess(""), 3000); // Clear success message after 3 seconds
+  } catch (error: any) {
+    console.error("Error adding to cart:", error);
+    setError(`Failed to add to cart: ${error.message || "Unknown error"}`);
+  }
+};
+
+  const renderStep = () => {
+    switch (step) {
+      case 1:
+        return (
+          <div className="container mx-auto px-4 py-[50px]">
+            <div className="max-w-lg mx-auto text-center">
+              <h2 className="text-2xl font-bold text-white mb-[200px]">Select Your Gender</h2>
+              <div className="flex justify-center gap-4">
+                <div
+                  className={`flex flex-col items-center p-4 rounded-lg cursor-pointer transition bg-black border-2 ${
+                    values.gender === "male" ? "border-[#EE7838]" : "border-gray-700"
+                  } hover:border-[#EE7838]`}
+                  onClick={() => handleChangeAndNext("gender", "male")}
+                >
+                  <img src={male.src} alt="male" className="rounded object-contain w-[150px] h-[150px]" />
+                  <p className="mt-2 text-white">Male</p>
+                </div>
+                <div
+                  className={`flex flex-col items-center p-4 rounded-lg cursor-pointer transition bg-black border-2 ${
+                    values.gender === "female" ? "border-[#EE7838]" : "border-gray-700"
+                  } hover:border-[#EE7838]`}
+                  onClick={() => handleChangeAndNext("gender", "female")}
+                >
+                  <img src={female.src} alt="female" className="rounded object-contain w-[150px] h-[150px]" />
+                  <p className="mt-2 text-white">Female</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      case 2:
+        return (
+          <div className="container mx-auto px-4 py-8">
+            <div className="max-w-lg mx-auto text-center">
+              <h2 className="text-2xl font-bold text-white mb-[200px]">Select Your Age Group</h2>
+              <div className="grid grid-cols-2 gap-4">
+                {["18-29", "30-39", "40-54", "55+"].map((group) => (
+                  <div
+                    key={group}
+                    className={`p-4 rounded-lg cursor-pointer transition bg-black border-2 ${
+                      values.age === group ? "border-[#EE7838]" : "border-gray-700"
+                    } hover:border-[#EE7838]`}
+                    onClick={() => handleChangeAndNext("age", group)}
+                  >
+                    <p className="text-white">{group}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-[50px]">
+                <button
+                  className="px-4 py-2 bg-[#EE7838] text-black rounded hover:bg-[#d66b30]"
+                  onClick={prevStep}
+                >
+                  Back
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      case 3:
+        return (
+          <div className="container mx-auto px-4 py-8">
+            <div className="max-w-lg mx-auto text-center">
+              <h2 className="text-2xl font-bold text-white mb-[200px]">Select Your Goal</h2>
+              <div className="flex justify-center gap-4">
+                <div
+                  className={`flex flex-col items-center p-4 rounded-lg cursor-pointer transition bg-black border-2 ${
+                    values.goal === "lose" ? "border-[#EE7838]" : "border-gray-700"
+                  } hover:border-[#EE7838]`}
+                  onClick={() => handleChangeAndNext("goal", "lose")}
+                >
+                  <img src={losew.src} alt="lose weight" className="rounded object-contain w-[150px] h-[150px]" />
+                  <p className="mt-2 text-white">Lose Weight</p>
+                </div>
+                <div
+                  className={`flex flex-col items-center p-4 rounded-lg cursor-pointer transition bg-black border-2 ${
+                    values.goal === "gain" ? "border-[#EE7838]" : "border-gray-700"
+                  } hover:border-[#EE7838]`}
+                  onClick={() => handleChangeAndNext("goal", "gain")}
+                >
+                  <img src={gain.src} alt="gain weight" className="rounded object-contain w-[150px] h-[150px]" />
+                  <p className="mt-2 text-white">Gain Weight</p>
+                </div>
+              </div>
+              <div className="mt-[50px]">
+                <button
+                  className="px-4 py-2 bg-[#EE7838] text-black rounded hover:bg-[#d66b30]"
+                  onClick={prevStep}
+                >
+                  Back
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      case 4:
+        return (
+          <div className="container mx-auto px-4 py-8">
+            <div className="max-w-lg mx-auto text-center">
+              <h2 className="text-2xl font-bold text-white mb-[200px]">How Active Are You?</h2>
+              <div className="flex justify-center gap-4">
+                <div
+                  className={`flex flex-col items-center p-4 rounded-lg cursor-pointer transition bg-black border-2 ${
+                    values.activity === "low" ? "border-[#EE7838]" : "border-gray-700"
+                  } hover:border-[#EE7838]`}
+                  onClick={() => handleChangeAndNext("activity", "low")}
+                >
+                  <img src={light.src} alt="low activity" className="rounded object-contain w-[150px] h-[150px]" />
+                  <p className="mt-2 text-white">Low</p>
+                </div>
+                <div
+                  className={`flex flex-col items-center p-4 rounded-lg cursor-pointer transition bg-black border-2 ${
+                    values.activity === "moderate" ? "border-[#EE7838]" : "border-gray-700"
+                  } hover:border-[#EE7838]`}
+                  onClick={() => handleChangeAndNext("activity", "moderate")}
+                >
+                  <img src={medium.src} alt="moderate activity" className="rounded object-contain w-[150px] h-[150px]" />
+                  <p className="mt-2 text-white">Moderate</p>
+                </div>
+                <div
+                  className={`flex flex-col items-center p-4 rounded-lg cursor-pointer transition bg-black border-2 ${
+                    values.activity === "high" ? "border-[#EE7838]" : "border-gray-700"
+                  } hover:border-[#EE7838]`}
+                  onClick={() => handleChangeAndNext("activity", "high")}
+                >
+                  <img src={active.src} alt="high activity" className="rounded object-contain w-[150px] h-[150px]" />
+                  <p className="mt-2 text-white">High</p>
+                </div>
+              </div>
+              <div className="mt-6">
+                <button
+                  className="px-4 py-2 bg-[#EE7838] text-black rounded hover:bg-[#d66b30]"
+                  onClick={prevStep}
+                >
+                  Back
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      case 5:
+        return (
+          <div className="container mx-auto px-4 py-8">
+            <div className="max-w-lg mx-auto text-center">
+              <h2 className="text-2xl font-bold text-white mb-6">Your Input Summary</h2>
+              <ul className="text-left space-y-2 bg-black p-6 rounded-lg shadow border-2 border-[#EE7838]">
+                <li className="text-white">
+                  <strong>Gender:</strong> {values.gender}
+                </li>
+                <li className="text-white">
+                  <strong>Age Group:</strong> {values.age}
+                </li>
+                <li className="text-white">
+                  <strong>Goal:</strong> {values.goal}
+                </li>
+                <li className="text-white">
+                  <strong>Activity Level:</strong> {values.activity}
+                </li>
+              </ul>
+              <div className="mt-6 flex justify-center gap-4">
+                <button
+                  className="px-4 py-2 bg-[#EE7838] text-black rounded hover:bg-[#d66b30]"
+                  onClick={handleSubmit}
+                >
+                  Submit
+                </button>
+                <button
+                  className="px-4 py-2 bg-black text-[#EE7838] border-2 border-[#EE7838] rounded hover:bg-[#EE7838] hover:text-black"
+                  onClick={resetForm}
+                >
+                  Restart
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      case 6:
+        return (
+          <div className="container mx-auto mt-[70px] px-4 py-8">
+            <div className="text-center">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-white">Your Recommended Supplements</h2>
+                <button
+                  className="px-4 py-2 bg-black text-[#EE7838] border-2 border-[#EE7838] rounded hover:bg-[#EE7838] hover:text-black"
+                  onClick={resetForm}
+                >
+                  Start Again
+                </button>
+              </div>
+              {error && <p className="text-red-600 mb-4 mt-[70px]">{error}</p>}
+              {success && <p className="text-green-600 mb-4 mt-[70px]">{success}</p>}
+              {supplements.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {supplements.map((supplement) => (
+                    <div
+                      key={supplement.id}
+                      className="bg-black p-6 rounded-lg shadow border-2 border-[#EE7838] hover:shadow-lg transition"
+                    >
+                      <div className="text-sm text-[#EE7838] font-semibold mb-2">{supplement.goal} weight</div>
+                      {supplement.image ? (
+                        <img
+                          src={`http://localhost:8080/uploads/${supplement.image}`}
+                          alt={supplement.name}
+                          width={200}
+                          height={200}
+                          className="mx-auto rounded"
+                        />
+                      ) : (
+                        <div className="w-[200px] h-[200px] mx-auto bg-gray-700 rounded flex items-center justify-center">
+                          <span className="text-gray-400">No img</span>
+                        </div>
+                      )}
+                      <h3 className="text-xl font-semibold text-white mt-4">{supplement.name}</h3>
+                      <p className="text-gray-300 mt-2">{supplement.description}</p>
+                      <p className="text-[#EE7838] font-bold mt-2">{supplement.price}€</p>
+                      <div className="mt-4 flex justify-center gap-4">
+                        <button
+                          className="px-4 py-2 bg-[#EE7838] text-black rounded hover:bg-[#d66b30]"
+                          onClick={() => addToCart(supplement)}
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-gray-300">No supplements found for your criteria.</p>
+              )}
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return <>
+    <Header/>
+    {renderStep()}
+    </>;
+};
+
+export default StartToday;
