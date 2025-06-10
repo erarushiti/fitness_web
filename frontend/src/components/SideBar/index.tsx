@@ -1,8 +1,7 @@
-
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
-
+import { FaTimes } from "react-icons/fa";
 
 interface NavItem {
   name: string;
@@ -10,7 +9,12 @@ interface NavItem {
   icon: string;
 }
 
-const Sidebar: React.FC = () => {
+interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const router = useRouter();
   const [role, setRole] = useState<string | null>(null);
 
@@ -20,7 +24,6 @@ const Sidebar: React.FC = () => {
       setRole(storedRole);
     }
   }, []);
-
 
   const navMap: Record<string, NavItem[]> = {
     admin: [
@@ -48,8 +51,17 @@ const Sidebar: React.FC = () => {
   const navItems = role ? navMap[role] || [] : [];
 
   return (
-    <div className="w-64 bg-[#1c1c1c] text-white p-6">
-      <h2 className="text-2xl font-bold mb-8 capitalize">{role} Panel</h2>
+    <>
+      {/* Close button for mobile */}
+      <div className="flex justify-between items-center md:hidden mb-4">
+        <h2 className="text-xl font-bold capitalize">{role} Panel</h2>
+        <button onClick={onClose}>
+          <FaTimes size={24} />
+        </button>
+      </div>
+
+      {/* Title for desktop */}
+      <h2 className="text-2xl font-bold mb-8 capitalize hidden md:block">{role} Panel</h2>
 
       <nav>
         <ul>
@@ -57,33 +69,32 @@ const Sidebar: React.FC = () => {
             <li key={item.name} className="mb-4">
               <Link
                 href={item.path}
-
-                className={`flex items-center hover:text-gray-300 ${router.pathname === item.path ? 'text-blue-400' : ''}`}
-
+                className={`flex items-center hover:text-gray-300 ${
+                  router.pathname === item.path ? "text-blue-400" : ""
+                }`}
+                onClick={onClose} // close sidebar when clicking a link on mobile
               >
                 <i className={`${item.icon} mr-2`}></i>
                 {item.name}
               </Link>
             </li>
           ))}
-          <li className="mb-4">
 
-            <a
-              href="#"
+          <li className="mb-4">
+            <button
               onClick={() => {
                 localStorage.clear();
                 router.push("/login");
               }}
               className="flex items-center hover:text-gray-300"
             >
-
               <i className="fas fa-sign-out-alt mr-2"></i>
               Logout
-            </a>
+            </button>
           </li>
         </ul>
       </nav>
-    </div>
+    </>
   );
 };
 

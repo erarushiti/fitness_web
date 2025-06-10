@@ -53,45 +53,44 @@ export default function OrderDetailPage() {
 
   if (!order) return <div className="p-6">Duke u ngarkuar...</div>;
 
+  const statusColor = {
+    completed: "text-green-600",
+    pending: "text-yellow-600",
+    failed: "text-red-600",
+    cancelled: "text-gray-600",
+  }[order.status] || "text-white";
+
   return (
     <DashboardLayout>
-      <div className="p-6 space-y-6">
-        <h1 className="text-2xl font-semibold mb-2">Orders Details</h1>
-        <p className="text-sm text-gray-500">
-          {new Date(order.createdAt).toLocaleString()}
-        </p>
-        <p
-          className={`font-medium capitalize ${
-              order.status === "completed"
-              ? "text-green-600"
-              : order.status === "pending"
-              ? "text-yellow-600"
-              : order.status === "failed"
-              ? "text-red-600"
-              : order.status === "cancelled"
-              ? "text-grey-600"
-              : 'text-white'
-          }`}
-        >
-          Status: {order.status}
-        </p>
+      <div className="p-4 sm:p-6 max-w-screen-lg mx-auto space-y-6">
+        <div>
+          <h1 className="text-2xl font-semibold">Order Details</h1>
+          <p className="text-sm text-gray-500">
+            {new Date(order.createdAt).toLocaleString()}
+          </p>
+          <p className={`font-medium capitalize mt-1 ${statusColor}`}>
+            Status: {order.status}
+          </p>
+        </div>
 
-        <div className="border rounded-md p-4">
+        <div className="border rounded-md p-4 bg-white">
           <h2 className="text-lg font-medium mb-4">Products</h2>
           <div className="divide-y">
             {order.orderItems.map((item) => (
-              <div key={item.id} className="py-4 flex items-center gap-4">
-                 <img
-                    src={`http://localhost:8080/uploads/${item.supplement.image}`}
-                    alt={item.supplement.name}
-                    height={200}
-                    className=" rounded w-[92px]"
-                  />
+              <div
+                key={item.id}
+                className="py-4 flex flex-col sm:flex-row sm:items-center gap-4"
+              >
+                <img
+                  src={`http://localhost:8080/uploads/${item.supplement.image}`}
+                  alt={item.supplement.name}
+                  className="rounded w-full sm:w-[92px] h-auto object-cover"
+                />
                 <div className="flex-1">
-                  <p className="font-medium">{item.supplement.name}</p>
+                  <p className="font-medium text-base">{item.supplement.name}</p>
                   <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
                 </div>
-                <p className="text-sm font-semibold">
+                <p className="text-sm font-semibold min-w-[80px] text-right">
                   € {(item.unitPrice ?? 0).toFixed(2)}
                 </p>
               </div>
@@ -99,7 +98,7 @@ export default function OrderDetailPage() {
           </div>
         </div>
 
-        <div className="text-right text-xl font-bold">
+        <div className="text-right text-lg sm:text-xl font-bold">
           Total: € {order.totalAmount.toFixed(2)}
         </div>
       </div>
