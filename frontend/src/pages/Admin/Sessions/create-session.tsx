@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 
 import DashboardLayout from "../../../components/DashboardLayout";
-import { fetchWithAuth } from "utils/api";
+import { fetchWithAuth } from "@/utils/api";
 
 const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
