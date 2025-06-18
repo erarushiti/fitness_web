@@ -54,24 +54,22 @@
     "whatwg-fetch": "^3.6.20"
   },
   "jest": {
-    "testEnvironment": "jsdom",
-    "setupFilesAfterEnv": [
-      "<rootDir>/jest.setup.js"
-    ],
-    "transform": {
-      "^.+\\.(ts|tsx)$": "ts-jest"
-    },
-    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(ts|tsx)$",
-    "moduleNameMapper": {
-      "^@/components/(.*)$": "<rootDir>/src/components/$1",
-      "^@/assets/(.*)$": "<rootDir>/src/assets/$1",
-      "^@/src/(.*)$": "<rootDir>/src/$1",
-      "^@/pages/(.*)$": "<rootDir>/src/pages/$1",
-      "^@/utils/(.*)$": "<rootDir>/src/utils/$1",
-      "\\.(css|less|sass|scss)$": "identity-obj-proxy"
-    },
-    "transformIgnorePatterns": [
-      "/node_modules/(?!@headlessui)"
-    ]
+   "testEnvironment": "jsdom",
+  "setupFilesAfterEnv": ["<rootDir>/jest.setup.js"],
+  "transform": {
+    "^.+\\.(ts|tsx|js|jsx)$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "^@/components/(.*)$": "<rootDir>/src/components/$1",
+    "^@/assets/(.*)$": "<rootDir>/src/assets/$1",
+    "^@/src/(.*)$": "<rootDir>/src/$1",
+    "^@/pages/(.*)$": "<rootDir>/src/pages/$1",
+    "^@/utils/(.*)$": "<rootDir>/src/utils/$1",
+    "\\.(css|less|sass|scss)$": "identity-obj-proxy"
+  },
+  "transformIgnorePatterns": [
+    "/node_modules/(?!@headlessui)"
+  ],
+  "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(ts|tsx)$"
   }
 }

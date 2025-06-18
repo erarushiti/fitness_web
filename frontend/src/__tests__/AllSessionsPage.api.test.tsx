@@ -1,7 +1,6 @@
 import React from "react";
 import { render, waitFor, screen } from "@testing-library/react";
 import AllSessionsPage from '@/pages/Admin/Sessions/index';
-// import '@testing-library/jest-dom/extend-expect';
 
 describe("AllSessionsPage API GET", () => {
   const mockSessions = [
@@ -28,6 +27,7 @@ describe("AllSessionsPage API GET", () => {
   beforeEach(() => {
     global.fetch = jest.fn(() =>
       Promise.resolve({
+        ok: true,
         json: () => Promise.resolve(mockSessions),
       })
     ) as jest.Mock;
@@ -41,12 +41,10 @@ describe("AllSessionsPage API GET", () => {
     render(<AllSessionsPage />);
 
     await waitFor(() => {
-      // Check that session names appear in the document
       expect(screen.getByText("Morning Yoga")).toBeInTheDocument();
       expect(screen.getByText("Evening Cardio")).toBeInTheDocument();
     });
 
-    // Optionally ensure fetch was called with correct URL
-    expect(global.fetch).toHaveBeenCalledWith("http://localhost:8080/api/sessions");
+    expect(global.fetch).toHaveBeenCalledWith("http://localhost:8080/api/session");
   });
 });
