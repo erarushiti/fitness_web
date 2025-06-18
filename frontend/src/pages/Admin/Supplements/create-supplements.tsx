@@ -32,9 +32,10 @@ export default function CreateSupplement() {
   });
 
   useEffect(() => {
-    // Retrieve token from localStorage when component mounts
+   
     const storedToken = localStorage.getItem("accessToken");
     if (storedToken) {
+      console.log(token);
       setToken(storedToken);
     }
   }, []);

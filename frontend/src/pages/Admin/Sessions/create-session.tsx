@@ -9,7 +9,7 @@ const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Satur
 interface FormData {
   name: string;
   description: string;
-  weekDays: string[]; // updated
+  weekDays: string[];
   time: string;
   price: string;
 }
@@ -19,9 +19,10 @@ export default function CreateSession() {
   const [token, setToken] = useState('');
 
   useEffect(() => {
-    // Retrieve token from localStorage when component mounts
+  
     const storedToken = localStorage.getItem('accessToken');
     if (storedToken) {
+      console.log(token);
       setToken(storedToken);
     }
   }, []);
@@ -29,7 +30,7 @@ export default function CreateSession() {
   const [formData, setFormData] = useState<FormData>({
     name: "",
     description: "",
-    weekDays: [], // updated
+    weekDays: [], 
     time: "",
     price: "",
   });
@@ -60,12 +61,7 @@ export default function CreateSession() {
     setError(null);
     setSuccess(null);
 
-    const { name, description, weekDays, time, price } = formData;
-    // if (!name || !description || weekDays.length === 0 || !time || !price) {
-    //   setError("All fields are required, including at least one weekday.");
-    //   return;
-    // }
-
+  
     try {
       const response = await fetchWithAuth("http://localhost:8080/api/sessions", {
         method: "POST",

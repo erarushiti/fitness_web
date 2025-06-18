@@ -39,7 +39,6 @@ const FeedbackPage: React.FC = () => {
     setFormData((prev) => ({ ...prev, rating: star }));
   };
 
-  const visibleFeedbacks = feedbacks.concat(feedbacks).slice(currentIndex, currentIndex + 3);
 
   return (
     <div className="min-h-screen bg-black text-white p-8 pt-28">
@@ -114,7 +113,7 @@ const FeedbackPage: React.FC = () => {
                   )
                 )}
               </div>
-              <p className="text-base text-gray-300 text-center">"{feedback.comment}"</p>
+              <p className="text-base text-gray-300 text-center">&quot;{feedback.comment}&quot;</p>
             </div>
           ))}
         </div>

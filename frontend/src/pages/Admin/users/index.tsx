@@ -8,31 +8,31 @@ import DeleteModal from "@/components/DeleteModal";
 import { fetchWithAuth } from "@/utils/api";
 
 
-interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: string;
-  createdAt: string;
-}
+// interface User {
+//   id: string;
+//   email: string;
+//   firstName: string;
+//   lastName: string;
+//   role: string;
+//   createdAt: string;
+// }
 
-interface Client {
-  id: string;
-  email: string;
-  name: string;
-  fitnessGoals: string;
-  weight: number;
-  height: number;
-}
+// interface Client {
+//   id: string;
+//   email: string;
+//   name: string;
+//   fitnessGoals: string;
+//   weight: number;
+//   height: number;
+// }
 
-interface Trainer {
-  id: string;
-  name: string;
-  email: string;
-  specialization: string;
-  experienceYears: number;
-}
+// interface Trainer {
+//   id: string;
+//   name: string;
+//   email: string;
+//   specialization: string;
+//   experienceYears: number;
+// }
 
 const TABS = ["All", "Clients", "Trainers"];
 
