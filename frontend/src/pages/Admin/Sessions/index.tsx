@@ -5,8 +5,11 @@ import DashboardLayout from "@/components/DashboardLayout";
 import DataTable, { Column } from "@/components/Table";
 import EditModal from "@/components/EditModal";
 import DeleteModal from "@/components/DeleteModal";
-import { fetchWithAuth } from "utils/api";
+
+import { fetchWithAuth } from "@/utils/api";
+
 import useAdminRedirect from "../../../../hooks/useAdminRedirect";
+
 
 interface Session {
   id: string;

@@ -2,47 +2,29 @@
   "compilerOptions": {
     "baseUrl": "src",
     "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
-    "paths": {
-      "@/components/*": [
-        "components/*"
-      ],
-      "@/assets/*": [
-        "assets/*"
-      ],
-      "@/src/*": [
-        "src/*"
-      ]
-    },
+    "lib": ["dom", "dom.iterable", "esnext"],
+   "paths": {
+  "@/*": ["*"],
+  "@/components/*": ["components/*"],
+  "@/assets/*": ["assets/*"],
+  "@/src/*": ["src/*"]
+}
+,
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
+    "module": "commonjs", // Jest prefers commonjs
+    "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx", // Updated for React 19
     "incremental": true,
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ]
+    "plugins": [{ "name": "next" }],
+    "types": ["jest", "@testing-library/jest-dom", "react", "react-dom"]
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "next-env.d.ts",
-    ".next/types/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["src/**/*", "next-env.d.ts", ".next/types/**/*.ts", "src/global.d.ts"],
+  "exclude": ["node_modules"]
 }
