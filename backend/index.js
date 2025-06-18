@@ -30,7 +30,7 @@ app.use(
 );
 
 app.use("/api/auth", authRouter);
-app.use("/api/sessions", sessionRoutes);
+app.use("/api/session", sessionRoutes);
 app.use('/api/waterlog', waterLogRoutes);
 app.use('/api/supplement', supplementRoutes);
 app.use('/api/trainer', trainerRoutes);
