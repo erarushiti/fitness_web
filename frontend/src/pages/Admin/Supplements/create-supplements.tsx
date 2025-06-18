@@ -3,6 +3,7 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import DashboardLayout from "../../../components/DashboardLayout";
 import { fetchWithAuth } from "utils/api";
+import useAdminRedirect from "../../../../hooks/useAdminRedirect";
 
 interface FormData {
   name: string;
@@ -19,7 +20,7 @@ export default function CreateSupplement() {
   const [token, setToken] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-
+   useAdminRedirect(); // Call hook at top level
   const [formData, setFormData] = useState<FormData>({
     name: "",
     description: "",
@@ -72,8 +73,9 @@ export default function CreateSupplement() {
     try {
       const response = await fetchWithAuth("http://localhost:8080/api/supplement", {
         method: "POST",
-        body: payload,
+       body: JSON.stringify(formData),
       });
+      console.log("payload", payload)
 
       if (!response.ok) {
         const data = await response.json();

@@ -5,7 +5,11 @@ import DashboardLayout from "@/components/DashboardLayout";
 import DataTable, { Column } from "@/components/Table";
 import EditModal from "@/components/EditModal";
 import DeleteModal from "@/components/DeleteModal";
+
 import { fetchWithAuth } from "@/utils/api";
+
+import useAdminRedirect from "../../../../hooks/useAdminRedirect";
+
 
 interface Session {
   id: string;
@@ -33,7 +37,7 @@ export default function AllSessionsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [sessionToDelete, setSessionToDelete] = useState<Session | null>(null);
-
+  useAdminRedirect(); // Call hook at top level
   const [token, setToken] = useState("");
   
     useEffect(() => {
@@ -45,7 +49,7 @@ export default function AllSessionsPage() {
     }, []);
 
   useEffect(() => {
-    fetch("http://localhost:8080/api/sessions")
+    fetch("http://localhost:8080/api/session")
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
@@ -77,7 +81,7 @@ export default function AllSessionsPage() {
     if (!sessionToDelete) return;
     try {
       const res = await fetch(
-        `http://localhost:8080/api/sessions/${sessionToDelete.id}`,
+        `http://localhost:8080/api/session/${sessionToDelete.id}`,
         {
           method: "DELETE",
         
@@ -116,7 +120,7 @@ export default function AllSessionsPage() {
     };
   
     try {
-      const res = await fetchWithAuth(`http://localhost:8080/api/sessions/${selectedSession.id}`, {
+      const res = await fetchWithAuth(`http://localhost:8080/api/session/${selectedSession.id}`, {
         method: "PUT",
         body: JSON.stringify(updatedSession),
       });

@@ -6,6 +6,7 @@ import DataTable, { Column } from "@/components/Table";
 import EditModal from "@/components/EditModal";
 import DeleteModal from "@/components/DeleteModal";
 import { fetchWithAuth } from "utils/api";
+import useAdminRedirect from "../../../../hooks/useAdminRedirect";
 
 interface Supplement {
   id: string;
@@ -27,7 +28,7 @@ export default function AllSupplementsPage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [supplementoDelete, setSupplementToDelete] =
     useState<Supplement | null>(null);
-
+  useAdminRedirect(); // Call hook at top level
   const [token, setToken] = useState("");
   const [searchParams, setSearchParams] = useState({
     name: "",

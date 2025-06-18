@@ -82,7 +82,7 @@ The app has three roles with specific permissions, and all routes are protected 
 Below are some screenshots showcasing key features of the app:
 
 - **Dashboard**: Overview of user activity and admin controls.  
-  *Add screenshot here: `screenshots/admin_dashboard.png`*
+  *Add screenshot here: `./screenshots/admin_dashboard.png`*
 - **Orders Management**: Admin interface for managing orders.  
   *Add screenshot here: `screenshots/admin_allOrders.png`*
 - **User Registration**: Admin interface for registering users.  
