@@ -26,6 +26,7 @@ export default function Sessions() {
     try {
       const response = await axios.get("http://localhost:8080/api/session");
       setSessions(response.data);
+      console.log(loading);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching sessions:", error);

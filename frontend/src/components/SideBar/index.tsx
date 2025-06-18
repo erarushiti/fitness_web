@@ -10,11 +10,11 @@ interface NavItem {
 }
 
 interface SidebarProps {
-  isOpen: boolean;
+  // isOpen: boolean;
   onClose: () => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
+const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
   const router = useRouter();
   const [role, setRole] = useState<string | null>(null);
 

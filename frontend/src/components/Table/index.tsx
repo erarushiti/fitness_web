@@ -59,7 +59,7 @@ export default function DataTable<T>({
                     key={String(col.accessor)}
                     className="px-4 py-3 text-sm text-gray-900 whitespace-nowrap"
                   >
-                    {col.render ? col.render(item) : (item[col.accessor] as any)}
+                    {col.render ? col.render(item) : (item[col.accessor] as string)}
                   </td>
                 ))}
                 {(onEdit || onDelete) && (
