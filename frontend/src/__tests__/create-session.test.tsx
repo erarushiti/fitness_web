@@ -1,17 +1,19 @@
+// src/__tests__/create-session.test.tsx
+
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import CreateSession from '@/pages/Admin/Sessions/create-session';
 
-
-
-// Mock layout and fetch
-jest.mock('../components/DashboardLayout', () => ({
+// Mocks must come BEFORE component imports
+jest.mock('@/components/DashboardLayout', () => ({
   __esModule: true,
-  default: ({ children }: any) => children,
+  default: ({ children }: any) => <>{children}</>,
 }));
-jest.mock('../utils/api', () => ({
+
+jest.mock('@/utils/api', () => ({
   fetchWithAuth: jest.fn(),
 }));
+
+import CreateSession from '@/pages/Admin/Sessions/create-session';
 import { fetchWithAuth } from '@/utils/api';
 
 describe('CreateSession component', () => {
