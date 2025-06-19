@@ -1,14 +1,10 @@
+
+'use client';
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import "../../app/globals.css";
-import female from "../../assets/images/female.png";
-import male from "../../assets/images/male.png";
-import losew from "../../assets/images/losew.png";
-import gain from "../../assets/images/gain.png";
-import light from "../../assets/images/light.png";
-import medium from "../../assets/images/medium.png";
-import active from "../../assets/images/active.png";
+import Image from "next/image";
 import Header from "@/components/Header";
+import "../../app/globals.css";
 
 // Interface for form values
 interface FormValues {
@@ -58,7 +54,7 @@ const StartToday: React.FC = () => {
 
   const fetchSupplements = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/supplement", {
+      const response = await fetch(`http://localhost:8080/api/supplement`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -68,7 +64,7 @@ const StartToday: React.FC = () => {
           setError("Session expired. Please log in again.");
           localStorage.removeItem("accessToken");
           setToken("");
-          router.push("/login"); // Redirect to login page
+          router.push("/login");
           return;
         }
         throw new Error(`Failed to fetch supplements: ${response.statusText}`);
@@ -174,9 +170,8 @@ const StartToday: React.FC = () => {
     fetchSupplements();
   };
 
-const addToCart = async (supplement: Supplement) => {
-  // Assuming userId is stored in localStorage or available in state/context
-  const clientData = localStorage.getItem("user");
+  const addToCart = async (supplement: Supplement) => {
+    const clientData = localStorage.getItem("user");
     console.log("clientdata", clientData);
 
     if (!clientData) {
@@ -184,42 +179,41 @@ const addToCart = async (supplement: Supplement) => {
       return;
     }
 
-    const userId = JSON.parse(clientData).id; // Replace with your method to get userId
+    const userId = JSON.parse(clientData).id;
 
+    try {
+      const response = await fetch(`http://localhost:8080/api/cart`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userId,
+          supplementId: supplement.id,
+          quantity: 1,
+        }),
+      });
 
-  try {
-    const response = await fetch("http://localhost:8080/api/cart", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userId,
-        supplementId: supplement.id,
-        quantity: 1,
-      }),
-    });
-
-    if (!response.ok) {
-      if (response.status === 400) {
-        setError("Invalid request. Please check your input and try again.");
-        return;
+      if (!response.ok) {
+        if (response.status === 400) {
+          setError("Invalid request. Please check your input and try again.");
+          return;
+        }
+        if (response.status === 404) {
+          setError("Supplement not found.");
+          return;
+        }
+        throw new Error(`Failed to add to cart: ${response.statusText}`);
       }
-      if (response.status === 404) {
-        setError("Supplement not found.");
-        return;
-      }
-      throw new Error(`Failed to add to cart: ${response.statusText}`);
+
+      const newCartItem = await response.json();
+      alert(`${supplement.name} added to cart!`);
+      setTimeout(() => setSuccess(""), 3000);
+    } catch (error: any) {
+      console.error("Error adding to cart:", error);
+      setError(`Failed to add to cart: ${error.message || "Unknown error"}`);
     }
-
-    const newCartItem = await response.json();
-   alert( `${supplement.name} added to cart!`)
-    setTimeout(() => setSuccess(""), 3000); // Clear success message after 3 seconds
-  } catch (error: any) {
-    console.error("Error adding to cart:", error);
-    setError(`Failed to add to cart: ${error.message || "Unknown error"}`);
-  }
-};
+  };
 
   const renderStep = () => {
     switch (step) {
@@ -235,7 +229,13 @@ const addToCart = async (supplement: Supplement) => {
                   } hover:border-[#EE7838]`}
                   onClick={() => handleChangeAndNext("gender", "male")}
                 >
-                  <img src={male.src} alt="male" className="rounded object-contain w-[150px] h-[150px]" />
+                  <Image
+                    src="/images/male.png"
+                    alt="Male"
+                    width={150}
+                    height={150}
+                    className="rounded object-contain w-[150px] h-[150px]"
+                  />
                   <p className="mt-2 text-white">Male</p>
                 </div>
                 <div
@@ -244,7 +244,13 @@ const addToCart = async (supplement: Supplement) => {
                   } hover:border-[#EE7838]`}
                   onClick={() => handleChangeAndNext("gender", "female")}
                 >
-                  <img src={female.src} alt="female" className="rounded object-contain w-[150px] h-[150px]" />
+                  <Image
+                    src="/images/female.png"
+                    alt="Female"
+                    width={150}
+                    height={150}
+                    className="rounded object-contain w-[150px] h-[150px]"
+                  />
                   <p className="mt-2 text-white">Female</p>
                 </div>
               </div>
@@ -292,7 +298,13 @@ const addToCart = async (supplement: Supplement) => {
                   } hover:border-[#EE7838]`}
                   onClick={() => handleChangeAndNext("goal", "lose")}
                 >
-                  <img src={losew.src} alt="lose weight" className="rounded object-contain w-[150px] h-[150px]" />
+                  <Image
+                    src="/images/losew.png"
+                    alt="Lose Weight"
+                    width={150}
+                    height={150}
+                    className="rounded object-contain w-[150px] h-[150px]"
+                  />
                   <p className="mt-2 text-white">Lose Weight</p>
                 </div>
                 <div
@@ -301,7 +313,13 @@ const addToCart = async (supplement: Supplement) => {
                   } hover:border-[#EE7838]`}
                   onClick={() => handleChangeAndNext("goal", "gain")}
                 >
-                  <img src={gain.src} alt="gain weight" className="rounded object-contain w-[150px] h-[150px]" />
+                  <Image
+                    src="/images/gain.png"
+                    alt="Gain Weight"
+                    width={150}
+                    height={150}
+                    className="rounded object-contain w-[150px] h-[150px]"
+                  />
                   <p className="mt-2 text-white">Gain Weight</p>
                 </div>
               </div>
@@ -328,7 +346,13 @@ const addToCart = async (supplement: Supplement) => {
                   } hover:border-[#EE7838]`}
                   onClick={() => handleChangeAndNext("activity", "low")}
                 >
-                  <img src={light.src} alt="low activity" className="rounded object-contain w-[150px] h-[150px]" />
+                  <Image
+                    src="/images/light.png"
+                    alt="Low Activity"
+                    width={150}
+                    height={150}
+                    className="rounded object-contain w-[150px] h-[150px]"
+                  />
                   <p className="mt-2 text-white">Low</p>
                 </div>
                 <div
@@ -337,7 +361,13 @@ const addToCart = async (supplement: Supplement) => {
                   } hover:border-[#EE7838]`}
                   onClick={() => handleChangeAndNext("activity", "moderate")}
                 >
-                  <img src={medium.src} alt="moderate activity" className="rounded object-contain w-[150px] h-[150px]" />
+                  <Image
+                    src="/images/medium.png"
+                    alt="Moderate Activity"
+                    width={150}
+                    height={150}
+                    className="rounded object-contain w-[150px] h-[150px]"
+                  />
                   <p className="mt-2 text-white">Moderate</p>
                 </div>
                 <div
@@ -346,7 +376,13 @@ const addToCart = async (supplement: Supplement) => {
                   } hover:border-[#EE7838]`}
                   onClick={() => handleChangeAndNext("activity", "high")}
                 >
-                  <img src={active.src} alt="high activity" className="rounded object-contain w-[150px] h-[150px]" />
+                  <Image
+                    src="/images/active.png"
+                    alt="High Activity"
+                    width={150}
+                    height={150}
+                    className="rounded object-contain w-[150px] h-[150px]"
+                  />
                   <p className="mt-2 text-white">High</p>
                 </div>
               </div>
@@ -458,10 +494,12 @@ const addToCart = async (supplement: Supplement) => {
     }
   };
 
-  return <>
-    <Header/>
-    {renderStep()}
-    </>;
+  return (
+    <>
+      <Header />
+      {renderStep()}
+    </>
+  );
 };
 
 export default StartToday;
