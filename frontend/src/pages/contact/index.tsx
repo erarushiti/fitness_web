@@ -26,7 +26,7 @@ const ContactPage: React.FC = () => {
     <>
       <Header />
 
-      <div className="min-h-screen bg-black text-white px-4 sm:px-6 pt-20 pb-10">
+      <div className="min-h-screen bg-black text-white px-4 sm:px-6 pt-20 pb-10 mt-[100px]">
         <div className="max-w-6xl mx-auto">
 
           {/* Contact Form */}

@@ -132,7 +132,7 @@ const TrainersPage: React.FC = () => {
   return (
     <div>
       <Header />
-      <div style={{ minHeight: '100vh', backgroundColor: '#111', color: 'white', padding: '2rem' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#111', color: 'white', padding: '2rem', marginTop: '100px' }}>
         <h1 style={{ fontSize: '2rem', fontWeight: 'bold', textAlign: 'center', marginBottom: '2rem' }}>
           Meet Our Trainers
         </h1>

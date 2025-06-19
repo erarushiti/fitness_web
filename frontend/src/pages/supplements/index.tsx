@@ -219,7 +219,7 @@ const StartToday: React.FC = () => {
     switch (step) {
       case 1:
         return (
-          <div className="container mx-auto px-4 py-[50px]">
+          <div className="container mx-auto px-4 py-[50px] mt-[100px]">
             <div className="max-w-lg mx-auto text-center">
               <h2 className="text-2xl font-bold text-white mb-[200px]">Select Your Gender</h2>
               <div className="flex justify-center gap-4">
@@ -261,7 +261,7 @@ const StartToday: React.FC = () => {
         return (
           <div className="container mx-auto px-4 py-8">
             <div className="max-w-lg mx-auto text-center">
-              <h2 className="text-2xl font-bold text-white mb-[200px]">Select Your Age Group</h2>
+              <h2 className="text-2xl font-bold text-white mb-[200px] mt-[100px]">Select Your Age Group</h2>
               <div className="grid grid-cols-2 gap-4">
                 {["18-29", "30-39", "40-54", "55+"].map((group) => (
                   <div
@@ -290,7 +290,7 @@ const StartToday: React.FC = () => {
         return (
           <div className="container mx-auto px-4 py-8">
             <div className="max-w-lg mx-auto text-center">
-              <h2 className="text-2xl font-bold text-white mb-[200px]">Select Your Goal</h2>
+              <h2 className="text-2xl font-bold text-white mb-[200px] mt-[100px]">Select Your Goal</h2>
               <div className="flex justify-center gap-4">
                 <div
                   className={`flex flex-col items-center p-4 rounded-lg cursor-pointer transition bg-black border-2 ${
@@ -338,7 +338,7 @@ const StartToday: React.FC = () => {
         return (
           <div className="container mx-auto px-4 py-8">
             <div className="max-w-lg mx-auto text-center">
-              <h2 className="text-2xl font-bold text-white mb-[200px]">How Active Are You?</h2>
+              <h2 className="text-2xl font-bold text-white mb-[200px] mt-[100px]">How Active Are You?</h2>
               <div className="flex justify-center gap-4">
                 <div
                   className={`flex flex-col items-center p-4 rounded-lg cursor-pointer transition bg-black border-2 ${
@@ -401,7 +401,7 @@ const StartToday: React.FC = () => {
         return (
           <div className="container mx-auto px-4 py-8">
             <div className="max-w-lg mx-auto text-center">
-              <h2 className="text-2xl font-bold text-white mb-6">Your Input Summary</h2>
+              <h2 className="text-2xl font-bold text-white mb-6 mt-[100px]" >Your Input Summary</h2>
               <ul className="text-left space-y-2 bg-black p-6 rounded-lg shadow border-2 border-[#EE7838]">
                 <li className="text-white">
                   <strong>Gender:</strong> {values.gender}
