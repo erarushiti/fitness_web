@@ -1,41 +1,30 @@
 "use client";
-import Banner from "@/assets/images/banerrr.png"
-import Icon1 from "@/assets/icons/icon1.png"
-import Icon2 from "@/assets/icons/icon2.png"
-import Icon3 from "@/assets/icons/icon3.png"
+import Image from "next/image";
 import { motion } from "framer-motion";
-import Photo2 from "@/assets/images/photo2.png"
-import Photo1 from "@/assets/images/photo1.png"
-import Photo3 from "@/assets/images/photo3.png"
-import F1 from "@/assets/icons/f1.png"
-import F2 from "@/assets/icons/f2.png"
-import F3 from "@/assets/icons/f3.png"
-import F4 from "@/assets/icons/f4.png"
-import F5 from "@/assets/icons/f5.png"
-import Sessions  from "@/components/Sessions";
+import Sessions from "@/components/Sessions";
 import Footer from "@/components/Footer";
 import FeedbackPage from "@/components/Feedback";
 
-
 const cards = [
   {
-    icon: Icon1,
+    icon: "/icons/icon1.png",
     title: "HAPPY GLOBAL CUSTOMERS",
     percentage: "85%",
   },
   {
-    icon: Icon2,
+    icon: "/icons/icon2.png",
     title: "ADVANCED GYM EQUIPMENTS",
     percentage: "92%",
   },
   {
-    icon: Icon3,
+    icon: "/icons/icon3.png",
     title: "QUALIFIED EXPERT TRAINERS",
     percentage: "99%",
   },
 ];
+
 export default function Home() {
- return (
+  return (
     <div className="w-full">
       {/* First Section (Hero) */}
       <section
@@ -84,10 +73,12 @@ export default function Home() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
           >
-            <img
+            <Image
+              src="/images/banerrr.png"
+              alt="Fitness Banner"
+              width={800}
+              height={400}
               className="w-full max-w-xl h-auto object-contain"
-              src={Banner.src}
-              alt="Fitness Image"
             />
           </motion.div>
         </div>
@@ -134,10 +125,12 @@ export default function Home() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 1, ease: "easeOut", delay: index * 0.3 }}
               >
-                <img
-                  className="h-8 sm:h-10 w-auto"
-                  src={card.icon.src}
+                <Image
+                  src={card.icon}
                   alt="Fitness Icon"
+                  width={40}
+                  height={40}
+                  className="h-8 sm:h-10 w-auto"
                 />
               </motion.div>
 
@@ -176,24 +169,30 @@ export default function Home() {
       {/* Third Section (Image + Text) */}
       <section className="flex flex-col lg:flex-row items-center justify-center gap-8 lg:gap-16 min-h-screen px-4 sm:px-6 lg:px-8 bg-black">
         <div className="relative flex justify-center">
-          <img
+          <Image
+            src="/images/photo2.png"
+            alt="Fitness Image"
+            width={500}
+            height={500}
             className="w-full max-w-md sm:max-w-lg h-auto rounded-[10px]"
-            src={Photo2.src}
-            alt="Fitness Image"
           />
-          <img
+          <Image
+            src="/images/photo1.png"
+            alt="Fitness Image"
+            width={160}
+            height={160}
             className="absolute w-32 sm:w-40 h-auto rounded-[10px] top-[-20px] sm:top-[-30px] left-[calc(100%-8rem)] sm:left-[calc(100%-10rem)] rotate-12 sm:rotate-30"
-            src={Photo1.src}
-            alt="Fitness Image"
           />
-          <img
-            className="absolute w-32 sm:w-40 h-auto rounded-[10px] bottom-[-20px] sm:bottom-[-30px] left-[calc(100%-8rem)] sm:left-[calc(100%-10rem)] -rotate-12 sm:-rotate-30"
-            src={Photo3.src}
+          <Image
+            src="/images/photo3.png"
             alt="Fitness Image"
+            width={160}
+            height={160}
+            className="absolute w-32 sm:w-40 h-auto rounded-[10px] bottom-[-20px] sm:bottom-[-30px] left-[calc(100%-8rem)] sm:left-[calc(100%-10rem)] -rotate-12 sm:-rotate-30"
           />
         </div>
         <div className="pt-6 w-full max-w-md sm:max-w-lg lg:max-w-xl">
-          <h3 className="text-2xl sm:text-3xl lg:text-4xl font-exbamld">
+          <h3 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold">
             DEDICATED TO
             <br />
             IGNITING YOUR
@@ -214,12 +213,14 @@ export default function Home() {
       {/* Fourth Section (Image Gallery) */}
       <section className="bg-black pb-8 sm:pb-12">
         <div className="flex flex-wrap justify-center gap-4 sm:gap-8 lg:gap-16 px-4 sm:px-6 lg:px-8">
-          {[F1, F2, F3, F4, F5].map((img, index) => (
-            <img
+          {["/icons/f1.png", "/icons/f2.png", "/icons/f3.png", "/icons/f4.png", "/icons/f5.png"].map((src, index) => (
+            <Image
               key={index}
+              src={src}
+              alt="Fitness Icon"
+              width={192}
+              height={192}
               className="w-32 sm:w-40 lg:w-48 h-auto object-contain"
-              src={img.src}
-              alt="Fitness Image"
             />
           ))}
         </div>
