@@ -1,17 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import T1 from '@/assets/images/john.jpg'; 
-import T2 from '@/assets/images/t2.jpg';
-import T3 from '@/assets/images/t3.jpg';
-import T4 from '@/assets/images/t4.jpg';
-import T5 from '@/assets/images/t5.jpg';
-import T6 from '@/assets/images/t6.jpg';
-import T7 from '@/assets/images/t7.jpg';
-import T8 from '@/assets/images/t8.jpg';
-import T9 from '@/assets/images/t9.jpg';
-import T10 from '@/assets/images/t10.jpg';
-import T11 from '@/assets/images/t11.jpg';
-import T12 from '@/assets/images/t12.jpg';
+import Image from 'next/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import "../../app/globals.css";
@@ -32,7 +21,7 @@ const trainers: Trainer[] = [
     name: 'John Smith',
     age: 35,
     category: 'Bench Press',
-    image: T1.src,
+    image: '/images/john.jpg',
     description: 'Certified personal trainer with 10+ years of experience in strength training and nutrition.',
     details: 'John specializes in bench press techniques, progressive overload plans, and strength-based routines for all levels.',
   },
@@ -41,7 +30,7 @@ const trainers: Trainer[] = [
     name: 'Emily Johnson',
     age: 29,
     category: 'Bench Press',
-    image: T3.src,
+    image: '/images/t3.jpg',
     description: 'Yoga and flexibility expert helping clients achieve balance and mindfulness.',
     details: 'Emily also incorporates bench press training to develop strength alongside flexibility practices.',
   },
@@ -50,7 +39,7 @@ const trainers: Trainer[] = [
     name: 'Michael Brown',
     age: 40,
     category: 'Bench Press',
-    image: T5.src,
+    image: '/images/t5.jpg',
     description: 'CrossFit coach known for high-intensity training programs.',
     details: 'Michael uses heavy bench press in CrossFit routines for building explosive upper-body strength.',
   },
@@ -59,7 +48,7 @@ const trainers: Trainer[] = [
     name: 'Sarah Davis',
     age: 33,
     category: 'HIIT',
-    image: T6.src,
+    image: '/images/t6.jpg',
     description: 'Specialist in weight loss and sustainable fitness habits.',
     details: 'Sarah’s HIIT sessions are effective for fat burning and improving cardiovascular health.',
   },
@@ -68,7 +57,7 @@ const trainers: Trainer[] = [
     name: 'David Wilson',
     age: 38,
     category: 'HIIT',
-    image: T10.src,
+    image: '/images/t10.jpg',
     description: 'Athletic performance coach working with competitive athletes.',
     details: 'David trains athletes using high-intensity intervals to boost endurance and agility.',
   },
@@ -77,7 +66,7 @@ const trainers: Trainer[] = [
     name: 'Laura Garcia',
     age: 31,
     category: 'HIIT',
-    image: T9.src,
+    image: '/images/t9.jpg',
     description: 'Pilates instructor focused on core strength and injury prevention.',
     details: 'Laura blends HIIT with Pilates to enhance both strength and core stability.',
   },
@@ -86,7 +75,7 @@ const trainers: Trainer[] = [
     name: 'Chris Martinez',
     age: 36,
     category: 'Yoga',
-    image: T7.src,
+    image: '/images/t7.jpg',
     description: 'Functional fitness and mobility expert.',
     details: 'Chris leads yoga sessions that improve flexibility, reduce stress, and aid recovery.',
   },
@@ -95,7 +84,7 @@ const trainers: Trainer[] = [
     name: 'Thomas Lee',
     age: 30,
     category: 'Yoga',
-    image: T2.src,
+    image: '/images/t2.jpg',
     description: 'Group fitness trainer with a passion for dance-based workouts.',
     details: 'Thomas adds yoga flows to his group routines to improve balance and body awareness.',
   },
@@ -104,7 +93,7 @@ const trainers: Trainer[] = [
     name: 'Daniel Thompson',
     age: 41,
     category: 'Yoga',
-    image: T8.src,
+    image: '/images/t8.jpg',
     description: 'Kickboxing and martial arts trainer with military background.',
     details: 'Daniel uses yoga for recovery and flexibility, especially for fighters.',
   },
@@ -113,7 +102,7 @@ const trainers: Trainer[] = [
     name: 'Ashley White',
     age: 28,
     category: 'Beginner',
-    image: T4.src,
+    image: '/images/t4.jpg',
     description: 'Nutrition coach and strength trainer focused on women’s health.',
     details: 'Ashley guides beginners through safe, effective strength training and nutritional planning.',
   },
@@ -122,7 +111,7 @@ const trainers: Trainer[] = [
     name: 'Greg Simmons',
     age: 45,
     category: 'Beginner',
-    image: T11.src,
+    image: '/images/t11.jpg',
     description: 'Beginner-focused trainer with emphasis on form and consistency.',
     details: 'Greg helps newcomers build confidence and correct form from day one.',
   },
@@ -131,7 +120,7 @@ const trainers: Trainer[] = [
     name: 'Nina Patel',
     age: 27,
     category: 'Beginner',
-    image: T12.src,
+    image: '/images/t12.jpg',
     description: 'Supportive coach for beginners looking to gain confidence.',
     details: 'Nina specializes in coaching through basic exercises and building a foundation for long-term success.',
   },
@@ -159,9 +148,11 @@ const TrainersPage: React.FC = () => {
               padding: '1rem',
               boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
             }}>
-              <img
+              <Image
                 src={trainer.image}
                 alt={trainer.name}
+                width={300}
+                height={250}
                 style={{
                   width: '100%',
                   height: '250px',
@@ -227,12 +218,14 @@ const TrainersPage: React.FC = () => {
               }}
               onClick={() => setSelectedTrainer(null)}
             >
-              &times;
+              ×
             </button>
             <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', marginBottom: '1rem' }}>{selectedTrainer.name}</h2>
-            <img
+            <Image
               src={selectedTrainer.image}
               alt={selectedTrainer.name}
+              width={500}
+              height={250}
               style={{ width: '100%', height: '250px', objectFit: 'cover', borderRadius: '8px', marginBottom: '1rem' }}
             />
             <p style={{ fontWeight: 500 }}>{selectedTrainer.description}</p>
