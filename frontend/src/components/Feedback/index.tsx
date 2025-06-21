@@ -24,21 +24,48 @@ const FeedbackPage: React.FC = () => {
     return () => clearInterval(interval);
   }, [feedbacks.length]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // const handleSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   if (formData.name && formData.rating && formData.comment) {
+  //     setFeedbacks([formData, ...feedbacks]);
+  //     setFormData({ name: "", rating: 0, comment: "" });
+  //     alert("Thank you for your feedback!");
+  //   } else {
+  //     alert("Please complete all fields before submitting.");
+  //   }
+  // };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.name && formData.rating && formData.comment) {
-      setFeedbacks([formData, ...feedbacks]);
+  
+    if (!formData.name || !formData.rating || !formData.comment) {
+      alert("Please complete all fields before submitting.");
+      return;
+    }
+  
+    try {
+      const res = await fetch("http://localhost:8080/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+  
+      if (!res.ok) throw new Error("Failed to submit feedback");
+  
+      const newFeedback = await res.json();
+      setFeedbacks([newFeedback, ...feedbacks]);
       setFormData({ name: "", rating: 0, comment: "" });
       alert("Thank you for your feedback!");
-    } else {
-      alert("Please complete all fields before submitting.");
+    } catch (err) {
+      console.error(err);
+      alert("Submission failed. Try again.");
     }
   };
-
   const handleRatingClick = (star: number) => {
     setFormData((prev) => ({ ...prev, rating: star }));
   };
 
+  const visibleFeedbacks = feedbacks.concat(feedbacks).slice(currentIndex, currentIndex + 3);
 
   return (
     <div className="min-h-screen bg-black text-white p-8 pt-28">
@@ -113,7 +140,7 @@ const FeedbackPage: React.FC = () => {
                   )
                 )}
               </div>
-              <p className="text-base text-gray-300 text-center">&quot;{feedback.comment}&quot;</p>
+              <p className="text-base text-gray-300 text-center">"{feedback.comment}"</p>
             </div>
           ))}
         </div>

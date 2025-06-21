@@ -7,6 +7,7 @@ const sessionRoutes = require("./routes/sessions");
 const authRouter = require("./routes/auth");
 const waterLogRoutes = require('./routes/waterLog');
 const supplementRoutes = require("./routes/supplements");
+const feedbackRoutes = require("./routes/feedback");
 const trainerRoutes = require("./routes/trainer");
 const ordesRoutes = require("./routes/orders");
 const cartRoutes = require("./routes/cart");
@@ -47,6 +48,7 @@ app.use('/api/waterlog', waterLogRoutes);
 app.use('/api/supplement', supplementRoutes);
 app.use('/api/trainer', trainerRoutes);
 app.use('/api/orders', ordesRoutes);
+app.use("/api/feedback", feedbackRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/contact', contactRoutes);
 
