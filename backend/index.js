@@ -10,16 +10,28 @@ const supplementRoutes = require("./routes/supplements");
 const trainerRoutes = require("./routes/trainer");
 const ordesRoutes = require("./routes/orders");
 const cartRoutes = require("./routes/cart");
+const contactRoutes = require("./routes/contact");
 const { authenticateToken } = require("./middleware/authenticateToken");
-
+const mongoose = require('mongoose');
 
 dotenv.config();
 const app = express();
+
+// MongoDB connection string from the .env file
+const dbURI = process.env.MONGODB_URI;
 
 // Middleware
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
+// Connect to MongoDB
+mongoose.connect(dbURI)
+  .then(() => {
+    console.log('MongoDB connected successfully');
+  })
+  .catch((err) => {
+    console.error('Error connecting to MongoDB:', err);
+  });
 
 app.use(
   cors({
@@ -36,6 +48,7 @@ app.use('/api/supplement', supplementRoutes);
 app.use('/api/trainer', trainerRoutes);
 app.use('/api/orders', ordesRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/contact', contactRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

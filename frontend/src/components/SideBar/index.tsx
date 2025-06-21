@@ -34,6 +34,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
       { name: "All Supplements", path: "/Admin/Supplements/", icon: "fas fa-cog" },
       { name: "All Orders", path: "/Admin/orders/", icon: "fas fa-cog" },
       { name: "All Users", path: "/Admin/users/", icon: "fas fa-cog" },
+      { name: "All Contacts", path: "/Admin/contacts/", icon: "fas fa-cog" }
       
     ],
     trainer: [
