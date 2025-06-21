@@ -12,6 +12,7 @@ const trainerRoutes = require("./routes/trainer");
 const ordesRoutes = require("./routes/orders");
 const cartRoutes = require("./routes/cart");
 const contactRoutes = require("./routes/contact");
+const quoteRoutes = require("./routes/quotes");
 const { authenticateToken } = require("./middleware/authenticateToken");
 const mongoose = require('mongoose');
 
@@ -51,6 +52,7 @@ app.use('/api/orders', ordesRoutes);
 app.use("/api/feedback", feedbackRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/contact', contactRoutes);
+app.use("/api/quote", quoteRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

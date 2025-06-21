@@ -106,7 +106,7 @@ export function Header() {
             </li>
             <li>
               <Link
-                href="/#about"
+                href="/about"
                 className="hover:text-[#EE7838] transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
