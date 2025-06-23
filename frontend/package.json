@@ -15,6 +15,7 @@
     "aos": "^2.3.4",
     "axios": "^1.9.0",
     "font-awesome": "^4.7.0",
+    "formik": "^2.4.6",
     "framer-motion": "^12.9.7",
     "gsap": "^3.12.7",
     "lucide-react": "^0.506.0",
@@ -23,7 +24,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.57.0",
-    "react-icons": "^5.5.0"
+    "react-icons": "^5.5.0",
+    "yup": "^1.6.1"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.27.2",
@@ -53,6 +55,7 @@
     "whatwg-fetch": "^3.6.20"
   },
   "jest": {
+
    "testEnvironment": "jsdom",
   "setupFilesAfterEnv": ["<rootDir>/jest.setup.ts"],
   "transform": {
@@ -70,5 +73,26 @@
     "/node_modules/(?!@headlessui)"
   ],
   "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(ts|tsx)$"
+
+    "testEnvironment": "jsdom",
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest.setup.js"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx|js|jsx)$": "ts-jest"
+    },
+    "moduleNameMapper": {
+      "^@/components/(.*)$": "<rootDir>/src/components/$1",
+      "^@/assets/(.*)$": "<rootDir>/src/assets/$1",
+      "^@/src/(.*)$": "<rootDir>/src/$1",
+      "^@/pages/(.*)$": "<rootDir>/src/pages/$1",
+      "^@/utils/(.*)$": "<rootDir>/src/utils/$1",
+      "\\.(css|less|sass|scss)$": "identity-obj-proxy"
+    },
+    "transformIgnorePatterns": [
+      "/node_modules/(?!@headlessui)"
+    ],
+    "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(ts|tsx)$"
+
   }
 }

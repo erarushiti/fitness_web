@@ -1,4 +1,3 @@
-import CustomImage from "@/assets/images/fitness.png";
 
 export default function Footer() {
  return (
@@ -13,7 +12,7 @@ export default function Footer() {
           >
             <img
               className="w-16 sm:w-20 h-auto object-contain"
-              src={CustomImage.src}
+              src={'/icons/fitness.png'}
               alt="My Fitness Logo"
             />
             <span className="self-center text-lg sm:text-xl md:text-2xl font-semibold whitespace-nowrap text-white">

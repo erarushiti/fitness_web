@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import fitnessImage from "@/assets/images/fitness.png";
 
 export function Header() {
   const [isSticky, setIsSticky] = useState(false);
@@ -49,7 +48,7 @@ export function Header() {
         {/* Logo */}
         <Link href="/">
           <Image
-            src={fitnessImage}
+            src={'/icons/fitness.png'}
             alt="Fitness Logo"
             width={50}
             height={50}
@@ -107,7 +106,7 @@ export function Header() {
             </li>
             <li>
               <Link
-                href="/#about"
+                href="/about"
                 className="hover:text-[#EE7838] transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
