@@ -1,9 +1,7 @@
-// jest.setup.js
+// frontend/jest.setup.ts
+import '@testing-library/jest-dom';
+import 'whatwg-fetch';
 
-require('@testing-library/jest-dom');
-require("whatwg-fetch");
-
-// Mock next/router (for legacy Pages Router components if any)
 jest.mock('next/router', () => ({
   useRouter: () => ({
     push: jest.fn(),
@@ -16,7 +14,6 @@ jest.mock('next/router', () => ({
   }),
 }));
 
-// Mock next/navigation (for App Router hooks like useRouter/usePathname)
 jest.mock('next/navigation', () => ({
   useRouter: () => ({
     push: jest.fn(),
