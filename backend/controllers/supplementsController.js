@@ -1,6 +1,10 @@
 const Supplement = require("../models/Supplement");
 const { verifyAccessToken } = require("../utils/jwt");
 const path = require('path');
+const { validate: isUUID } = require('uuid');
+const { Op } = require('sequelize');
+
+
 
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers["authorization"];
@@ -29,20 +33,93 @@ const isAdmin = (req, res, next) => {
 };
 
 const supplementController = {
+
+ 
+async advancedSearch(req, res) {
+  try {
+    const {
+      name,
+      goal,
+      activity,
+      gender,
+      age,
+      minPrice,
+      maxPrice,
+      userId,
+    } = req.query;
+
+    const whereClause = {};
+
+    if (name) {
+     whereClause.name = { [Op.like]: `%${name}%` }; // ✅ Compatible with MySQL
+// case-insensitive match
+    }
+
+    if (goal) whereClause.goal = goal;
+    if (activity) whereClause.activity = activity;
+    if (gender) whereClause.gender = gender;
+    if (age) whereClause.age = age;
+    if (userId) whereClause.userId = userId;
+
+    if (minPrice || maxPrice) {
+      whereClause.price = {};
+      if (minPrice && !isNaN(parseFloat(minPrice))) {
+        whereClause.price[Op.gte] = parseFloat(minPrice);
+      }
+      if (maxPrice && !isNaN(parseFloat(maxPrice))) {
+        whereClause.price[Op.lte] = parseFloat(maxPrice);
+      }
+    }
+
+    const supplements = await Supplement.findAll({
+      where: whereClause,
+      order: [['createdAt', 'DESC']],
+      limit: 100,
+    });
+
+    res.status(200).json(supplements);
+  } catch (error) {
+    console.error('Advanced search error:', error);
+    res.status(500).json({ message: 'Server error', error });
+  }
+},
   // CREATE a new session (admin only)
   async createSupplement(req, res) {
     try {
-      const { name, description, price, age, gender, activity, goal } =
-        req.body;
+      const { name, description, price, age, gender, activity, goal } = req.body;
+      const image = req.file ? req.file.filename : null;
 
-      const parsedPrice = parseFloat(price);
-      if (isNaN(parsedPrice)) {
-        return res.status(400).json({ error: "Price must be a valid number" });
+      // Validate required fields
+      if (!name || !description || !price || !age || !gender || !activity || !goal) {
+        return res.status(400).json({ error: "All fields are required" });
       }
 
-       const image = req.file ? req.file.filename : null;
+      // Validate ENUM values
+      const validGoals = ['lose weight', 'gain weight'];
+      const validActivities = ['high', 'low', 'moderate'];
+      const validGenders = ['male', 'female', 'other'];
+      const validAges = ['18-29', '30-39', '40-54', '55+'];
 
-      // Create new session
+      if (!validGoals.includes(goal)) {
+        return res.status(400).json({ error: `Invalid goal value. Must be one of: ${validGoals.join(', ')}` });
+      }
+      if (!validActivities.includes(activity)) {
+        return res.status(400).json({ error: `Invalid activity value. Must be one of: ${validActivities.join(', ')}` });
+      }
+      if (!validGenders.includes(gender)) {
+        return res.status(400).json({ error: `Invalid gender value. Must be one of: ${validGenders.join(', ')}` });
+      }
+      if (!validAges.includes(age)) {
+        return res.status(400).json({ error: `Invalid age value. Must be one of: ${validAges.join(', ')}` });
+      }
+
+      // Validate price
+      const parsedPrice = parseFloat(price);
+      if (isNaN(parsedPrice) || parsedPrice <= 0) {
+        return res.status(400).json({ error: "Price must be a valid positive number" });
+      }
+
+      // Create new supplement
       const newSupplement = await Supplement.create({
         name,
         description,
@@ -58,9 +135,7 @@ const supplementController = {
       res.status(201).json(newSupplement);
     } catch (error) {
       console.error("Error creating supplement:", error);
-      res
-        .status(500)
-        .json({ error: "Failed to create supplement", details: error.message });
+      res.status(500).json({ error: "Failed to create supplement", details: error.message });
     }
   },
 
@@ -75,6 +150,29 @@ const supplementController = {
     }
   },
 
+  // READ a single registration
+async  getSupplementById(req, res) {
+  try {
+    const { id } = req.params;
+      console.log("id", id)
+    // Validate UUID
+    if (!id) {
+      return res.status(400).json({ error: 'Invalid or missing UUID' });
+    }
+
+    // Fetch single supplement by primary key
+    const supplement = await Supplement.findByPk(id);
+
+    if (!supplement) {
+      return res.status(404).json({ error: 'Supplement not found' });
+    }
+
+    res.status(200).json(supplement);
+  } catch (error) {
+    console.error('Error fetching supplement:', error);
+    res.status(500).json({ error: 'Failed to fetch supplement', details: error.message });
+  }
+},
   // UPDATE a session by UUID (admin only)
   async updateSupplement(req, res) {
   try {
@@ -119,23 +217,30 @@ const supplementController = {
 
 
   // DELETE a session by UUID (admin only)
-  async deleteSupplement(req, res) {
-    try {
-      const supplement = await Supplement.findByPk(req.params.id);
+ // DELETE a supplement by UUID (admin only)
+async deleteSupplement(req, res) {
+  try {
+    const { id } = req.params;
 
-      // Check if session exists
-      if (!supplement) {
-        return res.status(404).json({ error: "Supplement not found" });
-      }
-
-      // Delete the session
-      await supplement.destroy();
-      res.status(204).send();
-    } catch (error) {
-      console.error("Error deleting supplement:", error);
-      res.status(500).json({ error: "Failed to delete supplement" });
+    // ✅ Validate UUID first
+    if (!id) {
+      return res.status(400).json({ error: "Invalid or missing UUID" });
     }
-  },
+
+    const supplement = await Supplement.findByPk(id);
+
+    if (!supplement) {
+      return res.status(404).json({ error: "Supplement not found" });
+    }
+
+    await supplement.destroy();
+    res.status(204).send();
+  } catch (error) {
+    console.error("Error deleting supplement:", error);
+    res.status(500).json({ error: "Failed to delete supplement" });
+  }
+},
+
 };
 
 module.exports = supplementController;

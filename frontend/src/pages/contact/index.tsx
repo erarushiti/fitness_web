@@ -13,13 +13,33 @@ const ContactPage: React.FC = () => {
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert("Your message has been sent successfully!");
-    setMessage("");
-    setName("");
-    setEmail("");
-    setSubject("");
+  const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+    
+      if (!name || !email || !subject || !message) {
+        alert("All fields are required!");
+        return;
+      }
+    
+      try {
+        const res = await fetch("http://localhost:8080/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name, email, subject, message }),
+        });
+    
+        const data = await res.json();
+    
+        if (!res.ok) throw new Error(data.error || "Something went wrong");
+    
+        alert("Your message has been sent successfully!");
+        setMessage("");
+        setName("");
+        setEmail("");
+        setSubject("");
+      } catch (err: any) {
+        alert("Error: " + err.message);
+      }
   };
 
   return (
