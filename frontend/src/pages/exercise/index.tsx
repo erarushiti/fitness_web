@@ -323,4 +323,8 @@ const ExercisesPage: React.FC = () => {
   );
 };
 
+ excersizes
+export default ExercisesPage;  
+
 export default ExercisesPage;
+ main

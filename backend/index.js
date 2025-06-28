@@ -14,7 +14,12 @@ const cartRoutes = require("./routes/cart");
 const contactRoutes = require("./routes/contact");
 const quoteRoutes = require("./routes/quotes");
 const { authenticateToken } = require("./middleware/authenticateToken");
+ excersizes
+const exerciseRoutes = require('./routes/exercise');
+const categoryRoutes = require("./routes/category");
+
 const mongoose = require('mongoose');
+main
 
 dotenv.config();
 const app = express();
@@ -51,8 +56,14 @@ app.use('/api/trainer', trainerRoutes);
 app.use('/api/orders', ordesRoutes);
 app.use("/api/feedback", feedbackRoutes);
 app.use('/api/cart', cartRoutes);
+excersizes
+app.use('/api/exercises', exerciseRoutes);
+
+app.use('/api/categories', categoryRoutes);
+
 app.use('/api/contact', contactRoutes);
 app.use("/api/quote", quoteRoutes);
+ main
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
