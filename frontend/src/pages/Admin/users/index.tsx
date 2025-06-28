@@ -5,34 +5,38 @@ import DashboardLayout from "@/components/DashboardLayout";
 import DataTable, { Column } from "@/components/Table";
 import EditModal from "@/components/EditModal";
 import DeleteModal from "@/components/DeleteModal";
-import { fetchWithAuth } from "utils/api";
+
+import { fetchWithAuth } from "@/utils/api";
+
+
 import useAdminRedirect from "../../../../hooks/useAdminRedirect";
 
-interface User {
-  id: string;
-  email: string;
-  firstName: string;
-  lastName: string;
-  role: string;
-  createdAt: string;
-}
 
-interface Client {
-  id: string;
-  email: string;
-  name: string;
-  fitnessGoals: string;
-  weight: number;
-  height: number;
-}
+// interface User {
+//   id: string;
+//   email: string;
+//   firstName: string;
+//   lastName: string;
+//   role: string;
+//   createdAt: string;
+// }
 
-interface Trainer {
-  id: string;
-  name: string;
-  email: string;
-  specialization: string;
-  experienceYears: number;
-}
+// interface Client {
+//   id: string;
+//   email: string;
+//   name: string;
+//   fitnessGoals: string;
+//   weight: number;
+//   height: number;
+// }
+
+// interface Trainer {
+//   id: string;
+//   name: string;
+//   email: string;
+//   specialization: string;
+//   experienceYears: number;
+// }
 
 const TABS = ["All", "Clients", "Trainers"];
 

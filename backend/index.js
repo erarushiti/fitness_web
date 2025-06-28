@@ -7,21 +7,38 @@ const sessionRoutes = require("./routes/sessions");
 const authRouter = require("./routes/auth");
 const waterLogRoutes = require('./routes/waterLog');
 const supplementRoutes = require("./routes/supplements");
+const feedbackRoutes = require("./routes/feedback");
 const trainerRoutes = require("./routes/trainer");
 const ordesRoutes = require("./routes/orders");
 const cartRoutes = require("./routes/cart");
+const contactRoutes = require("./routes/contact");
+const quoteRoutes = require("./routes/quotes");
 const { authenticateToken } = require("./middleware/authenticateToken");
+ excersizes
 const exerciseRoutes = require('./routes/exercise');
 const categoryRoutes = require("./routes/category");
 
+const mongoose = require('mongoose');
+main
 
 dotenv.config();
 const app = express();
+
+// MongoDB connection string from the .env file
+const dbURI = process.env.MONGODB_URI;
 
 // Middleware
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
+// Connect to MongoDB
+mongoose.connect(dbURI)
+  .then(() => {
+    console.log('MongoDB connected successfully');
+  })
+  .catch((err) => {
+    console.error('Error connecting to MongoDB:', err);
+  });
 
 app.use(
   cors({
@@ -37,10 +54,16 @@ app.use('/api/waterlog', waterLogRoutes);
 app.use('/api/supplement', supplementRoutes);
 app.use('/api/trainer', trainerRoutes);
 app.use('/api/orders', ordesRoutes);
+app.use("/api/feedback", feedbackRoutes);
 app.use('/api/cart', cartRoutes);
+excersizes
 app.use('/api/exercises', exerciseRoutes);
 
 app.use('/api/categories', categoryRoutes);
+
+app.use('/api/contact', contactRoutes);
+app.use("/api/quote", quoteRoutes);
+ main
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
