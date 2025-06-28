@@ -1,80 +1,73 @@
-// models/Exercise.js
-const { Sequelize, DataTypes } = require('sequelize');
+const { DataTypes } = require('sequelize');
 const sequelize = require('../config/db');
-const Trainer = require('./Trainer');
 const ExerciseCategory = require('./ExerciseCategory');
 
-const Exercise = sequelize.define('Exercise', {
-  id: {
-    type: DataTypes.UUID,
-    defaultValue: DataTypes.UUIDV4,
-    primaryKey: true,
-    allowNull: false,
-  },
-  trainerId: {
-    type: DataTypes.UUID,
-    allowNull: true,
-    field: 'trainer_id',
-    references: {
-      model: Trainer,
-      key: 'id',
+const Exercise = sequelize.define(
+  'Exercise',
+  {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
     },
-    onDelete: 'SET NULL',
-  },
-  categoryId: {
-    type: DataTypes.UUID,
-    allowNull: true,
-    field: 'category_id',
-    references: {
-      model: ExerciseCategory,
-      key: 'id',
+
+    /* UI fields you’re showing on the card / popup */
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
-    onDelete: 'SET NULL',
+    description: {
+      type: DataTypes.TEXT,         // short blurb under the card
+      allowNull: true,
+    },
+    steps: {
+      type: DataTypes.JSON,         // long text for the popup (steps, tips…)
+      allowNull: true,
+    },
+      musclesWorked: {
+      type: DataTypes.JSON,         // long text for the popup (steps, tips…)
+      allowNull: true,
+    },
+    recommendedSetsReps: {
+      type: DataTypes.TEXT,         // long text for the popup (steps, tips…)
+      allowNull: true,
+    },
+   
+
+
+
+    imageUrl: {
+      type: DataTypes.STRING,       // path you store in the DB or S3 URL
+      allowNull: true,
+      field: 'image_url',
+    },
+
+    /* FK → ExerciseCategory */
+    categoryId: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      field: 'category_id',
+      references: {
+        model: ExerciseCategory,
+        key: 'id',
+      },
+    },
   },
-  name: {
-    type: DataTypes.STRING(255),
-    allowNull: false,
-  },
-  imageUrl: {
-    type: DataTypes.STRING(255),
-    allowNull: true,
-    field: 'image_url',
-  },
-  description: {
-    type: DataTypes.TEXT,
-    allowNull: true,
-  },
-  steps: {
-    type: DataTypes.JSON,
-    allowNull: true,
-  },
-  musclesWorked: {
-    type: DataTypes.JSON,
-    allowNull: true,
-    field: 'muscles_worked',
-  },
-  recommendedSetsReps: {
-    type: DataTypes.STRING(100),
-    allowNull: true,
-    field: 'recommended_sets_reps',
-  },
-  createdAt: {
-    type: DataTypes.DATE,
-    allowNull: false,
-    defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
-    field: 'created_at',
-  },
-}, {
-  tableName: 'exercises',
-  timestamps: false,
+  {
+    tableName: 'exercises',
+    underscored: true,
+    timestamps: false,
+  }
+);
+
+/* Associations */
+Exercise.belongsTo(ExerciseCategory, {
+  foreignKey: 'categoryId',
+  as: 'category',
 });
-
-// ─── Associations ───
-Exercise.belongsTo(Trainer, { foreignKey: 'trainerId', as: 'trainer' });
-Exercise.belongsTo(ExerciseCategory, { foreignKey: 'categoryId', as: 'category' });
-
-
-Trainer.hasMany(Exercise, { foreignKey: 'trainerId', as: 'exercises' });
-ExerciseCategory.hasMany(Exercise, { foreignKey: 'categoryId', as: 'exercises' });
+ExerciseCategory.hasMany(Exercise, {
+  foreignKey: 'categoryId',
+  as: 'exercises',
+});
 
 module.exports = Exercise;

@@ -331,4 +331,4 @@ const ExercisesPage: React.FC = () => {
   );
 };
 
-export default ExercisesPage;
+export default ExercisesPage;  
