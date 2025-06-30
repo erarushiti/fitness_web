@@ -1,5 +1,5 @@
 // models/ExerciseCategory.js
-const { Sequelize, DataTypes } = require('sequelize');
+const { Sequelize, DataTypes } = require('sequelize');  
 const sequelize = require('../config/db');
 
 const ExerciseCategory = sequelize.define('ExerciseCategory', {

@@ -1,104 +1,151 @@
 const Exercise = require('../models/Exercise');
-const Trainer = require('../models/Trainer');
-const ExerciseCategory = require('../models/ExerciseCategory');
+const fs = require('fs');
+const path = require('path');
 
-// Create a new exercise
 const createExercise = async (req, res) => {
   try {
-    const {
-      name,
-      description,
-      trainerId,
-      categoryId
+    const { 
+      name, 
+      description, 
+      steps, 
+      musclesWorked,
+      recommendedSetsReps, 
+      categoryId 
     } = req.body;
 
-    const image = req.file?.filename; // uploaded image
+    const imageFile = req.file;
 
+    // Validimi i të dhënave
+    if (!name || !categoryId) {
+      // Fshi imazhin e ngarkuar nëse validimi dështon
+      if (imageFile) fs.unlinkSync(imageFile.path);
+      return res.status(400).json({ error: 'Name and categoryId are required' });
+    }
+
+    // Krijo objektin e ri të ushtrimit
     const newExercise = await Exercise.create({
       name,
       description,
-      trainerId,
+      steps: steps ? JSON.parse(steps) : [],
+      musclesWorked: musclesWorked ? JSON.parse(musclesWorked) : [],
+      recommendedSetsReps,
       categoryId,
-      image
+      imageUrl: imageFile ? imageFile.path : null
     });
 
-    res.status(201).json(newExercise);
+    return res.status(201).json(newExercise);
+
+  } catch (err) {
+    console.error(err);
+    
+    // Fshi imazhin nëse ndodh gabim
+    if (req.file) fs.unlinkSync(req.file.path);
+    
+    return res.status(500).json({ 
+      error: err.message || 'Internal server error' 
+    });
+  }
+};
+
+// Merr të gjitha ushtrimet me kategori
+const getAllExercises = async (req, res) => {
+  try {
+    const exercises = await Exercise.findAll({
+      include: ['category'],
+    });
+    
+    // Konverto shtegun e imazhit në URL të plotë
+    const exercisesWithImageUrl = exercises.map(exercise => {
+      if (exercise.imageUrl) {
+        return {
+          ...exercise.toJSON(),
+          imageUrl: `${req.protocol}://${req.get('host')}/${exercise.imageUrl}`
+        };
+      }
+      return exercise;
+    });
+
+    res.status(200).json(exercisesWithImageUrl);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-// Get all exercises
-const getAllExercises = async (req, res) => {
-  try {
-    const exercises = await Exercise.findAll({
-      include: [
-        { model: Trainer, as: 'trainer' },
-        { model: ExerciseCategory, as: 'category' }
-      ]
-    });
-    res.status(200).json(exercises);
-  } catch (err) {
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
-// Get a single exercise by ID
+// Merr ushtrim sipas ID
 const getExerciseById = async (req, res) => {
   try {
     const exercise = await Exercise.findByPk(req.params.id, {
-      include: [
-        { model: Trainer, as: 'trainer' },
-        { model: ExerciseCategory, as: 'category' }
-      ]
+      include: ['category'],
     });
-    if (!exercise) return res.status(404).json({ error: 'Exercise not found' });
+
+    if (!exercise) {
+      return res.status(404).json({ error: 'Exercise not found' });
+    }
+
+    // Shto URL të plotë për imazhin nëse ekziston
+    if (exercise.imageUrl) {
+      exercise.imageUrl = `${req.protocol}://${req.get('host')}/${exercise.imageUrl}`;
+    }
+
     res.status(200).json(exercise);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-// Update an exercise
-const updateExercise = async (req, res) => {
+// Përditëso ushtrim
+const  updateExercise = async (req, res) => {
   try {
     const { id } = req.params;
-    const {
-      name,
-      description,
-      trainerId,
-      categoryId
-    } = req.body;
-    const image = req.file?.filename;
+    const updates = req.body;
+    const imageFile = req.file;
 
     const exercise = await Exercise.findByPk(id);
-    if (!exercise) return res.status(404).json({ error: 'Exercise not found' });
+    if (!exercise) {
+      return res.status(404).json({ error: 'Exercise not found' });
+    }
 
-    await exercise.update({
-      name,
-      description,
-      trainerId,
-      categoryId,
-      image
-    });
+    // Nëse ka imazh të ri, fshi të vjetrën
+    if (imageFile) {
+      if (exercise.imageUrl) {
+        fs.unlinkSync(exercise.imageUrl);
+      }
+      updates.imageUrl = imageFile.path;
+    }
 
+    await exercise.update(updates);
     res.status(200).json(exercise);
+
   } catch (err) {
+    console.error(err);
+    // Fshi imazhin e ri nëse ndodh gabim
+    if (req.file) fs.unlinkSync(req.file.path);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-// Delete an exercise
+// Fshi ushtrim
 const deleteExercise = async (req, res) => {
   try {
     const { id } = req.params;
+
     const exercise = await Exercise.findByPk(id);
-    if (!exercise) return res.status(404).json({ error: 'Exercise not found' });
+    if (!exercise) {
+      return res.status(404).json({ error: 'Exercise not found' });
+    }
+
+    // Fshi imazhin nëse ekziston
+    if (exercise.imageUrl) {
+      fs.unlinkSync(exercise.imageUrl);
+    }
 
     await exercise.destroy();
     res.status(200).json({ message: 'Exercise deleted successfully' });
+
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: 'Internal server error' });
   }
 };

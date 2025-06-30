@@ -1,6 +1,19 @@
 'use client';
 import React, { useState } from 'react';
-import Image from 'next/image';
+import e1 from '@/assets/images/e1.jpg';
+import e2 from '@/assets/images/e2.jpg';
+import e3 from '@/assets/images/e3.jpg';
+import e4 from '@/assets/images/e4.jpg';
+import e5 from '@/assets/images/e5.jpg';
+import e6 from '@/assets/images/e6.jpg';
+import e7 from '@/assets/images/e7.jpg';
+import e8 from '@/assets/images/e8.jpg';
+import e9 from '@/assets/images/e9.jpg';
+import e10 from '@/assets/images/e10.jpg';
+import e11 from '@/assets/images/e11.jpg';
+import e12 from '@/assets/images/e12.jpg';
+import e13 from '@/assets/images/e13.jpg';
+import e14 from '@/assets/images/e14.jpg';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import '../../app/globals.css';
@@ -21,7 +34,7 @@ const exercises: Exercise[] = [
     id: 1,
     name: 'Bench Press',
     category: 'Strength Training',
-    image: '/images/e1.jpg',
+    image: e1.src,
     description: 'Targets the chest, shoulders, and triceps.',
     musclesWorked: ['Chest', 'Shoulders', 'Triceps'],
     steps: [
@@ -36,7 +49,7 @@ const exercises: Exercise[] = [
     id: 2,
     name: 'Squats',
     category: 'Strength Training',
-    image: '/images/e2.jpg',
+    image: e2.src,
     description: 'Strengthens the legs, glutes, and core.',
     musclesWorked: ['Quads', 'Glutes', 'Hamstrings', 'Core'],
     steps: [
@@ -51,7 +64,7 @@ const exercises: Exercise[] = [
     id: 3,
     name: 'Deadlifts',
     category: 'Strength Training',
-    image: '/images/e3.jpg',
+    image: e3.src,
     description: 'A compound lift that targets the back and legs.',
     musclesWorked: ['Hamstrings', 'Glutes', 'Lower Back', 'Traps'],
     steps: [
@@ -66,7 +79,7 @@ const exercises: Exercise[] = [
     id: 4,
     name: 'Push-ups',
     category: 'Bodyweight Exercises',
-    image: '/images/e6.jpg',
+    image: e6.src,
     description: 'Upper body bodyweight movement for chest and arms.',
     musclesWorked: ['Chest', 'Shoulders', 'Triceps', 'Core'],
     steps: [
@@ -80,7 +93,7 @@ const exercises: Exercise[] = [
     id: 5,
     name: 'Plank',
     category: 'Core Workouts',
-    image: '/images/e7.jpg',
+    image: e7.src,
     description: 'Core stabilization exercise.',
     musclesWorked: ['Abdominals', 'Lower Back', 'Shoulders'],
     steps: [
@@ -94,7 +107,7 @@ const exercises: Exercise[] = [
     id: 6,
     name: 'Lunges',
     category: 'Leg Workouts',
-    image: '/images/e8.jpg',
+    image: e8.src,
     description: 'Strengthens lower body muscles.',
     musclesWorked: ['Glutes', 'Quads', 'Hamstrings'],
     steps: [
@@ -108,7 +121,7 @@ const exercises: Exercise[] = [
     id: 7,
     name: 'Pull-ups',
     category: 'Upper Body Workouts',
-    image: '/images/e11.jpg',
+    image: e11.src,
     description: 'Strengthens back and arms using bodyweight.',
     musclesWorked: ['Lats', 'Biceps', 'Shoulders'],
     steps: [
@@ -122,7 +135,7 @@ const exercises: Exercise[] = [
     id: 8,
     name: 'Bicep Curls',
     category: 'Strength Training',
-    image: '/images/e10.jpg',
+    image: e10.src,
     description: 'Isolation movement for arm development.',
     musclesWorked: ['Biceps'],
     steps: [
@@ -136,7 +149,7 @@ const exercises: Exercise[] = [
     id: 9,
     name: 'Leg Press',
     category: 'Leg Workouts',
-    image: '/images/e9.jpg',
+    image: e9.src,
     description: 'Targets the lower body with resistance.',
     musclesWorked: ['Quads', 'Glutes', 'Hamstrings'],
     steps: [
@@ -150,7 +163,7 @@ const exercises: Exercise[] = [
     id: 10,
     name: 'Tricep Dips',
     category: 'Upper Body Workouts',
-    image: '/images/e12.jpg',
+    image: e12.src,
     description: 'Uses bodyweight to strengthen arms.',
     musclesWorked: ['Triceps', 'Shoulders', 'Chest'],
     steps: [
@@ -164,7 +177,7 @@ const exercises: Exercise[] = [
     id: 11,
     name: 'Burpees',
     category: 'Cardio Workouts',
-    image: '/images/e13.jpg',
+    image: e13.src,
     description: 'High-intensity full-body cardio move.',
     musclesWorked: ['Full Body', 'Core', 'Legs', 'Arms'],
     steps: [
@@ -178,7 +191,7 @@ const exercises: Exercise[] = [
     id: 12,
     name: 'Mountain Climbers',
     category: 'Core and Cardio',
-    image: '/images/e14.jpg',
+    image: e14.src,
     description: 'Combines core work with cardio.',
     musclesWorked: ['Core', 'Shoulders', 'Legs'],
     steps: [
@@ -196,8 +209,7 @@ const ExercisesPage: React.FC = () => {
   return (
     <div>
       <Header />
-   <div style={{ minHeight: '100vh', backgroundColor: '#111', color: 'white', padding: '2rem', marginTop: '100px' }}>
-
+      <div style={{ minHeight: '100vh', backgroundColor: '#111', color: 'white', padding: '2rem' }}>
         <h1 style={{ fontSize: '2rem', fontWeight: 'bold', textAlign: 'center', marginBottom: '2rem' }}>
           Exercises for Every Goal
         </h1>
@@ -213,11 +225,9 @@ const ExercisesPage: React.FC = () => {
               padding: '1rem',
               boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
             }}>
-              <Image
+              <img
                 src={exercise.image}
                 alt={exercise.name}
-                width={300}
-                height={250}
                 style={{
                   width: '100%',
                   height: '250px',
@@ -285,14 +295,12 @@ const ExercisesPage: React.FC = () => {
               }}
               onClick={() => setSelectedExercise(null)}
             >
-              ×
+              &times;
             </button>
             <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', marginBottom: '1rem' }}>{selectedExercise.name}</h2>
-            <Image
+            <img
               src={selectedExercise.image}
               alt={selectedExercise.name}
-              width={600}
-              height={250}
               style={{ width: '100%', height: '250px', objectFit: 'cover', borderRadius: '8px', marginBottom: '1rem' }}
             />
             <p>{selectedExercise.description}</p>
@@ -323,4 +331,4 @@ const ExercisesPage: React.FC = () => {
   );
 };
 
-export default ExercisesPage;
+export default ExercisesPage;  
