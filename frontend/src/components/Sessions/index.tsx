@@ -24,8 +24,9 @@ export default function Sessions() {
 
   const fetchSessions = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/api/session");
+      const response = await axios.get("https://fitness-web-api-g1zu.onrender.com/api/session");
       setSessions(response.data);
+      console.log(loading);
       setLoading(false);
     } catch (error) {
       console.error("Error fetching sessions:", error);
@@ -38,60 +39,61 @@ export default function Sessions() {
 
   console.log("sessions", sessions);
 
-  return (
-    <div className="mt-[50px] bg-black px-[100px] py-[50px]  rounded-[30px] md:rounded-[60px]">
-      <h2 className="text-3xl md:text-5xl text-center mb-[40px] font-bold text-white">
+ return (
+    <div className="mt-8 sm:mt-10 bg-black px-4 sm:px-6 md:px-8 lg:px-16 py-8 sm:py-10 md:py-12 rounded-2xl sm:rounded-3xl md:rounded-4xl">
+      {/* Heading */}
+      <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl text-center mb-6 sm:mb-8 md:mb-10 font-bold text-white">
         BEST WORKOUT{" "}
-        <span className="text-3xl md:text-5xl font-bold text-[#EE7838]">
+        <span className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-[#EE7838]">
           PROGRAM
         </span>
         <br />
         MADE FOR YOU!
       </h2>
+
+      {/* Session Cards */}
       {sessions.map((session, index) => (
         <div
           key={session.id}
-          className="bg-[#111]  rounded-3xl flex flex-col md:flex-row items-start md:items-center mb-4 justify-between  "
+          className="bg-[#111] rounded-2xl sm:rounded-3xl flex flex-col md:flex-row items-start md:items-center mb-4 sm:mb-6"
         >
           {/* Number Label */}
-          <div className="bg-[#FF9B17] text-white text-xl md:text-2xl font-bold rounded-l-3xl h-[91.99px] w-[85px] flex items-center justify-center ">
+          <div className="bg-[#FF9B17] text-white text-lg sm:text-xl md:text-2xl font-bold rounded-l-2xl sm:rounded-l-3xl h-16 sm:h-20 md:h-[91.99px] w-16 sm:w-20 md:w-[85px] flex items-center justify-center shrink-0">
             {String(index + 1).padStart(2, "0")}.
           </div>
+
           {/* Session Details */}
-          <div className="flex w-full justify-between px-[100px]">
-            <div>
-              <h3 className=" text-3xl font-bold text-white uppercase">
+          <div className="flex flex-col sm:flex-row w-full justify-between px-4 sm:px-6 md:px-8 lg:px-12 py-4 md:py-0">
+            <div className="mb-4 sm:mb-0">
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-white uppercase">
                 {session.name}
               </h3>
-              <p className="text-gray-400 text-[17px] mt-2">
+              <p className="text-gray-400 text-sm sm:text-base md:text-lg mt-2 max-w-md">
                 {session.description}
               </p>
             </div>
 
-            <div className="flex flex-col  mt-2 text-gray-300 text-base justify-between font-extrabold">
-              <div className="flex items-center mr-4">
-                <FaCalendarAlt className="mr-2" />
-                {/* Example days, adjust based on your data */}
+            <div className="flex flex-col sm:flex-row sm:space-x-6 md:space-x-8 text-gray-300 text-sm sm:text-base font-extrabold">
+              <div className="flex items-center mb-2 sm:mb-0">
+                <FaCalendarAlt className="mr-2 w-4 h-4 sm:w-5 sm:h-5" />
                 <span>{session.weekDays.join(" - ")}</span>
-
               </div>
               <div className="flex items-center">
-                <FaClock className="mr-2" />
+                <FaClock className="mr-2 w-4 h-4 sm:w-5 sm:h-5" />
                 <span>{session.time}</span>
               </div>
             </div>
 
-            <div className="flex flex-col  mt-2 text-gray-300 text-base justify-between font-extrabold">
-              <div className="flex items-center">
-                <span>{session.price}€</span>
-
-              </div>
+            <div className="flex items-center text-gray-300 text-sm sm:text-base font-extrabold mt-2 sm:mt-0">
+              <span>{session.price}€</span>
             </div>
           </div>
+
           {/* Join Now Button */}
           <button
             onClick={() => handleRegister(session.id)}
-            className="mt-4 md:mt-0 bg-yellow-400 text-black font-semibold py-2 px-[30px] w-[190px] mr-[15px] rounded-3xl flex items-center hover:bg-yellow-500 transition"
+            className="mt-4 md:mt-0 bg-yellow-400 text-black font-semibold py-2 px-4 sm:px-6 w-full sm:w-auto sm:min-w-[160px] md:min-w-[190px] mr-0 md:mr-4 rounded-2xl sm:rounded-3xl flex items-center justify-center hover:bg-yellow-500 transition-colors"
+            aria-label={`Join ${session.name} workout program`}
           >
             Join Now
             <svg

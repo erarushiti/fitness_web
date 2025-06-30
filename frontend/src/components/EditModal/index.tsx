@@ -1,21 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import { Dialog } from "@headlessui/react";
 import { X } from "lucide-react";
 
 interface EditModalButtonProps {
     title?: string;
-    buttonLabel?: string;
     children: React.ReactNode;
-    isOpen: boolean;        // This prop should be passed from the parent
-    onClose: () => void;    // Add a close handler to control the modal's state
+    isOpen: boolean;        
+    onClose: () => void;    
   }
   
   const EditModalButton: React.FC<EditModalButtonProps> = ({
     title = "Edit Item",
-    buttonLabel = "Edit",
     children,
     isOpen,
-    onClose,   // Destructure the onClose prop
+    onClose,   
   }) => {
     return (
       <>
