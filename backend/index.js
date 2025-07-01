@@ -13,7 +13,7 @@ const cartRoutes = require("./routes/cart");
 const { authenticateToken } = require("./middleware/authenticateToken");
 const exerciseRoutes = require('./routes/exercise');
 const categoryRoutes = require("./routes/category");
-
+const feedbackRoutes = require("./routes/feedback")
 
 dotenv.config();
 const app = express();
@@ -39,7 +39,7 @@ app.use('/api/trainer', trainerRoutes);
 app.use('/api/orders', ordesRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/exercises', exerciseRoutes);
-
+app.use('/api/feedbacks', feedbackRoutes);
 app.use('/api/categories', categoryRoutes);
 
 app.use((err, req, res, next) => {

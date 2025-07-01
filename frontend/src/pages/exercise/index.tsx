@@ -1,210 +1,157 @@
 'use client';
-import React, { useState } from 'react';
-import e1 from '@/assets/images/e1.jpg';
-import e2 from '@/assets/images/e2.jpg';
-import e3 from '@/assets/images/e3.jpg';
-import e4 from '@/assets/images/e4.jpg';
-import e5 from '@/assets/images/e5.jpg';
-import e6 from '@/assets/images/e6.jpg';
-import e7 from '@/assets/images/e7.jpg';
-import e8 from '@/assets/images/e8.jpg';
-import e9 from '@/assets/images/e9.jpg';
-import e10 from '@/assets/images/e10.jpg';
-import e11 from '@/assets/images/e11.jpg';
-import e12 from '@/assets/images/e12.jpg';
-import e13 from '@/assets/images/e13.jpg';
-import e14 from '@/assets/images/e14.jpg';
+import React, { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import '../../app/globals.css';
 
-interface Exercise {
-  id: number;
+interface Category {
+  id: string;
   name: string;
-  category: string;
-  image: string;
+  description: string | null;
+  createdAt: string;
+}
+
+interface Exercise {
+  id: string;
+  name: string;
   description: string;
   steps: string[];
   musclesWorked: string[];
   recommendedSetsReps: string;
+  imageUrl: string;
+  categoryId: string;
+  category: Category;
 }
 
-const exercises: Exercise[] = [
-  {
-    id: 1,
-    name: 'Bench Press',
-    category: 'Strength Training',
-    image: e1.src,
-    description: 'Targets the chest, shoulders, and triceps.',
-    musclesWorked: ['Chest', 'Shoulders', 'Triceps'],
-    steps: [
-      'Lie flat on the bench with feet firmly on the ground.',
-      'Grip the bar slightly wider than shoulder-width.',
-      'Lower the bar slowly to the mid-chest.',
-      'Push the bar upward until arms are extended.'
-    ],
-    recommendedSetsReps: '3–4 sets of 8–10 reps'
-  },
-  {
-    id: 2,
-    name: 'Squats',
-    category: 'Strength Training',
-    image: e2.src,
-    description: 'Strengthens the legs, glutes, and core.',
-    musclesWorked: ['Quads', 'Glutes', 'Hamstrings', 'Core'],
-    steps: [
-      'Stand with feet shoulder-width apart.',
-      'Lower your hips as if sitting back into a chair.',
-      'Keep your chest up and knees aligned.',
-      'Push through your heels to return to standing.'
-    ],
-    recommendedSetsReps: '3–4 sets of 10–12 reps'
-  },
-  {
-    id: 3,
-    name: 'Deadlifts',
-    category: 'Strength Training',
-    image: e3.src,
-    description: 'A compound lift that targets the back and legs.',
-    musclesWorked: ['Hamstrings', 'Glutes', 'Lower Back', 'Traps'],
-    steps: [
-      'Stand with feet hip-width apart, barbell over mid-foot.',
-      'Grip the bar, keep your back straight.',
-      'Lift by extending hips and knees simultaneously.',
-      'Lower the bar in a controlled motion.'
-    ],
-    recommendedSetsReps: '3–5 sets of 5–8 reps'
-  },
-  {
-    id: 4,
-    name: 'Push-ups',
-    category: 'Bodyweight Exercises',
-    image: e6.src,
-    description: 'Upper body bodyweight movement for chest and arms.',
-    musclesWorked: ['Chest', 'Shoulders', 'Triceps', 'Core'],
-    steps: [
-      'Start in plank position, hands shoulder-width apart.',
-      'Lower your body until your chest nearly touches the floor.',
-      'Push back to starting position while keeping your core tight.'
-    ],
-    recommendedSetsReps: '3 sets of 15–20 reps'
-  },
-  {
-    id: 5,
-    name: 'Plank',
-    category: 'Core Workouts',
-    image: e7.src,
-    description: 'Core stabilization exercise.',
-    musclesWorked: ['Abdominals', 'Lower Back', 'Shoulders'],
-    steps: [
-      'Start in forearm plank position.',
-      'Keep your back flat and core engaged.',
-      'Hold position for desired time.'
-    ],
-    recommendedSetsReps: '3 sets of 30–60 seconds'
-  },
-  {
-    id: 6,
-    name: 'Lunges',
-    category: 'Leg Workouts',
-    image: e8.src,
-    description: 'Strengthens lower body muscles.',
-    musclesWorked: ['Glutes', 'Quads', 'Hamstrings'],
-    steps: [
-      'Stand tall, step forward with one foot.',
-      'Lower your hips until both knees are bent at 90 degrees.',
-      'Push back up and return to start.'
-    ],
-    recommendedSetsReps: '3 sets of 10 reps per leg'
-  },
-  {
-    id: 7,
-    name: 'Pull-ups',
-    category: 'Upper Body Workouts',
-    image: e11.src,
-    description: 'Strengthens back and arms using bodyweight.',
-    musclesWorked: ['Lats', 'Biceps', 'Shoulders'],
-    steps: [
-      'Grip the bar with palms facing away.',
-      'Pull your body upward until chin is above the bar.',
-      'Lower yourself with control.'
-    ],
-    recommendedSetsReps: '3 sets of max reps'
-  },
-  {
-    id: 8,
-    name: 'Bicep Curls',
-    category: 'Strength Training',
-    image: e10.src,
-    description: 'Isolation movement for arm development.',
-    musclesWorked: ['Biceps'],
-    steps: [
-      'Hold dumbbells at your sides with palms facing forward.',
-      'Curl the weights upward while keeping elbows stationary.',
-      'Lower back down slowly.'
-    ],
-    recommendedSetsReps: '3–4 sets of 10–12 reps'
-  },
-  {
-    id: 9,
-    name: 'Leg Press',
-    category: 'Leg Workouts',
-    image: e9.src,
-    description: 'Targets the lower body with resistance.',
-    musclesWorked: ['Quads', 'Glutes', 'Hamstrings'],
-    steps: [
-      'Sit in the leg press machine with feet on the platform.',
-      'Lower the platform until knees form 90-degree angles.',
-      'Push the weight back to the starting position.'
-    ],
-    recommendedSetsReps: '3–4 sets of 10 reps'
-  },
-  {
-    id: 10,
-    name: 'Tricep Dips',
-    category: 'Upper Body Workouts',
-    image: e12.src,
-    description: 'Uses bodyweight to strengthen arms.',
-    musclesWorked: ['Triceps', 'Shoulders', 'Chest'],
-    steps: [
-      'Place hands behind you on a bench or chair.',
-      'Lower your body by bending the elbows.',
-      'Push back up to straighten arms.'
-    ],
-    recommendedSetsReps: '3 sets of 10–15 reps'
-  },
-  {
-    id: 11,
-    name: 'Burpees',
-    category: 'Cardio Workouts',
-    image: e13.src,
-    description: 'High-intensity full-body cardio move.',
-    musclesWorked: ['Full Body', 'Core', 'Legs', 'Arms'],
-    steps: [
-      'Start standing, drop into a squat.',
-      'Kick your feet back into a plank.',
-      'Return feet to squat and jump up.'
-    ],
-    recommendedSetsReps: '3 sets of 10–15 reps'
-  },
-  {
-    id: 12,
-    name: 'Mountain Climbers',
-    category: 'Core and Cardio',
-    image: e14.src,
-    description: 'Combines core work with cardio.',
-    musclesWorked: ['Core', 'Shoulders', 'Legs'],
-    steps: [
-      'Start in plank position.',
-      'Drive one knee toward your chest.',
-      'Alternate legs quickly like running in place.'
-    ],
-    recommendedSetsReps: '3 sets of 30 seconds'
-  }
-];
-
-const ExercisesPage: React.FC = () => {
+export default function ExercisesPage() {
+  const [exercises, setExercises] = useState<Exercise[]>([]);
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch exercises from API
+  useEffect(() => {
+    const fetchExercises = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('http://localhost:8080/api/exercises');
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data: Exercise[] = await response.json();
+        setExercises(data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Gabim në ngarkimin e ushtrimeve');
+        console.error('Error fetching exercises:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchExercises();
+  }, []);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div>
+        <Header />
+        <div style={{ 
+          minHeight: '100vh', 
+          backgroundColor: '#111', 
+          color: 'white', 
+          padding: '2rem',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{
+              width: '50px',
+              height: '50px',
+              border: '5px solid #333',
+              borderTop: '5px solid #EE7838',
+              borderRadius: '50%',
+              animation: 'spin 1s linear infinite',
+              margin: '0 auto 1rem'
+            }}></div>
+            <p>Loading...</p>
+          </div>
+        </div>
+        <Footer />
+        <style jsx>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div>
+        <Header />
+        <div style={{ 
+          minHeight: '100vh', 
+          backgroundColor: '#111', 
+          color: 'white', 
+          padding: '2rem',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
+          <div style={{ textAlign: 'center', maxWidth: '500px' }}>
+            <h2 style={{ color: '#ff4444', marginBottom: '1rem' }}>Error</h2>
+            <p style={{ marginBottom: '1rem' }}>{error}</p>
+            <button
+              style={{
+                backgroundColor: '#EE7838',
+                color: '#fff',
+                border: 'none',
+                padding: '0.75rem 1.5rem',
+                borderRadius: '4px',
+                cursor: 'pointer',
+                fontWeight: '600'
+              }}
+              onClick={() => window.location.reload()}
+            >
+              Try again
+            </button>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Empty state
+  if (exercises.length === 0) {
+    return (
+      <div>
+        <Header />
+        <div style={{ 
+          minHeight: '100vh', 
+          backgroundColor: '#111', 
+          color: 'white', 
+          padding: '2rem',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
+          <div style={{ textAlign: 'center' }}>
+            <h2 style={{ marginBottom: '1rem' }}>There's no exercise</h2>
+            <p>Please try again later.</p>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -223,10 +170,20 @@ const ExercisesPage: React.FC = () => {
               backgroundColor: '#1a1a1a',
               borderRadius: '8px',
               padding: '1rem',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.3)'
-            }}>
+              boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+              transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = '0 4px 16px rgba(0,0,0,0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.3)';
+            }}
+            >
               <img
-                src={exercise.image}
+                src={exercise.imageUrl}
                 alt={exercise.name}
                 style={{
                   width: '100%',
@@ -235,11 +192,29 @@ const ExercisesPage: React.FC = () => {
                   borderRadius: '8px',
                   marginBottom: '1rem',
                 }}
+                onError={(e) => {
+                  
+                  e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjI1MCIgdmlld0JveD0iMCAwIDMwMCAyNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjUwIiBmaWxsPSIjMzMzIi8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTI1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5IiBmb250LXNpemU9IjE2Ij5JbWFnZSBOb3QgRm91bmQ8L3RleHQ+Cjwvc3ZnPg==';
+                }}
               />
-              <h2 style={{ fontSize: '1.25rem', fontWeight: '600' }}>{exercise.name}</h2>
-              <p style={{ color: '#ccc', margin: '0.25rem 0' }}>Category: {exercise.category}</p>
-              <p style={{ color: '#ccc', marginBottom: '0.5rem' }}>{exercise.description}</p>
-              <div style={{ textAlign: 'center', marginTop: '0.5rem' }}>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: '600', marginBottom: '0.5rem' }}>
+                {exercise.name}
+              </h2>
+              <p style={{ color: '#ccc', margin: '0.25rem 0', fontSize: '0.9rem' }}>
+                Category: {exercise.category?.name || 'Uncategorized'}
+              </p>
+              <p style={{ 
+                color: '#ccc', 
+                marginBottom: '1rem', 
+                fontSize: '0.9rem',
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden'
+              }}>
+                {exercise.description}
+              </p>
+              <div style={{ textAlign: 'center', marginTop: 'auto' }}>
                 <button
                   style={{
                     backgroundColor: '#EE7838',
@@ -248,7 +223,14 @@ const ExercisesPage: React.FC = () => {
                     padding: '0.5rem 1rem',
                     borderRadius: '4px',
                     cursor: 'pointer',
-                    fontWeight: '600'
+                    fontWeight: '600',
+                    transition: 'background-color 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#d6642e';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = '#EE7838';
                   }}
                   onClick={() => setSelectedExercise(exercise)}
                 >
@@ -269,14 +251,15 @@ const ExercisesPage: React.FC = () => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          zIndex: 1000
+          zIndex: 1000,
+          padding: '1rem'
         }}>
           <div style={{
             backgroundColor: '#fff',
             color: '#000',
             padding: '2rem',
             borderRadius: '8px',
-            width: '90%',
+            width: '100%',
             maxWidth: '600px',
             position: 'relative',
             overflowY: 'auto',
@@ -291,37 +274,75 @@ const ExercisesPage: React.FC = () => {
                 border: 'none',
                 fontSize: '1.5rem',
                 cursor: 'pointer',
-                color: '#333'
+                color: '#333',
+                width: '30px',
+                height: '30px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '50%',
+                transition: 'background-color 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#f0f0f0';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'transparent';
               }}
               onClick={() => setSelectedExercise(null)}
             >
               &times;
             </button>
-            <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', marginBottom: '1rem' }}>{selectedExercise.name}</h2>
+            <h2 style={{ fontSize: '1.75rem', fontWeight: 'bold', marginBottom: '1rem', paddingRight: '40px' }}>
+              {selectedExercise.name}
+            </h2>
             <img
-              src={selectedExercise.image}
+              src={selectedExercise.imageUrl}
               alt={selectedExercise.name}
-              style={{ width: '100%', height: '250px', objectFit: 'cover', borderRadius: '8px', marginBottom: '1rem' }}
+              style={{ 
+                width: '100%', 
+                height: '250px', 
+                objectFit: 'cover', 
+                borderRadius: '8px', 
+                marginBottom: '1rem' 
+              }}
+              onError={(e) => {
+                e.currentTarget.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjI1MCIgdmlld0JveD0iMCAwIDMwMCAyNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMjUwIiBmaWxsPSIjMzMzIi8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTI1IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSIjOTk5IiBmb250LXNpemU9IjE2Ij5JbWFnZSBOb3QgRm91bmQ8L3RleHQ+Cjwvc3ZnPg==';
+              }}
             />
-            <p>{selectedExercise.description}</p>
+            <p style={{ marginBottom: '1rem', lineHeight: '1.5' }}>{selectedExercise.description}</p>
+            
+            <div style={{ marginBottom: '1rem' }}>
+              <p style={{ fontSize: '0.9rem', color: '#666' }}>
+                <strong>Category:</strong> {selectedExercise.category?.name || 'Uncategorized'}
+              </p>
+            </div>
 
-            <h3 style={{ marginTop: '1rem', fontWeight: 'bold' }}>Muscles Worked:</h3>
-            <ul>
+            <h3 style={{ marginTop: '1rem', fontWeight: 'bold', color: '#333' }}>Muscles Worked:</h3>
+            <ul style={{ marginLeft: '1.5rem', marginBottom: '1rem' }}>
               {selectedExercise.musclesWorked.map((muscle, index) => (
-                <li key={index}>{muscle}</li>
+                <li key={index} style={{ marginBottom: '0.25rem' }}>{muscle}</li>
               ))}
             </ul>
 
-            <h3 style={{ marginTop: '1rem', fontWeight: 'bold' }}>How to Perform:</h3>
-            <ol>
+            <h3 style={{ marginTop: '1rem', fontWeight: 'bold', color: '#333' }}>How to Perform:</h3>
+            <ol style={{ marginLeft: '1.5rem', marginBottom: '1rem' }}>
               {selectedExercise.steps.map((step, index) => (
-                <li key={index}>{step}</li>
+                <li key={index} style={{ marginBottom: '0.5rem', lineHeight: '1.4' }}>{step}</li>
               ))}
             </ol>
 
-            <p style={{ marginTop: '1rem', fontStyle: 'italic' }}>
-              <strong>Recommended:</strong> {selectedExercise.recommendedSetsReps}
-            </p>
+            <div style={{ 
+              marginTop: '1.5rem', 
+              padding: '1rem',
+              backgroundColor: '#f8f9fa',
+              borderRadius: '6px',
+              borderLeft: '4px solid #EE7838'
+            }}>
+              <p style={{ margin: 0, fontWeight: 'bold', color: '#333' }}>
+                Recommended: {selectedExercise.recommendedSetsReps}
+              </p>
+            </div>
           </div>
         </div>
       )}
@@ -329,6 +350,4 @@ const ExercisesPage: React.FC = () => {
       <Footer />
     </div>
   );
-};
-
-export default ExercisesPage;  
+}
