@@ -1,4 +1,4 @@
-const Contact = require("../models/contact");
+const Contact = require("../models/Contact");
 const { verifyAccessToken } = require("../utils/jwt");
 
 const contactController = {
