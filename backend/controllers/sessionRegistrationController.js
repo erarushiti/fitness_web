@@ -33,7 +33,7 @@ const createSessionRegistration = async (req, res) => {
       fullName,
       email,
       phone,
-      status: 'pending', // Added required status field
+      status: 'pending',
     });
 
     res.status(201).json({
@@ -56,9 +56,10 @@ const getRegistrationsBySession = async (req, res) => {
       return res.status(404).json({ error: 'Session not found' });
     }
 
+    // Remove include temporarily to check if issue is from include
     const registrations = await SessionRegistration.findAll({
       where: { sessionId },
-      include: [{ model: Session, as: 'sessions', attributes: ['name', 'startDate'] }],
+     
     });
 
     res.status(200).json(registrations);
@@ -68,7 +69,8 @@ const getRegistrationsBySession = async (req, res) => {
   }
 };
 
-// READ a single registration
+
+// READ a single registration by ID
 const getSessionRegistrationById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -99,7 +101,6 @@ const updateSessionRegistration = async (req, res) => {
       return res.status(404).json({ error: 'Registration not found' });
     }
 
-    // Validate status if provided
     if (status && !['pending', 'confirmed', 'cancelled'].includes(status)) {
       return res.status(400).json({ error: 'Invalid status value' });
     }
@@ -108,7 +109,7 @@ const updateSessionRegistration = async (req, res) => {
       fullName: fullName || registration.fullName,
       email: email || registration.email,
       phone: phone !== undefined ? phone : registration.phone,
-      status: status || registration.status, // Allow status update
+      status: status || registration.status,
     });
 
     res.status(200).json({
@@ -148,5 +149,6 @@ const sessionRegistrationController = {
   updateSessionRegistration,
   deleteSessionRegistration,
 };
+
 
 module.exports = sessionRegistrationController;

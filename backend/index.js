@@ -14,7 +14,7 @@ const cartRoutes = require("./routes/cart");
 const contactRoutes = require("./routes/contact");
 const quoteRoutes = require("./routes/quotes");
 const { authenticateToken } = require("./middleware/authenticateToken");
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 
 dotenv.config();
 const app = express();
@@ -27,13 +27,13 @@ app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 // Connect to MongoDB
-mongoose.connect(dbURI)
-  .then(() => {
-    console.log('MongoDB connected successfully');
-  })
-  .catch((err) => {
-    console.error('Error connecting to MongoDB:', err);
-  });
+// mongoose.connect(dbURI)
+//   .then(() => {
+//     console.log('MongoDB connected successfully');
+//   })
+//   .catch((err) => {
+//     console.error('Error connecting to MongoDB:', err);
+//   });
 
 app.use(
   cors({

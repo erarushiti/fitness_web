@@ -95,7 +95,7 @@ export default function OrdersPage() {
                 onClick={() => router.push(`/orders/${order.id}`)}
                 className="text-blue-600 hover:underline font-medium text-sm mt-2 sm:mt-0"
               >
-                Detajet →
+                Details →
               </button>
             </div>
 
