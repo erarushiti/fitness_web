@@ -44,7 +44,7 @@ const SessionRegister: React.FC = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`http://localhost:8080/api/sessions/${sessionId}/register`, {
+      const response = await axios.post(`http://localhost:8080/api/session/${sessionId}/register`, {
         fullName: formData.fullName,
         email: formData.email,
         phone: formData.phone,

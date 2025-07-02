@@ -11,9 +11,13 @@ const trainerRoutes = require("./routes/trainer");
 const ordesRoutes = require("./routes/orders");
 const cartRoutes = require("./routes/cart");
 const { authenticateToken } = require("./middleware/authenticateToken");
+
+// const mongoose = require('mongoose');
+
 const exerciseRoutes = require('./routes/exercise');
 const categoryRoutes = require("./routes/category");
 const feedbackRoutes = require("./routes/feedback")
+
 
 dotenv.config();
 const app = express();
@@ -21,6 +25,16 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+
+
+// Connect to MongoDB
+// mongoose.connect(dbURI)
+//   .then(() => {
+//     console.log('MongoDB connected successfully');
+//   })
+//   .catch((err) => {
+//     console.error('Error connecting to MongoDB:', err);
+//   });
 
 
 app.use(

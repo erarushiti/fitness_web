@@ -76,6 +76,8 @@ export default function CreateSupplement() {
         body: payload,
       });
 
+      //newSupplement
+
       if (!response.ok) {
         const data = await response.json();
         throw new Error(data.error || "Failed to create supplement");

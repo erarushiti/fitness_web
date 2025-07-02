@@ -29,6 +29,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onClose }) => {
     admin: [
       { name: "All Sessions", path: "/Admin/Sessions/", icon: "fas fa-users" },
       { name: "Create Session", path: "/Admin/Sessions/create-session", icon: "fas fa-chart-bar" },
+     
       { name: "Register", path: "/Admin/register", icon: "fas fa-cog" },
       { name: "Create Supplement", path: "/Admin/Supplements/create-supplements", icon: "fas fa-cog" },
       { name: "All Supplements", path: "/Admin/Supplements/", icon: "fas fa-cog" },

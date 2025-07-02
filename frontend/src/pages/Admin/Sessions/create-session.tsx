@@ -1,7 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { useFormik } from "formik";
-import * as Yup from "yup";
+import React, { useEffect, useState, ChangeEvent, FormEvent } from "react";
 
 import DashboardLayout from "../../../components/DashboardLayout";
 import { fetchWithAuth } from "@/utils/api";
@@ -26,10 +24,21 @@ interface FormData {
 }
 
 export default function CreateSession() {
+  useAdminRedirect();
+
   const [token, setToken] = useState("");
+  const [formData, setFormData] = useState<FormData>({
+    name: "",
+    description: "",
+    weekDays: [],
+    time: "",
+    price: "",
+  });
+  const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>(
+    {}
+  );
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  useAdminRedirect();
 
   useEffect(() => {
     const storedToken = localStorage.getItem("accessToken");
@@ -38,62 +47,74 @@ export default function CreateSession() {
     }
   }, []);
 
-  const formik = useFormik<FormData>({
-    initialValues: {
-      name: "",
-      description: "",
-      weekDays: [],
-      time: "",
-      price: "",
-    },
-    validationSchema: Yup.object({
-      name: Yup.string().required("Session name is required"),
-      description: Yup.string().required("Description is required"),
-      weekDays: Yup.array()
-        .of(Yup.string())
-        .min(1, "Select at least one weekday"),
-      time: Yup.string().required("Time is required"),
-      price: Yup.number()
-        .typeError("Price must be a number")
-        .min(0, "Price must be 0 or more")
-        .required("Price is required"),
-    }),
-    onSubmit: async (values, { resetForm }) => {
-      setError(null);
-      setSuccess(null);
+  // Simple validation function
+  const validate = (): boolean => {
+    const newErrors: Partial<Record<keyof FormData, string>> = {};
 
-      try {
-        const response = await fetchWithAuth("http://localhost:8080/api/session", {
-          method: "POST",
-          body: JSON.stringify(values),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+    if (!formData.name.trim()) newErrors.name = "Session name is required";
+    if (!formData.description.trim()) newErrors.description = "Description is required";
+    if (formData.weekDays.length === 0) newErrors.weekDays = "Select at least one weekday";
+    if (!formData.time) newErrors.time = "Time is required";
+    if (!formData.price) newErrors.price = "Price is required";
+    else if (isNaN(Number(formData.price)) || Number(formData.price) < 0)
+      newErrors.price = "Price must be a number 0 or more";
 
-        if (!response.ok) {
-          const data = await response.json();
-          throw new Error(data.error || "Failed to create session");
-        }
+    setErrors(newErrors);
 
-        setSuccess("Session created successfully!");
-        resetForm();
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "An error occurred");
-      }
-    },
-  });
+    return Object.keys(newErrors).length === 0;
+  };
 
-  // Helper to toggle weekdays in Formik
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
   const toggleWeekDay = (day: string) => {
-    const current = formik.values.weekDays;
-    if (current.includes(day)) {
-      formik.setFieldValue(
-        "weekDays",
-        current.filter((d) => d !== day)
-      );
-    } else {
-      formik.setFieldValue("weekDays", [...current, day]);
+    setFormData((prev) => {
+      if (prev.weekDays.includes(day)) {
+        return { ...prev, weekDays: prev.weekDays.filter((d) => d !== day) };
+      } else {
+        return { ...prev, weekDays: [...prev.weekDays, day] };
+      }
+    });
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setSuccess(null);
+
+    if (!validate()) {
+      return;
+    }
+
+    try {
+      const response = await fetchWithAuth("http://localhost:8080/api/session", {
+        method: "POST",
+        body: JSON.stringify(formData),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Failed to create session");
+      }
+
+      setSuccess("Session created successfully!");
+      setFormData({
+        name: "",
+        description: "",
+        weekDays: [],
+        time: "",
+        price: "",
+      });
+      setErrors({});
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "An error occurred");
     }
   };
 
@@ -106,7 +127,7 @@ export default function CreateSession() {
         {success && (
           <div className="mb-4 p-4 bg-green-100 text-green-700 rounded-lg">{success}</div>
         )}
-        <form onSubmit={formik.handleSubmit} className="space-y-6" noValidate>
+        <form onSubmit={handleSubmit} className="space-y-6" noValidate>
           {/* Name */}
           <div>
             <label
@@ -119,14 +140,13 @@ export default function CreateSession() {
               id="name"
               name="name"
               type="text"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.name}
+              onChange={handleChange}
+              value={formData.name}
               className="mt-1 block w-full p-2 border border-[#1c1c1c] rounded-lg text-black"
             />
-            {formik.touched.name && formik.errors.name ? (
-              <div className="text-red-600 text-sm">{formik.errors.name}</div>
-            ) : null}
+            {errors.name && (
+              <div className="text-red-600 text-sm">{errors.name}</div>
+            )}
           </div>
 
           {/* Description */}
@@ -140,15 +160,14 @@ export default function CreateSession() {
             <textarea
               id="description"
               name="description"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.description}
+              onChange={handleChange}
+              value={formData.description}
               rows={4}
               className="mt-1 block w-full p-2 border border-[#1c1c1c] rounded-lg text-black"
             />
-            {formik.touched.description && formik.errors.description ? (
-              <div className="text-red-600 text-sm">{formik.errors.description}</div>
-            ) : null}
+            {errors.description && (
+              <div className="text-red-600 text-sm">{errors.description}</div>
+            )}
           </div>
 
           {/* Weekdays */}
@@ -163,7 +182,7 @@ export default function CreateSession() {
                     type="checkbox"
                     name="weekDays"
                     value={day}
-                    checked={formik.values.weekDays.includes(day)}
+                    checked={formData.weekDays.includes(day)}
                     onChange={() => toggleWeekDay(day)}
                     className="accent-blue-600"
                   />
@@ -171,9 +190,9 @@ export default function CreateSession() {
                 </label>
               ))}
             </div>
-            {formik.touched.weekDays && formik.errors.weekDays ? (
-              <div className="text-red-600 text-sm">{formik.errors.weekDays}</div>
-            ) : null}
+            {errors.weekDays && (
+              <div className="text-red-600 text-sm">{errors.weekDays}</div>
+            )}
           </div>
 
           {/* Time */}
@@ -188,14 +207,13 @@ export default function CreateSession() {
               id="time"
               name="time"
               type="time"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.time}
+              onChange={handleChange}
+              value={formData.time}
               className="mt-1 block w-full p-2 border border-[#1c1c1c] rounded-lg text-black"
             />
-            {formik.touched.time && formik.errors.time ? (
-              <div className="text-red-600 text-sm">{formik.errors.time}</div>
-            ) : null}
+            {errors.time && (
+              <div className="text-red-600 text-sm">{errors.time}</div>
+            )}
           </div>
 
           {/* Price */}
@@ -212,14 +230,13 @@ export default function CreateSession() {
               type="number"
               min="0"
               step="0.01"
-              onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              value={formik.values.price}
+              onChange={handleChange}
+              value={formData.price}
               className="mt-1 block w-full p-2 border border-[#1c1c1c] rounded-lg text-black"
             />
-            {formik.touched.price && formik.errors.price ? (
-              <div className="text-red-600 text-sm">{formik.errors.price}</div>
-            ) : null}
+            {errors.price && (
+              <div className="text-red-600 text-sm">{errors.price}</div>
+            )}
           </div>
 
           <button
