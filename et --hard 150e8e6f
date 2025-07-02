@@ -1,0 +1,128 @@
+*   [33m44b6e37a[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Merge pull request #41 from erarushiti/excersizes
+[31m|[m[32m\[m  
+[31m|[m *   [33m89b47fd7[m Merge branch 'main' into excersizes
+[31m|[m [33m|[m[31m\[m  
+[31m|[m [33m|[m[31m/[m  
+[31m|[m[31m/[m[33m|[m   
+* [33m|[m [33m150e8e6f[m Fixed Feedback loop
+* [33m|[m [33m28bc4241[m quotes connected with mongodb
+* [33m|[m [33me5cf9718[m Feedback with mongodb
+* [33m|[m [33ma87ae0fd[m Contact Us with mongodb
+* [33m|[m [33m93c1d547[m fixed bugs
+* [33m|[m [33mb8fa86e0[m fixed some bugs3
+* [33m|[m [33m3758b693[m fixed some bugs2
+* [33m|[m [33m01f5708b[m fixed some bugs1
+* [33m|[m [33m9069881c[m fixed some bugs
+* [33m|[m [33m976e09b5[m fixed some bugs
+* [33m|[m   [33m2cfecbf7[m Merge pull request #38 from erarushiti/tests
+[35m|[m[36m\[m [33m\[m  
+[35m|[m * [33m|[m [33m55ba944e[m[33m ([m[1;31morigin/tests[m[33m)[m fixed small bugs
+* [36m|[m [33m|[m   [33mf036ba8d[m Merge pull request #37 from erarushiti/form-validation
+[1;31m|[m[1;32m\[m [36m\[m [33m\[m  
+[1;31m|[m * [36m|[m [33m|[m [33mc0ca7d70[m[33m ([m[1;31morigin/form-validation[m[33m)[m fixed some bugs
+[1;31m|[m [36m|[m[36m/[m [33m/[m  
+* [36m|[m [33m|[m [33mad2bc7d7[m Merge pull request #36 from erarushiti/tests
+[1;33m|[m[36m\[m[36m|[m [33m|[m 
+[1;33m|[m * [33m|[m   [33m24be68c4[m fixed deploy issues
+[1;33m|[m [1;35m|[m[1;33m\[m [33m\[m  
+[1;33m|[m [1;35m|[m[1;33m/[m [33m/[m  
+[1;33m|[m[1;33m/[m[1;35m|[m [33m|[m   
+* [1;35m|[m [33m|[m   [33m2892739c[m Merge pull request #35 from erarushiti/tests
+[31m|[m[32m\[m [1;35m\[m [33m\[m  
+[31m|[m * [1;35m\[m [33m\[m   [33md364dafa[m Merge branch 'main' into tests
+[31m|[m [33m|[m[31m\[m [1;35m\[m [33m\[m  
+[31m|[m [33m|[m[31m/[m [1;35m/[m [33m/[m  
+[31m|[m[31m/[m[33m|[m [1;35m|[m [33m|[m   
+* [33m|[m [1;35m|[m [33m|[m   [33m5480084e[m Merge pull request #34 from erarushiti/excersizes
+[35m|[m[36m\[m [33m\[m [1;35m\[m [33m\[m  
+* [36m|[m [33m|[m [1;35m|[m [33m|[m [33md4a9425e[m Update .env
+* [36m|[m [33m|[m [1;35m|[m [33m|[m   [33m36080f6b[m Merge pull request #33 from erarushiti/tests
+[1;31m|[m[1;32m\[m [36m\[m [33m\[m [1;35m\[m [33m\[m  
+* [1;32m\[m [36m\[m [33m\[m [1;35m\[m [33m\[m   [33m9a99b848[m Merge pull request #32 from erarushiti/excersizes
+[1;33m|[m[1;34m\[m [1;32m\[m [36m\[m [33m\[m [1;35m\[m [33m\[m  
+[1;33m|[m [1;34m|[m [1;32m|[m [36m|[m [33m|[m * [33m|[m [33m7120587c[m fixed deploy issues
+[1;33m|[m [1;34m|[m [1;32m|[m [36m|[m [33m|[m[33m/[m [33m/[m  
+[1;33m|[m [1;34m|[m [1;32m|[m [36m|[m * [33m/[m [33ma7c672de[m Jest/React Testing Library tests completed: 3 component tests and 2 API route tests.
+[1;33m|[m [1;34m|[m [1;32m|[m [36m|[m[1;32m/[m [33m/[m  
+[1;33m|[m [1;34m|[m [1;32m|[m[1;32m/[m[36m|[m [33m|[m   
+[1;33m|[m [1;34m|[m * [36m|[m [33m|[m [33ma6cbae94[m created responsive design
+[1;33m|[m [1;34m|[m [1;34m|[m [36m|[m * [33m7b88142f[m[33m ([m[1;31morigin/excersizes[m[33m, [m[1;32mexcersizes[m[33m)[m created exercise form for admin
+[1;33m|[m [1;34m|[m [1;34m|[m [36m|[m * [33m2e08fe33[m created exercise form for admin
+[1;33m|[m [1;34m|[m [1;34m|[m [36m|[m[36m/[m  
+[1;33m|[m [1;34m|[m [1;34m|[m * [33m8d9adb7b[m created exercises and category tables
+[1;33m|[m [1;34m|[m [1;34m|[m[1;34m/[m  
+[1;33m|[m [1;34m|[m[1;34m/[m[1;34m|[m   
+[1;33m|[m * [1;34m|[m   [33ma7bf376a[m Merge branch 'main' into excersizes
+[1;33m|[m [1;35m|[m[1;33m\[m [1;34m\[m  
+[1;33m|[m [1;35m|[m[1;33m/[m [1;34m/[m  
+[1;33m|[m[1;33m/[m[1;35m|[m [1;34m|[m   
+* [1;35m|[m [1;34m|[m [33m963c58ab[m Update README.md
+* [1;35m|[m [1;34m|[m   [33mded6f187[m Merge pull request #31 from erarushiti/tests
+[31m|[m[1;34m\[m [1;35m\[m [1;34m\[m  
+[31m|[m [1;34m|[m [1;35m|[m[1;34m/[m  
+[31m|[m [1;34m|[m[1;34m/[m[1;35m|[m   
+[31m|[m * [1;35m|[m [33md8fe4013[m created README.md
+* [32m|[m [1;35m|[m   [33mcb6a4bd4[m Merge pull request #30 from erarushiti/next-auth
+[33m|[m[34m\[m [32m\[m [1;35m\[m  
+[33m|[m [34m|[m [32m|[m * [33mdab249ba[m created exercise
+[33m|[m [34m|[m [32m|[m [34m|[m * [33m58b5ae71[m[33m ([m[1;31morigin/next-auth[m[33m)[m added validation to forms
+[33m|[m [34m|[m [32m|[m[34m_[m[34m|[m[34m/[m  
+[33m|[m [34m|[m[34m/[m[32m|[m [34m|[m   
+[33m|[m * [32m|[m [34m|[m   [33m6b254c2a[m Merge branch 'main' into next-auth
+[33m|[m [36m|[m[33m\[m [32m\[m [34m\[m  
+[33m|[m [36m|[m[33m/[m [32m/[m [34m/[m  
+[33m|[m[33m/[m[36m|[m [32m|[m [34m|[m   
+* [36m|[m [32m|[m [34m|[m   [33m73163843[m Merge pull request #29 from erarushiti/orders
+[32m|[m[1;33m\[m [36m\[m [32m\[m [34m\[m  
+[32m|[m [1;33m|[m[32m_[m[36m|[m[32m/[m [34m/[m  
+[32m|[m[32m/[m[1;33m|[m [36m|[m [34m|[m   
+[32m|[m * [36m|[m [34m|[m [33mca524fa9[m[33m ([m[1;31morigin/orders[m[33m)[m fixed some bugs
+[32m|[m [1;33m|[m * [34m|[m [33m8fd42c82[m protected routes
+[32m|[m [1;33m|[m[32m/[m [34m/[m  
+[32m|[m[32m/[m[1;33m|[m [34m|[m   
+* [1;33m|[m [34m|[m [33m9fa3ec43[m Merge pull request #28 from erarushiti/orders
+[1;34m|[m[1;33m\[m[1;33m|[m [34m|[m 
+[1;34m|[m * [34m|[m [33m03220def[m fixed access token
+* [1;35m|[m [34m|[m [33m226aa0ae[m Merge pull request #27 from erarushiti/orders
+[1;36m|[m[1;35m\[m[1;35m|[m [34m|[m 
+[1;36m|[m * [34m|[m [33m8a9cc7ab[m create users table
+* [31m|[m [34m|[m [33mcc9c2485[m Merge pull request #26 from erarushiti/orders
+[32m|[m[31m\[m[31m|[m [34m|[m 
+[32m|[m * [34m|[m [33m9cc4965a[m added advanced search
+* [33m|[m [34m|[m [33mcafd15f9[m Merge pull request #25 from erarushiti/orders
+[34m|[m[33m\[m[33m|[m [34m|[m 
+[34m|[m * [34m|[m [33md8268971[m created orders details page
+* [35m|[m [34m|[m [33m587666ad[m Merge pull request #24 from erarushiti/orders
+[36m|[m[35m\[m[35m|[m [34m|[m 
+[36m|[m * [34m|[m [33m175e0641[m fixed some bugs
+[36m|[m * [34m|[m [33m846a79dc[m made some changes
+[36m|[m * [34m|[m [33m71121035[m created users crud
+* [1;31m|[m [34m|[m [33m858aec19[m Merge pull request #23 from erarushiti/orders
+[1;32m|[m[1;31m\[m[1;31m|[m [34m|[m 
+[1;32m|[m * [34m|[m [33mdfc385c6[m create cart component and checkout with stripe
+* [1;33m|[m [34m|[m [33mdb561eb1[m Merge pull request #22 from erarushiti/orders
+[1;34m|[m[1;33m\[m[1;33m|[m [34m|[m 
+[1;34m|[m * [34m|[m [33maecf6f34[m created pages for orders
+* [1;35m|[m [34m|[m [33ma725ce37[m Merge pull request #20 from erarushiti/orders
+[1;36m|[m[1;35m\[m[1;35m|[m [34m|[m 
+[1;36m|[m * [34m|[m [33mf4adf61d[m created crud for orders
+* [31m|[m [34m|[m [33mb102dd91[m Merge pull request #19 from erarushiti/orders
+[32m|[m[31m\[m[31m|[m [34m|[m 
+[32m|[m * [34m|[m [33meb4d525e[m created orders table
+[32m|[m[32m/[m [34m/[m  
+* [34m|[m   [33m37ba63d4[m Merge pull request #18 from erarushiti/supplements
+[34m|[m[35m\[m [34m\[m  
+[34m|[m [35m|[m[34m/[m  
+[34m|[m[34m/[m[35m|[m   
+[34m|[m * [33m0cab9b2d[m[33m ([m[1;31morigin/supplements[m[33m)[m created supplements page
+* [35m|[m [33mb196c380[m Merge pull request #17 from erarushiti/supplements
+[36m|[m[35m\[m[35m|[m 
+[36m|[m * [33m8cdd6d8a[m created all trainers for admin
+[36m|[m[36m/[m  
+*   [33m567c2cf9[m Merge pull request #16 from erarushiti/excersizes
+[1;32m|[m[1;33m\[m  
+[1;32m|[m * [33m430217ce[m backend for Trainer
+[1;32m|[m[1;32m/[m  
+[1;32m|[m * [33me23720ad[m[33m ([m[1;31morigin/about[m[33m)[m About Us Page
+[1;32m|[m[1;32m/[m  
+*   [33mf1234ace[m Merge 
