@@ -2,6 +2,8 @@
 
 import { useState, FormEvent, ChangeEvent } from "react";
 import "../../../app/globals.css";
+import DashboardLayout from "@/components/DashboardLayout";
+import { fetchWithAuth } from "utils/api";
 interface FormData {
   email: string;
   password: string;
@@ -75,9 +77,8 @@ const RegisterForm: React.FC<RegisterFormProps> = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/api/auth/admin/register", {
+      const response = await fetchWithAuth("http://localhost:8080/api/auth/admin/register", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
 
@@ -111,7 +112,7 @@ const RegisterForm: React.FC<RegisterFormProps> = () => {
       return (
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-white">
+            <label htmlFor="email" className="block text-sm font-medium text-black">
               Email
             </label>
             <input
@@ -121,11 +122,12 @@ const RegisterForm: React.FC<RegisterFormProps> = () => {
               value={formData.email}
               onChange={handleInputChange}
               required
-              className="mt-1 block w-full bg-[#111] rounded-md border border-gray-300 shadow-sm text-white"
+              autoComplete="off"
+              className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm text-black"
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-white">
+            <label htmlFor="password" className="block text-sm font-medium text-black">
               Password
             </label>
             <input
@@ -135,11 +137,12 @@ const RegisterForm: React.FC<RegisterFormProps> = () => {
               value={formData.password}
               onChange={handleInputChange}
               required
-              className="mt-1 block w-full bg-[#111] rounded-md border border-gray-300 shadow-sm text-white"
+              autoComplete="off"
+              className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm text-black"
             />
           </div>
           <div>
-            <label htmlFor="firstName" className="block text-sm font-medium text-white">
+            <label htmlFor="firstName" className="block text-sm font-medium text-black">
               First Name
             </label>
             <input
@@ -149,11 +152,11 @@ const RegisterForm: React.FC<RegisterFormProps> = () => {
               value={formData.firstName}
               onChange={handleInputChange}
               required
-              className="mt-1 block w-full bg-[#111] rounded-md border border-gray-300 shadow-sm text-white"
+              className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm text-black"
             />
           </div>
           <div>
-            <label htmlFor="lastName" className="block text-sm font-medium text-white">
+            <label htmlFor="lastName" className="block text-sm font-medium text-black">
               Last Name
             </label>
             <input
@@ -163,11 +166,11 @@ const RegisterForm: React.FC<RegisterFormProps> = () => {
               value={formData.lastName}
               onChange={handleInputChange}
               required
-              className="mt-1 block w-full bg-[#111] rounded-md border border-gray-300 shadow-sm text-white"
+              className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm text-black"
             />
           </div>
           <div>
-            <label htmlFor="dateOfBirth" className="block text-sm font-medium text-white">
+            <label htmlFor="dateOfBirth" className="block text-sm font-medium text-black">
               Date of Birth
             </label>
             <input
@@ -176,11 +179,11 @@ const RegisterForm: React.FC<RegisterFormProps> = () => {
               id="dateOfBirth"
               value={formData.dateOfBirth}
               onChange={handleInputChange}
-              className="mt-1 block w-full bg-[#111] rounded-md border border-gray-300 shadow-sm text-white"
+              className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm text-black"
             />
           </div>
           <div>
-            <label htmlFor="weight" className="block text-sm font-medium text-white">
+            <label htmlFor="weight" className="block text-sm font-medium text-black">
               Weight (kg)
             </label>
             <input
@@ -190,11 +193,11 @@ const RegisterForm: React.FC<RegisterFormProps> = () => {
               value={formData.weight}
               onChange={handleInputChange}
               step="0.1"
-              className="mt-1 block w-full bg-[#111] rounded-md border border-gray-300 shadow-sm text-white"
+              className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm text-black"
             />
           </div>
           <div>
-            <label htmlFor="height" className="block text-sm font-medium text-white">
+            <label htmlFor="height" className="block text-sm font-medium text-black">
               Height (cm)
             </label>
             <input
@@ -204,11 +207,11 @@ const RegisterForm: React.FC<RegisterFormProps> = () => {
               value={formData.height}
               onChange={handleInputChange}
               step="0.1"
-              className="mt-1 block w-full bg-[#111] rounded-md border border-gray-300 shadow-sm text-white"
+              className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm text-black"
             />
           </div>
           <div>
-            <label htmlFor="fitnessGoals" className="block text-sm font-medium text-white">
+            <label htmlFor="fitnessGoals" className="block text-sm font-medium text-black">
               Fitness Goals
             </label>
             <textarea
@@ -216,20 +219,20 @@ const RegisterForm: React.FC<RegisterFormProps> = () => {
               id="fitnessGoals"
               value={formData.fitnessGoals}
               onChange={handleInputChange}
-              className="mt-1 block w-full bg-[#111] rounded-md border border-gray-300 shadow-sm text-white"
+              className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm text-black"
             />
           </div>
           <div className="flex space-x-4">
             <button
               type="submit"
-              className="flex-1 rounded-md bg-[#EE7838] px-4 py-2 text-sm font-medium text-white"
+              className="flex-1 rounded-md bg-[#EE7838] px-4 py-2 text-sm font-medium text-black"
             >
               Register Client
             </button>
             <button
               type="button"
               onClick={() => setFormType(null)}
-              className="flex-1 rounded-md bg-[#111] px-4 py-2 text-sm font-medium text-white"
+              className="flex-1 rounded-md bg-white px-4 py-2 text-sm font-medium text-black"
             >
               Cancel
             </button>
@@ -240,7 +243,7 @@ const RegisterForm: React.FC<RegisterFormProps> = () => {
       return (
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-sm font-medium text-white">
+            <label htmlFor="email" className="block text-sm font-medium text-black">
               Email
             </label>
             <input
@@ -250,11 +253,12 @@ const RegisterForm: React.FC<RegisterFormProps> = () => {
               value={formData.email}
               onChange={handleInputChange}
               required
-              className="mt-1 block w-full bg-[#111] rounded-md border border-gray-300 shadow-sm text-white"
+              autoComplete="off"
+              className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm text-black"
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-white">
+            <label htmlFor="password" className="block text-sm font-medium text-black">
               Password
             </label>
             <input
@@ -264,11 +268,12 @@ const RegisterForm: React.FC<RegisterFormProps> = () => {
               value={formData.password}
               onChange={handleInputChange}
               required
-              className="mt-1 block w-full bg-[#111] rounded-md border border-gray-300 shadow-sm text-white"
+              autoComplete="off"
+              className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm text-black"
             />
           </div>
           <div>
-            <label htmlFor="firstName" className="block text-sm font-medium text-white">
+            <label htmlFor="firstName" className="block text-sm font-medium text-black">
               First Name
             </label>
             <input
@@ -278,11 +283,11 @@ const RegisterForm: React.FC<RegisterFormProps> = () => {
               value={formData.firstName}
               onChange={handleInputChange}
               required
-              className="mt-1 block w-full bg-[#111] rounded-md border border-gray-300 shadow-sm text-white"
+              className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm text-black"
             />
           </div>
           <div>
-            <label htmlFor="lastName" className="block text-sm font-medium text-white">
+            <label htmlFor="lastName" className="block text-sm font-medium text-black">
               Last Name
             </label>
             <input
@@ -292,11 +297,11 @@ const RegisterForm: React.FC<RegisterFormProps> = () => {
               value={formData.lastName}
               onChange={handleInputChange}
               required
-              className="mt-1 block w-full bg-[#111] rounded-md border border-gray-300 shadow-sm text-white"
+              className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm text-black"
             />
           </div>
           <div>
-            <label htmlFor="specialization" className="block text-sm font-medium text-white">
+            <label htmlFor="specialization" className="block text-sm font-medium text-black">
               Specialization
             </label>
             <input
@@ -305,11 +310,11 @@ const RegisterForm: React.FC<RegisterFormProps> = () => {
               id="specialization"
               value={formData.specialization}
               onChange={handleInputChange}
-              className="mt-1 block w-full bg-[#111] rounded-md border border-gray-300 shadow-sm text-white"
+              className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm text-black"
             />
           </div>
           <div>
-            <label htmlFor="experienceYears" className="block text-sm font-medium text-white">
+            <label htmlFor="experienceYears" className="block text-sm font-medium text-black">
               Years of Experience
             </label>
             <input
@@ -318,11 +323,11 @@ const RegisterForm: React.FC<RegisterFormProps> = () => {
               id="experienceYears"
               value={formData.experienceYears}
               onChange={handleInputChange}
-              className="mt-1 block w-full bg-[#111] rounded-md border border-gray-300 shadow-sm text-white"
+              className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm text-black"
             />
           </div>
           <div>
-            <label htmlFor="bio" className="block text-sm font-medium text-white">
+            <label htmlFor="bio" className="block text-sm font-medium text-black">
               Bio
             </label>
             <textarea
@@ -330,20 +335,20 @@ const RegisterForm: React.FC<RegisterFormProps> = () => {
               id="bio"
               value={formData.bio}
               onChange={handleInputChange}
-              className="mt-1 block w-full bg-[#111] rounded-md border border-gray-300 shadow-sm text-white"
+              className="mt-1 block w-full bg-white rounded-md border border-gray-300 shadow-sm text-black"
             />
           </div>
           <div className="flex space-x-4">
             <button
               type="submit"
-              className="flex-1 rounded-md bg-[#EE7838] px-4 py-2 text-sm font-medium text-white"
+              className="flex-1 rounded-md bg-[#EE7838] px-4 py-2 text-sm font-medium text-black"
             >
               Register Trainer
             </button>
             <button
               type="button"
               onClick={() => setFormType(null)}
-              className="flex-1 rounded-md bg-[#111] px-4 py-2 text-sm font-medium text-white"
+              className="flex-1 rounded-md bg-white px-4 py-2 text-sm font-medium text-black"
             >
               Cancel
             </button>
@@ -355,22 +360,23 @@ const RegisterForm: React.FC<RegisterFormProps> = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#111]">
-      <div className="max-w-md w-full space-y-8 p-8 bg-black border border-white rounded-lg shadow-lg">
-        <h2 className="text-center text-2xl font-bold text-white">Register</h2>
+     <DashboardLayout>
+    <div className="min-h-screen flex items-center justify-center ">
+      <div className="max-w-md w-full space-y-8 p-8 bg-[#e5e5e5] border border-black rounded-lg shadow-lg">
+        <h2 className="text-center text-2xl font-bold text-black">Register</h2>
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
         {success && <p className="text-green-500 text-sm text-center">{success}</p>}
         {!formType ? (
           <div className="space-y-4">
             <button
               onClick={() => setFormType("client")}
-              className="w-full bg-[#111]; rounded-[8px] border  border-white px-4 py-2 text-sm font-bold text-white "
+              className="w-full bg-white; rounded-[8px] border  border-black px-4 py-2 text-sm font-bold text-black "
             >
               Register as Client
             </button>
             <button
               onClick={() => setFormType("trainer")}
-              className="w-full rounded-[8px] border border-white px-4 py-2 text-sm font-bold text-white"
+              className="w-full rounded-[8px] border border-black px-4 py-2 text-sm font-bold text-black"
             >
               Register as Trainer
             </button>
@@ -380,6 +386,7 @@ const RegisterForm: React.FC<RegisterFormProps> = () => {
         )}
       </div>
     </div>
+      </DashboardLayout>
   );
 };
 

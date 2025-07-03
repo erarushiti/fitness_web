@@ -22,64 +22,68 @@ export default function DataTable<T>({
   onDelete,
 }: DataTableProps<T>) {
   return (
-    <div className="overflow-x-auto shadow rounded-lg border border-gray-200">
-      <table className="min-w-full bg-white">
+    <div className="w-full overflow-x-auto shadow rounded-lg border border-gray-200">
+      <table className="min-w-full bg-white table-auto">
         <thead>
           <tr className="bg-gray-100">
             {columns.map((col) => (
               <th
                 key={String(col.accessor)}
-                className="px-4 py-2 text-left text-base font-medium text-black"
+                className="px-4 py-3 text-left text-sm font-semibold text-gray-800 whitespace-nowrap"
               >
                 {col.header}
               </th>
             ))}
             {(onEdit || onDelete) && (
-              <th className="px-4 py-2 text-left text-base font-medium text-gray-700">
+              <th className="px-4 py-3 text-left text-sm font-semibold text-gray-800 whitespace-nowrap">
                 Actions
               </th>
             )}
           </tr>
         </thead>
         <tbody>
-          {data.map((item, rowIndex) => (
-            <tr key={rowIndex} className="hover:bg-gray-50">
-              {columns.map((col) => (
-                <td key={String(col.accessor)} className="px-4 py-2 text-base text-black">
-                  {col.render ? col.render(item) : (item[col.accessor] as any)}
-                </td>
-              ))}
-              {(onEdit || onDelete) && (
-                <td className="px-4 py-2 space-x-2">
-                  {onEdit && (
-                    <button
-                      onClick={() => onEdit(item)}
-                      className="text-blue-600 hover:underline"
-                    >
-                      Edit
-                    </button>
-                  )}
-                  {onDelete && (
-                    <button
-                      onClick={() => onDelete(item)}
-                      className="text-red-600 hover:underline"
-                    >
-                      Delete
-                    </button>
-                  )}
-                </td>
-              )}
-            </tr>
-          ))}
-          {data.length === 0 && (
+          {data.length === 0 ? (
             <tr>
               <td
-                colSpan={columns.length + 1}
+                colSpan={columns.length + (onEdit || onDelete ? 1 : 0)}
                 className="text-center text-gray-500 py-4"
               >
                 No records found.
               </td>
             </tr>
+          ) : (
+            data.map((item, rowIndex) => (
+              <tr key={rowIndex} className="hover:bg-gray-50 border-b">
+                {columns.map((col) => (
+                  <td
+                    key={String(col.accessor)}
+                    className="px-4 py-3 text-sm text-gray-900 whitespace-nowrap"
+                  >
+                    {col.render ? col.render(item) : (item[col.accessor] as string)}
+                  </td>
+                ))}
+                {(onEdit || onDelete) && (
+                  <td className="px-4 py-3 space-x-2 whitespace-nowrap">
+                    {onEdit && (
+                      <button
+                        onClick={() => onEdit(item)}
+                        className="text-blue-600 hover:underline"
+                      >
+                        Edit
+                      </button>
+                    )}
+                    {onDelete && (
+                      <button
+                        onClick={() => onDelete(item)}
+                        className="text-red-600 hover:underline"
+                      >
+                        Delete
+                      </button>
+                    )}
+                  </td>
+                )}
+              </tr>
+            ))
           )}
         </tbody>
       </table>

@@ -8,6 +8,11 @@ const RefreshToken = require('./models/RefreshToken');
 const Trainer = require('./models/Trainer');
 const WaterLog = require('./models/WaterLog');
 const Supplement = require('./models/Supplement');
+const Orders = require('./models/Orders');
+const OrderItems = require('./models/OrderItems');
+const Cart = require('./models/Cart');
+const Exercise = require('./models/Exercise');
+const ExerciseCategory = require('./models/ExerciseCategory');
 
 async function syncDatabase() {
   try {
